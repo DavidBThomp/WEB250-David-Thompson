@@ -1,3 +1,8 @@
-conosle.log('Hello World from nodeJS');
+const express = require('express');
+const app = express();
 
-//Test File
+app.get('/', (request, response) => {
+    response.send('Hello David!');
+});
+
+app.listen(3000, () => console.log('server started'))
