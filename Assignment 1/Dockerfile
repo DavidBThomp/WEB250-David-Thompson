@@ -3,6 +3,9 @@
 #   https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
 #   Code From: https://en.wikiversity.org/wiki/Docker/Express
 
+# Purpose: 
+#   Installs express over port 3000, expecting file app.js
+
 FROM node:alpine
 WORKDIR /usr/src/app
 
