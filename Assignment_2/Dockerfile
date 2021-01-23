@@ -6,6 +6,12 @@
 
 # Purpose: 
 #   Installs express over port 3000, expecting file app.js
+
+#   Installing NPM for VSC Testing: 
+#   npm install express --save
+#   npm install handlebars
+#   Be in working directory and use "node app"
+
 #   Docker Testing Instructions: 
 #   touch {filename}
 #   edit file in docker
