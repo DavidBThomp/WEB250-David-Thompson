@@ -3,10 +3,10 @@
 //  https://expressjs.com/en/starter/hello-world.html
 //  Code from: https://en.wikiversity.org/wiki/Server-Side_Scripting/Introduction/Node.js_(Express)
 //  HandleBars: https://handlebarsjs.com/
+//  noobcoder1137 Routes Tutorial: https://youtu.be/miXhYmYqle8
 
 // Purpose: 
-//  Installation of Express and Handle bars. Points to a directory of /static. Requires the file hello. 
-//  
+//  Installation of Express and Handle bars. Then Creates 3 seperate ways to display a page from directory
 
 const express = require("express");
 const fs = require("fs");
