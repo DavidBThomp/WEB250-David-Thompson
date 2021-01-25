@@ -21,7 +21,7 @@
 FROM node:alpine
 WORKDIR /usr/src/app
 
-RUN npm install express handlebars
+RUN npm install express handlebars os
 COPY . .
 
 EXPOSE 3000
