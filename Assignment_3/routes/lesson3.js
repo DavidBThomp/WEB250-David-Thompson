@@ -11,10 +11,12 @@
 const express = require('express')
 const fs = require("fs");
 const handlebars = require('handlebars');
+const { route } = require('./lesson1');
 const router = express.Router()
 
 router.get("/", function (request, response) {
     let result = "";
+
     if (request.query.yards) {
         let yards = request.query.yards;
         let meters = yards * 1.093613;
@@ -28,30 +30,30 @@ router.get("/", function (request, response) {
         yards: result,
         meters: ""
     }
+
     result = template(data);
     response.send(result);
 });
 
+router.get("/", function (request, response) {
+    let result = "";
 
-// router.POST("/", function (request, response) {
-//     let result = "";
+    if (request.query.feet) {
+        let feet = request.query.feet;
+        let centimeters = feet * 30.48;
+        result = feet + " feet are " +
+            centimeters + " centimeters";
+    }
 
-//     if (request.body.feet) {
-//         let feet = request.body.feet;
-//         let centimeters = feet * 30.48;
-//         result = feet + " foot is " +
-//             centimeters + " centimeters.";
-//     }
-
-//     let source = fs.readFileSync("./templates/lesson3.html");
-//     let template = handlebars.compile(source.toString());
-//     let data = {
-//         centimeters: "",
-//         feet: result
-//     }
-//     result = template(data);
-//     response.send(result);
-// });
+    let source = fs.readFileSync("./templates/lesson3.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        feet: result,
+        centimeters: ""
+    }
+    result = template(data);
+    response.send(result);
+});
 
 router.post("/", function (request, response) {
     let result = "";
