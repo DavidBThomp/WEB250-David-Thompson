@@ -9,3 +9,7 @@ I am taking this course to understand more about back-end web development and to
 ## Assignment 2
 
 I learned that server-side scripting has much more depth when it comes to interacting with the clients' web page. I also learned how we can put multiple files in our container using various methods. I was able to understand that using these methods will allow me to host multiple webpages on a single site. This is useful because most websites aren't one dimensional on one page, they span multiple pages with various types of content. In the future using docker and express to host websites like this is useful because if I run it on my own servers, I won't have to rely on third-party hosting services to contain my site. 
+
+## Assignment 3
+
+In this session, I learned about processing requests and updating webpages so that users can get feedback. To do this, I had to learn about how to put forms using templates so that the feedback and be seen. I also learned about GET and POST requests which are used to get information from a specified source and then to send data back and update a resource. Creating these forms will help me in the future by having the ability to collect and store data that users provide. I can also make it so that inputs have responses so that inputs aren't repeated.
