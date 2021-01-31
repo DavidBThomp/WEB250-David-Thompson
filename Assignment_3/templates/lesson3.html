@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lesson 3</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        p {
+            min-height: 1em;
+        }
+    </style>
+</head>
+  <body>
+    <form method="GET">
+        <p>
+            <label for="fahrenheit">Enter Fahrenheit temperature:</label>
+            <input type="text" id="fahrenheit" name="fahrenheit">
+            <input type="submit" value="Submit">
+        </p>
+        <p>
+            <output>{{fahrenheit}}</output>
+        </p>
+    </form>
+    <form method="POST">
+        <p>
+            <label for="celsius">Enter Celsius temperature:</label>
+            <input type="text" id="celsius" name="celsius">
+            <input type="submit" value="Submit">
+        </p>
+        <p>
+            <output>{{celsius}}</output>
+        </p>
+    </form>
+</body>
+</html>
