@@ -15,38 +15,59 @@ const router = express.Router()
 
 router.get("/", function (request, response) {
     let result = "";
-    if (request.query.fahrenheit) {
-        let fahrenheit = request.query.fahrenheit;
-        let celsius = (fahrenheit - 32) * 5 / 9;
-        result = fahrenheit + "° Fahrenheit is " +
-            celsius + "° Celsius";
+    if (request.query.yards) {
+        let yards = request.query.yards;
+        let meters = yards * 1.093613;
+        result = yards + " yards are " +
+            meters + " meters";
     }
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        fahrenheit: result,
-        celsius: ""
+        yards: result,
+        meters: ""
     }
     result = template(data);
     response.send(result);
 });
 
+
+// router.POST("/", function (request, response) {
+//     let result = "";
+
+//     if (request.body.feet) {
+//         let feet = request.body.feet;
+//         let centimeters = feet * 30.48;
+//         result = feet + " foot is " +
+//             centimeters + " centimeters.";
+//     }
+
+//     let source = fs.readFileSync("./templates/lesson3.html");
+//     let template = handlebars.compile(source.toString());
+//     let data = {
+//         centimeters: "",
+//         feet: result
+//     }
+//     result = template(data);
+//     response.send(result);
+// });
+
 router.post("/", function (request, response) {
     let result = "";
 
-    if (request.body.celsius) {
-        let celsius = request.body.celsius;
-        let fahrenheit = celsius * 9 / 5 + 32;
-        result = celsius + "° Celsius is " +
-            fahrenheit + "° Fahrenheit";
+    if (request.body.inches) {
+        let inches = request.body.inches;
+        let millimeters = inches * 25.4;
+        result = inches + " inches is " +
+            millimeters + " millimeters.";
     }
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        fahrenheit: "",
-        celsius: result
+        millimeters: "",
+        inches: result
     }
     result = template(data);
     response.send(result);
