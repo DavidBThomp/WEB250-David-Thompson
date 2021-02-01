@@ -13,7 +13,7 @@ const os = require("os")
 
 const router = express.Router()
 router.get("/", function (request, response) {
-    let source = fs.readFileSync("./templates/template.html");
+    let source = fs.readFileSync("./templates/lesson2.html");
     let dateTime = new Date();
     let host = os.hostname();
     let plat = os.platform();
