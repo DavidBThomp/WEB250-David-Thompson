@@ -15,24 +15,30 @@ const { route } = require('./lesson1');
 const router = express.Router()
 
 router.get("/", function (request, response) {
-    let result = "";
+    let source = fs.readFileSync("./templates/lesson3.html");
+    let template = handlebars.compile(source.toString());
+    let result = template();
 
     if (request.query.yards) {
         result = getYard(request.query.yards);
+    } else if (request.query.feet) {
+        result = getFeet(request.query.feet);
+    } else if (request.query.inches) {
+        result = getInches(request.query.inches)
+    } else {
+        result += "<p> Please insert valid data.</p>"
     }
-
-
     response.send(result);
 });
 
 function getYard(yard) {
     let meters = yard * 1.0935;
-    result = yard + " yards are " + meters + " meters."
+    let yardValue = yard + " yards are " + meters + " meters.";
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        yards: result,
+        yards: yardValue,
         meters: ""
     }
 
@@ -40,44 +46,34 @@ function getYard(yard) {
     return result;
 }
 
-router.get("/", function (request, response) {
-    let result = "";
-
-    if (request.query.feet) {
-        let feet = request.query.feet;
-        let centimeters = feet * 30.48;
-        result = feet + " feet are " +
-            centimeters + " centimeters";
-    }
+function getFeet(feet) {
+    let centimeters = feet * 30.48;
+    let feetValue = feet + " feet are " + centimeters + " centimeters";
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        feet: result,
-        centimeters: ""
+    feets: feetValue,
+    centimeters: ""
     }
+
     result = template(data);
-    response.send(result);
-});
+    return result;
+}
 
-router.post("/", function (request, response) {
-    let result = "";
-
-    if (request.body.inches) {
-        let inches = request.body.inches;
-        let millimeters = inches * 25.4;
-        result = inches + " inches is " +
-            millimeters + " millimeters.";
-    }
+function getInches(inches) {
+    let millimeters = inches * 25.4;
+    let inchesValue = inches + " inches is " + millimeters + " millimeters.";
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        millimeters: "",
-        inches: result
+    inches: inchesValue,
+    millimeters: ""
     }
+
     result = template(data);
-    response.send(result);
-});
+    return result;
+}
 
 module.exports = router;
