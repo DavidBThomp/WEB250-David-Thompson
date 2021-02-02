@@ -18,14 +18,20 @@ router.get("/", function (request, response) {
     let result = "";
 
     if (request.query.yards) {
+        console.log(request.query.yards);
         result = getYard(request.query.yards);
     }
 
+    //template must always be rendered.
+    //I think you need to render here.
+    //Use conditions to determine which data values are calculated.
+    //Render template once with all values.
 
     response.send(result);
 });
 
 function getYard(yard) {
+    console.log(yards);
     let meters = yard * 1.0935;
     result = yard + " yards are " + meters + " meters."
 
@@ -37,47 +43,8 @@ function getYard(yard) {
     }
 
     result = template(data);
+    console.log(result);
     return result;
 }
-
-router.get("/", function (request, response) {
-    let result = "";
-
-    if (request.query.feet) {
-        let feet = request.query.feet;
-        let centimeters = feet * 30.48;
-        result = feet + " feet are " +
-            centimeters + " centimeters";
-    }
-
-    let source = fs.readFileSync("./templates/lesson3.html");
-    let template = handlebars.compile(source.toString());
-    let data = {
-        feet: result,
-        centimeters: ""
-    }
-    result = template(data);
-    response.send(result);
-});
-
-router.post("/", function (request, response) {
-    let result = "";
-
-    if (request.body.inches) {
-        let inches = request.body.inches;
-        let millimeters = inches * 25.4;
-        result = inches + " inches is " +
-            millimeters + " millimeters.";
-    }
-
-    let source = fs.readFileSync("./templates/lesson3.html");
-    let template = handlebars.compile(source.toString());
-    let data = {
-        millimeters: "",
-        inches: result
-    }
-    result = template(data);
-    response.send(result);
-});
 
 module.exports = router;
