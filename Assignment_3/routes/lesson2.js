@@ -9,7 +9,7 @@
 const express = require('express')
 const fs = require("fs");
 const handlebars = require('handlebars');
-const os = require("os")
+const os = require("os");
 
 const router = express.Router()
 router.get("/", function (request, response) {

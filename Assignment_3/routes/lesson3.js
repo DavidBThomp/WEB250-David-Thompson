@@ -18,11 +18,16 @@ router.get("/", function (request, response) {
     let result = "";
 
     if (request.query.yards) {
-        let yards = request.query.yards;
-        let meters = yards * 1.093613;
-        result = yards + " yards are " +
-            meters + " meters";
+        result = getYard(request.query.yards);
     }
+
+
+    response.send(result);
+});
+
+function getYard(yard) {
+    let meters = yard * 1.0935;
+    result = yard + " yards are " + meters + " meters."
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
@@ -32,8 +37,8 @@ router.get("/", function (request, response) {
     }
 
     result = template(data);
-    response.send(result);
-});
+    return result;
+}
 
 router.get("/", function (request, response) {
     let result = "";
