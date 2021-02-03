@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 3</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        p {
+            min-height: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <form method="GET">
+        <p>
+            <label for="yards">Enter distance in yards to convert to meters:</label>
+            <input type="text" id="yards" name="yards">
+            <input type="submit" value="SUBMIT">
+        </p>
+        <p>
+            <output>{{yards}}</output>
+        </p>
+    </form>
+
+    <form method="GET">
+        <p>
+            <label for="feet">Enter distance in feet to convert to centimeters:</label>
+            <input type="text" id="feet" name="feet">
+            <input type="submit" value="SUBMIT">
+        </p>
+        <p>
+            <output>{{feets}}</output>
+        </p>
+    </form>
+
+    <form method="GET">
+        <p>
+            <label for="inches">Enter distance in inches to convert to millimeters:</label>
+            <input type="text" id="inches" name="inches">
+            <input type="submit" value="SUBMIT">
+        </p>
+        <p>
+            <output>{{inches}}</output>
+        </p>
+    </form>
+
+</body>
+
+</html>
