@@ -20,7 +20,6 @@ router.get("/", function (request, response) {
     let result = template();
 
     if (request.query.yards) {
-        console.log(request.query.yards);
         result = getYard(request.query.yards);
     } else if (request.query.feet) {
         result = getFeet(request.query.feet);
@@ -32,10 +31,9 @@ router.get("/", function (request, response) {
     response.send(result);
 });
 
-function getYard(yard) {
-    console.log(yards);
-    let meters = yard * 1.0935;
-    let yardValue = yard + " yards are " + meters + " meters.";
+function getYard(yards) {
+    let meters = yards * 1.0935;
+    let yardValue = yards + " yards are " + meters + " meters.";
 
     let source = fs.readFileSync("./templates/lesson3.html");
     let template = handlebars.compile(source.toString());
@@ -45,7 +43,6 @@ function getYard(yard) {
     }
 
     result = template(data);
-    console.log(result);
     return result;
 }
 
