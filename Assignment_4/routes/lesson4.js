@@ -16,20 +16,13 @@ const router = express.Router()
 router.get("/", function (request, response) {
     let source = fs.readFileSync("./templates/lesson4.html");
     let template = handlebars.compile(source.toString());
-    let data = {
-        table: ""
-    }
-    result = template(data);
-    response.send(result);
-});
 
-router.post("/", function (request, response) {
-    let start = Number(request.body.start);
-    let stop = Number(request.body.stop);
-    let increment = Number(request.body.increment);
-    let submit = request.body.submit;
 
-    let result = "";
+    let start = Number(request.query.start);
+    let stop = Number(request.query.stop);
+    let increment = Number(request.query.increment);
+    let submit = request.query.submit;
+
     if (submit == "Celsius") {
         result = processCelsius(start, stop, increment);
     }
@@ -37,17 +30,11 @@ router.post("/", function (request, response) {
         result = processFahrenheit(start, stop, increment);
     }
     else {
-        result = "Unexpected submit value: " + submit;
+        result = template();
     }
-
-    let source = fs.readFileSync("./templates/lesson4.html");
-    let template = handlebars.compile(source.toString());
-    let data = {
-        table: result
-    }
-    result = template(data);
     response.send(result);
 });
+
 
 function processCelsius(start, stop, increment) {
     let result = "<table><tr><th>Celsius</th><th>Fahrenheit</th></tr>";
@@ -59,6 +46,13 @@ function processCelsius(start, stop, increment) {
         celsius += increment;
     }
     result += "</table>";
+    let source = fs.readFileSync("./templates/lesson4.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        table: result
+    }
+
+    result = template(data);
     return result;
 }
 
@@ -69,7 +63,15 @@ function processFahrenheit(start, stop, increment) {
         result += "<tr><td>" + fahrenheit + "</td>";
         result += "<td>" + celsius.toFixed(1) + "</td></tr>";
     }
+
     result += "</table>";
+    let source = fs.readFileSync("./templates/lesson4.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        table: result
+    }
+
+    result = template(data);
     return result;
 }
 
