@@ -14,13 +14,14 @@
 
 <body>
     <h1>Temperature Conversion</h1>
+    <h2>Leave input box blank and submit to reset</h2>
     <form method="GET">
-        <input type="hidden" id="total" name="total" value="0">
+        <input type="hidden" id="total" name="total" value={{total}}>
 
-        <input type="hidden" id="count" name="count" value="0">
+        <input type="hidden" id="count" name="count" value={{count}}>
 
         <p><label for="number">Number:</label>
-            <input type="text" id="number" name="number" value="">
+            <input type="text" id="number" name="number" value={{inputNumber}}>
         </p>
 
         <p><input type="submit" name="submit" value="submit">

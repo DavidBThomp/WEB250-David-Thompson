@@ -34,14 +34,10 @@ router.get("/", function (request, response) {
 
 
 function processNumber(inputNumber, count, total) {
-    total = total + inputNumber;
+    total += inputNumber;
     count = count + 1;
     let average = total/count;
     result = `Average is ${average}`;
-
-    // console.log("Total: " + total);
-    // console.log("Count: " + count);
-    // console.log("Number input " +inputNumber);
 
     /*let result = "<table><tr><th>Celsius</th><th>Fahrenheit</th></tr>";
     let celsius = start;
@@ -54,12 +50,15 @@ function processNumber(inputNumber, count, total) {
     result += "</table>";
     */
     
+
     let source = fs.readFileSync("./templates/lesson4.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        average: result
+        average: result,
+        count: count,
+        total: total,
+        inputNumber: inputNumber
     }
-
     result = template(data);
     return result;
 }
