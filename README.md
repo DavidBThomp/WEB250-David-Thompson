@@ -13,3 +13,7 @@ I learned that server-side scripting has much more depth when it comes to intera
 ## Assignment 3
 
 In this session, I learned about processing requests and updating webpages so that users can get feedback. To do this, I had to learn about how to put forms using templates so that the feedback and be seen. I also learned about GET and POST requests which are used to get information from a specified source and then to send data back and update a resource. Creating these forms will help me in the future by having the ability to collect and store data that users provide. I can also make it so that inputs have responses so that inputs aren't repeated.
+
+## Assignment 4
+
+This assignment taught me how to use requests and loops in a way that allows me to intake multiple inputs and store the data using express. I learned about a key function of hidden elements and the ability to templates to interact with the webpage more dynamically. In the future, I will be able to use these techniques to have pages that intake multiple inputs. Adding input validation would allow for more complex things to be processed. This also allowed me understand the differences between GET and POST requests a bit more and why they are used in certain cases.
