@@ -8,6 +8,7 @@
 //  https://flaviocopes.com/express-forms/
 //  https://expressjs.com/en/guide/routing.html
 
+const { request } = require('express');
 const express = require('express')
 const fs = require("fs");
 const handlebars = require('handlebars');
@@ -17,27 +18,31 @@ router.get("/", function (request, response) {
     let source = fs.readFileSync("./templates/lesson4.html");
     let template = handlebars.compile(source.toString());
 
-
+    let count = Number(request.query.count);
+    let total = Number(request.query.total);
     let inputNumber = Number(request.query.number);
 
     if (inputNumber) {
-        result = processNumber(inputNumber);
+        result = processNumber(inputNumber, count, total);
     }
     else {
         result = template();
     }
+
     response.send(result);
 });
 
 
-function processNumber(inputNumber) {
-    let runningTotal =+ inputNumber;
-    console.log(runningTotal);
+function processNumber(inputNumber, count, total) {
+    total = total + inputNumber;
+    count = count + 1;
+    let average = total/count;
+    result = `Average is ${average}`;
 
-    let result = (`Input Number: ${inputNumber}
-    Running Total: ${runningTotal}`);
-    
-    
+    // console.log("Total: " + total);
+    // console.log("Count: " + count);
+    // console.log("Number input " +inputNumber);
+
     /*let result = "<table><tr><th>Celsius</th><th>Fahrenheit</th></tr>";
     let celsius = start;
     while (celsius <= stop) {
