@@ -13,12 +13,15 @@
 </head>
 
 <body>
-    <h1>Temperature Conversion</h1>
+    <h1>Average of Numbers Calculator</h1>
+    <h2>Keeps a running average of numbers entered</h2>
     <h2>Leave input box blank and submit to reset</h2>
+
     <form method="GET">
         <input type="hidden" id="total" name="total" value={{total}}>
 
         <input type="hidden" id="count" name="count" value={{count}}>
+        <p>Numbers Entered: {{count}}</p>
 
         <p><label for="number">Number:</label>
             <input type="text" id="number" name="number" value={{inputNumber}}>
