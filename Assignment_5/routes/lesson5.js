@@ -1,10 +1,9 @@
-// This program reads a user-selected text file of Celsius
-// temperatures and converts the temperatures to Fahrenheit.
+// This program reads a user-selected text file of Storms.
+// Converts Winds to MPH and Saffir-Simpson Scale Category
 //
 // File format:
-// Country,MaximumTemperature,3rdOption
-// Bulgaria,45.2 °C,3rdOption1
-// Canada,45 °C,3rdOption2
+// Date,Storm,MaximumSustainWinds
+// November 3, 1970,1970 Bhola cyclone,240 km/h
 //
 //  https://www.mathsisfun.com/temperature-conversion.html
 //  https://en.wikibooks.org/wiki/JavaScript
