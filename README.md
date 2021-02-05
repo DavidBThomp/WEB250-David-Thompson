@@ -17,3 +17,9 @@ In this session, I learned about processing requests and updating webpages so th
 ## Assignment 4
 
 This assignment taught me how to use requests and loops in a way that allows me to intake multiple inputs and store the data using express. I learned about a key function of hidden elements and the ability to templates to interact with the webpage more dynamically. In the future, I will be able to use these techniques to have pages that intake multiple inputs. Adding input validation would allow for more complex things to be processed. This also allowed me understand the differences between GET and POST requests a bit more and why they are used in certain cases.
+
+
+## Assignment 5
+
+This session involved getting data from an external file and converting it so it is readable in a table. In order to this, I had to learn how express-file upload worked and how to get that data into an array. After validating that the file exists, I sorted the information into an array and separated that array into individual pieces of data. Once that is done I was able to do the math and other sorting methods in order to add more information into the table such as the MPH and scale of the storm. This is all useful because being able to intake data and manipulate it makes it so that we can create useful information for tables. 
+
