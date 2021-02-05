@@ -10,6 +10,7 @@
 #   Installing NPM for VSC Testing: 
 #   npm install express --save
 #   npm install handlebars
+#   npm i express-fileupload
 #   Be in working directory and use "node app"
 
 #   Docker Testing Instructions: 
