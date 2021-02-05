@@ -46,9 +46,10 @@ router.post("/", function (request, response) {
 });
 
 function processFile(file) {
-    let result = "<table><tr><th>Celsius</th><th>Fahrenheit</th></tr>"; //Provides top 2 Table names
+    let result = "<table><tr><th>Date</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
     let text = file.data.toString(); //Converts file data to stirngs
     let lines = text.trim().split("\n"); //New lines after celcius are split in new array
+
 
     // forEach doesn't return a value. Using global.forEach instead.
     global.forEach = "";
@@ -64,23 +65,45 @@ function processFile(file) {
 
 function processLine(line) {
     // skip heading
-    let index = line.indexOf("Country,MaximumTemperature"); //returns first occurance of string entered* b 
+    let index = line.indexOf("Date,Storm,MaximumSustainWinds,MilesPerHour,Saffir-SimpsonScale"); //returns first occurance of string entered
     if (index >= 0) {
         return;
     }
 
-    // find temperature
-    let start = line.indexOf(","); //Find the first string of "," 
-    let end = line.indexOf("°C"); //finds the first string of "°C"
-    if (start < 0 || end < 0) { //If , or degree C is not found, then the file is invalid
-        global.forEach += "Invalid file format";
+    //find date
+    let dateStart = line.charAt(0); //Find the first string of "," 
+    let dateEnd = line.indexOf(","); //finds the first last index of "," which is after the storm
+    if (dateStart < 0 || dateEnd < 0) { //If , or second , is not found, then the file is invalid
+        global.forEach += "Invalid file format1";
         return
     } //If invalid then reutrn invalid file format, if valid keeps going
-    let celsius = Number(line.substring(start + 1, end)); //Starts at the "," and takes anything between that and the end, which is the end of the number
-    let fahrenheit = celsius * 9 / 5 + 32;  //Maths to get Fahrenheit
 
-    global.forEach += "<tr><td>" + celsius + "</td>"; //Adds each array to table element
-    global.forEach += "<td>" + fahrenheit.toFixed(1) + "</td></tr>"; //adds each fahrenheit element to table
+    // find storm
+    let start = line.indexOf(","); //Find the first string of "," 
+    let end = line.lastIndexOf(","); //finds the first last index of "," which is after the storm
+    if (start < 0 || end < 0) { //If , or second , is not found, then the file is invalid
+        global.forEach += "Invalid file format2";
+        return
+    } //If invalid then reutrn invalid file format, if valid keeps going
+
+    //find wind
+    let windStart = line.lastIndexOf(","); //Find the first string of "," 
+    let windEnd = line.lastIndexOf("k"); //finds the first last index of "," which is after the storm
+    console.log(windEnd);
+    if (windStart < 0 || windEnd < 0) { //If , or second , is not found, then the file is invalid
+        global.forEach += "";
+        return
+    } //If invalid then reutrn invalid file format, if valid keeps going
+
+    let date = (line.substring(dateStart - 2, dateEnd - 10));
+    let storm = (line.substring(start + 1, end)); //Starts at the "," and takes anything between that and the end, which is the end of the number
+    let wind = (line.substring(windStart + 1, windEnd - 1)); //Starts at the last index of "," and take anything between that and windEnd, which is "k"
+    let milesPer = wind * 0.621371;  //Maths to get miles per hour
+
+    global.forEach += "<tr><td>" + date + "</td>";
+    global.forEach += "<td>" + storm + "</td>"; //Adds each array to table element
+    global.forEach += "<td>" + wind + " km/h" + "</td>"; //adds each fahrenheit element to table
+    global.forEach += "<td>" + milesPer.toFixed(2) + " mp/h" + "</td></tr>";
 }
 
 module.exports = router;
