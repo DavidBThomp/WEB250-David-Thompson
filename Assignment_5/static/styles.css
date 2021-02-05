@@ -25,3 +25,7 @@ ul {
 table, th, td {
     border: 1px solid white;
 }
+
+td {
+    padding: 3px;
+}
