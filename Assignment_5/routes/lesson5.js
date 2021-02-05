@@ -89,7 +89,6 @@ function processLine(line) {
     //find wind
     let windStart = line.lastIndexOf(","); //Find the first string of "," 
     let windEnd = line.lastIndexOf("k"); //finds the first last index of "," which is after the storm
-    console.log(windEnd);
     if (windStart < 0 || windEnd < 0) { //If , or second , is not found, then the file is invalid
         global.forEach += "";
         return
@@ -100,10 +99,29 @@ function processLine(line) {
     let wind = (line.substring(windStart + 1, windEnd - 1)); //Starts at the last index of "," and take anything between that and windEnd, which is "k"
     let milesPer = wind * 0.621371;  //Maths to get miles per hour
 
+
+
     global.forEach += "<tr><td>" + date + "</td>";
     global.forEach += "<td>" + storm + "</td>"; //Adds each array to table element
     global.forEach += "<td>" + wind + " km/h" + "</td>"; //adds each fahrenheit element to table
-    global.forEach += "<td>" + milesPer.toFixed(2) + " mp/h" + "</td></tr>";
+    global.forEach += "<td>" + milesPer.toFixed(2) + " mp/h" + "</td>";
+
+    if (wind >= 157) {
+        let scale = "Category Five";
+        global.forEach += "<td style=\"color:red\">" + scale  + "</td></tr>";
+    } else if (wind < 157 && wind >= 130) {
+        scale = "Category Four";
+        global.forEach += "<td style=\"color:darkorange\">" + scale  + "</td></tr>";
+    } else if (wind < 130 && wind >= 110) {
+        scale = "Category Three";
+        global.forEach += "<td style=\"color:orange\">" + scale  + "</td></tr>";
+    } else if (wind < 110 && wind >= 96) {
+        scale = "Category Two";
+        global.forEach += "<td style=\"color:yellow\">" + scale  + "</td></tr>";
+    } else {
+        scale = "Category One";
+        global.forEach += "<td style=\"color:lightyellow\">" + scale  + "</td></tr>";
+    }
 }
 
 module.exports = router;
