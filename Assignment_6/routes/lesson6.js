@@ -126,7 +126,6 @@ function processLine(lines) {
         scale = "<td style=\"color:lightyellow\">Category One";
         array.push(scale);
     }
-    console.log(array);
     return array;
 }
 
