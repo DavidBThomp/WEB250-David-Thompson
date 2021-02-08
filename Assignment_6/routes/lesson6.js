@@ -1,62 +1,58 @@
-// This program reads a user-selected text file of countries
-// and Celsius temperatures. It displays the data in Celsius
-// and Fahrenheit sorted in decending order by temperature.
+// This program reads a user-selected text file of Storms.
+// Converts Winds to MPH and Saffir-Simpson Scale Category
 //
 // File format:
-// Country,Temperature
-// American Samoa,37.2° C
-// Bulgaria,45.2° C
+// Date,Storm,MaximumSustainWinds
+// November 3, 1970,1970 Bhola cyclone,240 km/h
 //
 //  https://www.mathsisfun.com/temperature-conversion.html
 //  https://en.wikibooks.org/wiki/JavaScript
 //  https://www.npmjs.com/package/express-fileupload
 
-const express = require('express');
-const fileUpload = require('express-fileupload');
-const app = express();
+const express = require('express')
+const fs = require("fs");
+const handlebars = require('handlebars');
+const router = express.Router()
 
-const FORM = `
-<h1>Temperature Conversion</h1>
-<p>Select a comma-separated file of countries and Celsius temperatures:</p>
-<form method="POST" enctype="multipart/form-data">
-<input type="file" id="file" name="file">
-<input type="submit">
-</form>
-`
-
-app.use(express.urlencoded({
-  extended: true
-}));
-
-app.use(fileUpload({
-  limits: { fileSize: 1 * 1024 * 1024 },
-}));
-
-app.get('/', (request, response) => {
-    response.send(FORM);
+router.get("/", function (request, response) {
+    let source = fs.readFileSync("./templates/lesson5.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        table: ""
+    }
+    result = template(data);
+    response.send(result);
 });
 
-app.post('/', (request, response) => {
+router.post("/", function (request, response) {
     let result = "";
 
     if (!request.files || Object.keys(request.files).length == 0) {
         result = "No file selected"
     } else {
-        let file = request.files.file;
-        result = "<h1>Temperature Conversion</h1>";
-        result += "<h2>" + file.name + "</h2>";
-        result += processFile(file)
+        let file = request.files.file; 
+        result += "<h2>" + file.name + "</h2>"; //Top Title of file uploaded
+        result += "<table><tr><th>Date</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
+        result += processFile(file) //Runs processFile
     }
 
+    let source = fs.readFileSync("./templates/lesson5.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        table: result //Result from table in handlebars template of table
+    }
+    result = template(data);
     response.send(result);
 });
 
 function processFile(file) {
-    let text = file.data.toString();
-    let lines = text.trim().split("\n");
-    if (lines[0].toLowerCase().indexOf("country") >= 0) {
+    let text = file.data.toString(); //Converts file data to stirngs
+    let lines = text.trim().split("\n"); //New lines after celcius are split in new array
+    
+    if (lines[0].toLowerCase().indexOf("date") >= 0) {
         lines.shift(); // remove heading line
-    }
+    } // lines is now an array with all the data in single lines
+
 
     let table = [];
     for (let index = 0; index < lines.length; index++) {
@@ -69,44 +65,46 @@ function processFile(file) {
         }
     }
 
-    table.sort(function(a, b) {return b[1] - a[1]});
-    result = formatTable(table);
-    return result
+    return result //returns full table
 }
 
-function processLine(line) {
-    let array = line.split(",");
-    if (array.length != 2) {
-        return "Invalid file format"
+function processLine(lines) {
+    // Heading already Skipped
+    let array = lines.split(",");
+    if (array.length < 0) {
+        throw "Invalid file format"
     }
 
-    let celsius = array[1];
-    let index = celsius.indexOf(" °C");
-    if (index < 0) {
-        return "Invalid file format";
+    let date = array[0];
+    let dateIndex = date.indexOf("T");
+    let dateCheck = date.length;
+    if (dateCheck < 0) {
+        throw "Invalid file format"
+    }
+    date = (date.substring(0, dateIndex));
+    array[0] = date;
+
+    let storm = array[1]; //gets the value storm as values store in the 2nd column of array
+    let stormCheck = storm.length;
+    if (stormCheck < 0) {
+        throw "Invalid file format"
     }
 
-    celsius = Number(celsius.substring(0, index));
-    array[1] = celsius;
-    let fahrenheit = celsius * 9 / 5 + 32;
-    array.push(fahrenheit)
-    return array;
+
+    let winds = array[2]; //Get the value maximumSustatinedWinds as the 3rd column of array
+    let windsIndex = winds.indexOf(" ")
+    let windsCheck = winds.length;
+    if (windsCheck < 0) {
+        throw "Invalid file format"
+    }
+    winds = Number(winds.substring(0, windsIndex));
+    array[2] = winds;
+
+    let milesPer = (winds * 0.621371);
+    array.push(Number(milesPer.toFixed(2)));
+    
+
+    console.log(array);
 }
 
-function formatTable(table) {
-    let result = "<table><tr><th>Country</th>"
-    result += "<th>Celsius</th>";
-    result += "<th>Fahrenheit</th></tr>";
-
-    for (index = 0; index < table.length; index++) {
-        let row = table[index];
-        result += "<tr><td>" + row[0] + "</td>";
-        result += "<td>" + row[1].toFixed(1) + "° C</td>";
-        result += "<td>" + row[2].toFixed(1) + "° F</td></tr>";        
-    }
-
-    result += "</table>";
-    return result;
-}
-
-app.listen(3000, () => console.log('server started'));
+module.exports = router;
