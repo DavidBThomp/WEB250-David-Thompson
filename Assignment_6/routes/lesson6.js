@@ -24,6 +24,14 @@ const FORM = `
 </form>
 `
 
+app.use(express.urlencoded({
+  extended: true
+}));
+
+app.use(fileUpload({
+  limits: { fileSize: 1 * 1024 * 1024 },
+}));
+
 app.get('/', (request, response) => {
     response.send(FORM);
 });
@@ -69,13 +77,13 @@ function processFile(file) {
 function processLine(line) {
     let array = line.split(",");
     if (array.length != 2) {
-        throw "Invalid file format"
+        return "Invalid file format"
     }
 
     let celsius = array[1];
     let index = celsius.indexOf(" °C");
     if (index < 0) {
-        throw "Invalid file format";
+        return "Invalid file format";
     }
 
     celsius = Number(celsius.substring(0, index));
