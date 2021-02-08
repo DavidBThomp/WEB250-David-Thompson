@@ -30,11 +30,12 @@ router.post("/", function (request, response) {
     if (!request.files || Object.keys(request.files).length == 0) {
         result = "No file selected"
     } else {
-        let file = request.files.file; 
-        result += "<h2>" + file.name + "</h2>"; //Top Title of file uploaded
+        let file = request.files.file;
+        result = "<h2>" + file.name + "</h2>"; //Top Title of file uploaded
         result += "<table><tr><th>Date</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
-        result += processFile(file) //Runs processFile
+        result += processFile(file); //Runs processFile    
     }
+
 
     let source = fs.readFileSync("./templates/lesson5.html");
     let template = handlebars.compile(source.toString());
@@ -48,7 +49,7 @@ router.post("/", function (request, response) {
 function processFile(file) {
     let text = file.data.toString(); //Converts file data to stirngs
     let lines = text.trim().split("\n"); //New lines after celcius are split in new array
-    
+
     if (lines[0].toLowerCase().indexOf("date") >= 0) {
         lines.shift(); // remove heading line
     } // lines is now an array with all the data in single lines
@@ -59,14 +60,19 @@ function processFile(file) {
         try {
             let array = processLine(lines[index]);
             table.push(array);
-        }
-        catch(error) {
+        } catch (error) {
             return error;
         }
     }
 
+    table.sort(function(a, b) {
+        return b[2]-a[2];
+    })
+
+    result = formatTable(table);
     return result //returns full table
 }
+
 
 function processLine(lines) {
     // Heading already Skipped
@@ -102,9 +108,42 @@ function processLine(lines) {
 
     let milesPer = (winds * 0.621371);
     array.push(Number(milesPer.toFixed(2)));
-    
 
+
+    if (milesPer >= 157) {
+        let scale = "<td style=\"color:red\">Category Five";
+        array.push(scale);
+    } else if (milesPer < 157 && milesPer >= 130) {
+        scale = "<td style=\"color:darkorange\">Category Four";
+        array.push(scale);
+    } else if (milesPer < 130 && milesPer >= 110) {
+        scale = "<td style=\"color:orange\">Category Three";
+        array.push(scale);
+    } else if (milesPer < 110 && milesPer >= 96) {
+        scale = "<td style=\"color:yellow\">Category Two";
+        array.push(scale);
+    } else {
+        scale = "<td style=\"color:lightyellow\">Category One";
+        array.push(scale);
+    }
     console.log(array);
+    return array;
 }
+
+function formatTable(table, result) {
+    
+    for (index = 0; index < table.length; index++) {
+        let row = table[index];
+        result += "<tr><td>" + row[0] + "</td>";
+        result += "<td>" + row[1] + "</td>";
+        result += "<td>" + row[2] + " km/h</td>";   
+        result += "<td>" + row[3] + " mp/h</td>";
+        result += row[4] + "</td></tr>";
+    }
+    result += "</table>";
+    return result;
+}
+
+
 
 module.exports = router;
