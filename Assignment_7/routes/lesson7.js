@@ -1,11 +1,10 @@
-// This program reads a user-selected text file of countries
-// and Celsius temperatures. It displays the data in Celsius
-// and Fahrenheit sorted in descending order by temperature.
+// This program reads a user-selected text file of Storms.
+// Converts Winds to MPH and Saffir-Simpson Scale Category
+// Uses Dictionary/Object/Associative Array to process results of array
 //
 // File format:
-// Country,MaximumTemperature
-// Bulgaria,45.2 °C
-// Canada,45 °C
+// Date,Storm,MaximumSustainWinds
+// November 3, 1970,1970 Bhola cyclone,240 km/h
 //
 //  https://www.mathsisfun.com/temperature-conversion.html
 //  https://en.wikibooks.org/wiki/JavaScript
@@ -33,78 +32,127 @@ router.post("/", function (request, response) {
         result = "No file selected"
     } else {
         let file = request.files.file;
-        result += "<h2>" + file.name + "</h2>";
-        result += processFile(file); //Goes to processFile
+        result = "<h2>" + file.name + "</h2>"; //Top Title of file uploaded
+        result += "<table><tr><th>Date</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
+        result += processFile(file); //Runs processFile    
     }
+
 
     let source = fs.readFileSync("./templates/lesson7.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        table: result
+        table: result //Result from table in handlebars template of table
     }
     result = template(data);
     response.send(result);
 });
 
 function processFile(file) {
-    let text = file.data.toString();
-    let lines = text.trim().split("\n");
-    if (lines[0].toLowerCase().indexOf("country") >= 0) {
-        // remove heading line
-        lines.shift();
-    }
+    let text = file.data.toString(); //Converts file data to stirngs
+    let lines = text.trim().split("\n"); //New lines after celcius are split in new array
+
+    if (lines[0].toLowerCase().indexOf("date") >= 0) {
+        lines.shift(); // remove heading line
+    } // lines is now an array with all the data in single lines
+
 
     let table = [];
     for (let index = 0; index < lines.length; index++) {
         try {
             let record = processLine(lines[index]);
             table.push(record);
-        }
-        catch(error) {
+        } catch (error) {
             return error;
         }
     }
 
-    table.sort(function(a, b) {return b.celsius - a.celsius});
+
+    console.log(table);
+    table.sort(function(a, b) {return b.milesPer - a.milesPer});
+
     result = formatTable(table);
-    return result
+    return result; //returns full table
 }
 
-function processLine(line) {
-    let record = {}; //This is where records begin (Tables with dictanary)
-    let array = line.split(",");
-    if (array.length != 2) {
+
+function processLine(lines) {
+    // Heading already Skipped
+
+    record = {}; // Associative Array Begins (Dictionary)
+
+    let array = lines.split(",");
+    if (array.length < 0) {
         throw "Invalid file format"
     }
 
-    record.country = array[0]; //Country will be  array [0] AKA the first results
-    let celsius = array[1]; // Celsius is the result of array [1]
-    let index = celsius.indexOf(" °C");  // Take out anything beyond this
-    if (index < 0) {
-        throw "Invalid file format";
+    let date = array[0];
+    let dateIndex = date.indexOf("T");
+    let dateCheck = date.length;
+    if (dateCheck < 0) {
+        throw "Invalid file format"
     }
+    date = (date.substring(0, dateIndex));
+    record.date = array[0]; // Puts thse result of array[0] as assoiative array "date"
 
-    celsius = Number(celsius.substring(0, index)); //Trim Celc and make a number
-    record.celsius = celsius; //Celsius will now be array[1]
-    let fahrenheit = celsius * 9 / 5 + 32;
-    record.fahrenheit = fahrenheit; //Fahrenheit will now be dict
+    let storm = array[1]; //gets the value storm as values store in the 2nd column of array
+    let stormCheck = storm.length;
+    if (stormCheck < 0) {
+        throw "Invalid file format"
+    }
+    record.storm = storm;
+
+
+    let winds = array[2]; //Get the value maximumSustatinedWinds as the 3rd column of array
+    let windsIndex = winds.indexOf(" ")
+    let windsCheck = winds.length;
+    if (windsCheck < 0) {
+        throw "Invalid file format"
+    }
+    winds = Number(winds.substring(0, windsIndex));
+    record.winds = array[2];
+
+
+    let milesPer = (winds * 0.621371);
+    array.push(Number(milesPer.toFixed(2)));
+    record.milesPer = array[3];
+
+
+
+    if (milesPer >= 157) {
+        let scale = "<td style=\"color:red\">Category Five";
+        array.push(scale);
+    } else if (milesPer < 157 && milesPer >= 130) {
+        scale = "<td style=\"color:darkorange\">Category Four";
+        array.push(scale);
+    } else if (milesPer < 130 && milesPer >= 110) {
+        scale = "<td style=\"color:orange\">Category Three";
+        array.push(scale);
+    } else if (milesPer < 110 && milesPer >= 96) {
+        scale = "<td style=\"color:yellow\">Category Two";
+        array.push(scale);
+    } else {
+        scale = "<td style=\"color:lightyellow\">Category One";
+        array.push(scale);
+    }
+    record.scale = array[4];
     return record;
 }
 
-function formatTable(table) {
-    let result = "<table><tr><th>Country</th>"
-    result += "<th>Celsius</th>";
-    result += "<th>Fahrenheit</th></tr>";
-
+function formatTable(table, result) {
+    
     for (index = 0; index < table.length; index++) {
         let record = table[index];
-        result += "<tr><td>" + record.country + "</td>";
-        result += "<td>" + record.celsius.toFixed(1) + "° C</td>";
-        result += "<td>" + record.fahrenheit.toFixed(1) + "° F</td></tr>";        
+        result += "<tr><td>" + record.date + "</td>";
+        result += "<td>" + record.storm + "</td>";
+        result += "<td>" + record.winds + "</td>";   
+        result += "<td>" + record.milesPer + " mp/h</td>";
+        result += record.scale + "</td></tr>";
     }
-
     result += "</table>";
+
     return result;
 }
+
+
 
 module.exports = router;
