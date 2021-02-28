@@ -17,24 +17,27 @@ const router = express.Router()
 
 const URL = "https://query.wikidata.org/sparql";
 const QUERY = `
-SELECT DISTINCT ?Country ?MaximumTemperature WHERE {
-  ?countryItem wdt:P31 wd:Q6256;
-    p:P6591 ?maximumTemperatureRecord.
-  ?maximumTemperatureRecord psv:P6591 ?maximumTemperatureValue.
-  ?maximumTemperatureValue wikibase:quantityAmount ?maximumTemperatureQuantity;
-    wikibase:quantityUnit ?temperatureUnit.
+SELECT DISTINCT ?Date ?Storm ?MaximumSustainedWinds
+WHERE {
+  ?stormItem wdt:P31 wd:Q8092.
   {
-    ?countryItem rdfs:label ?Country.
-    FILTER((LANG(?Country)) = "en")
+    ?stormItem rdfs:label ?Storm.
+    FILTER((LANG(?Storm)) = "en")
   }
+
+  ?stormItem wdt:P580 ?Date.
+  
+  ?stormItem wdt:P2895 ?MaximumSustainedWindsValue .
+  ?stormItem p:P2895/psv:P2895 ?maximumSustainedWinds.
+  ?maximumSustainedWinds wikibase:quantityUnit ?maximumSustainedWindsUnit.
   {
-    ?temperatureUnit wdt:P5061 ?unitSymbol.
-    FILTER((LANG(?unitSymbol)) = "en")
-    FILTER(CONTAINS(?unitSymbol, "C"))
+    ?maximumSustainedWindsUnit rdfs:label ?maximumSustainedWindsLabel.
+    FILTER((LANG(?maximumSustainedWindsLabel)) = "en")
+    FILTER(CONTAINS(?maximumSustainedWindsLabel, "kilometre per hour"))
   }
-  BIND(CONCAT(STR(?maximumTemperatureQuantity), " ", ?unitSymbol) AS ?MaximumTemperature)
+  BIND(CONCAT(STR(?MaximumSustainedWindsValue), " km/h") AS ?MaximumSustainedWinds)
 }
-ORDER BY (?Country)
+ORDER BY (?Date)
 `;
 
 router.get("/", async function (request, response) {
@@ -57,10 +60,10 @@ async function getData() {
         let records = getRecords(data);
         // Sorts the info in key,value format
 
-        records.sort(function(a, b) {return b.celsius - a.celsius});
+        records.sort(function(a, b) {return b.maximumSustainedWinds - a.maximumSustainedWinds});
         let result = formatTable(records);
 
-        //Sorts table in order of celsius and puts table in the variable result
+        //Sorts table in order of celsius and puts table in the variable
         return result;
     }
     catch(error) {
@@ -82,10 +85,12 @@ function getRecords(data) {
     let records = [];
     //creates an array fot the records from the data of download
     for (let i = 0; i < data.results.bindings.length; i++) {
+
         record = getRecord(data.results.bindings[i]);
         // goes through the result of data and 
         // .results shows data from bindings
         // .bindings displays data in the bindings (country and Maxiumum Temp)
+
         records.push(record);
         // Put values from record below into array
     }
@@ -95,43 +100,69 @@ function getRecords(data) {
 function getRecord(object) {
     // object is data.results.binding[i]
     
-    let country = object.Country.value;
-    // Extracts the value of country binding
+    let date = object.Date.value;
+    date = (date.substring(0,10));
+    // Extracts the value of Date binding
 
-    let celsius = object.MaximumTemperature.value;
-    // Extracts the value of Maximum Temperature Binding
+    let storm = object.Storm.value;
+    // Extracts the value of Storm Names
 
-    let index = celsius.indexOf(" °C");
+    let maximumSustainedWinds = object.MaximumSustainedWinds.value;
+    // Extract the value of Maximum Winds KM/H
+
+    let index = maximumSustainedWinds.indexOf(" km/h");
     if (index < 0) {
         throw "Invalid data format";
     }
-    // If a celsius value doesn't have then invalid
+    // If a maximumSustainedWinds doesn't have KM/H value doesn't have then invalid
 
-    celsius = Number(celsius.substring(0, index));
-    // Celsius in number ignoring all else
+    maximumSustainedWinds = Number(maximumSustainedWinds.substring(0, index));
+    // Maximum Winds in number ignoring all else (kn/h)
 
-    let fahrenheit = celsius * 9 / 5 + 32;
-    // Fahrenheit Temp
+    let milesPerHour = maximumSustainedWinds * 0.621371;
+    milesPerHour = Number(milesPerHour.toFixed(2));
+    // Miles Per Hour
+
+    let scale = "";
+
+
+    if (milesPerHour >= 157) {
+        scale = "<td style=\"color:red\">Category Five";
+    } else if (milesPerHour < 157 && milesPerHour >= 130) {
+        scale = "<td style=\"color:darkorange\">Category Four";
+    } else if (milesPerHour < 130 && milesPerHour >= 110) {
+        scale = "<td style=\"color:orange\">Category Three";
+    } else if (milesPerHour < 110 && milesPerHour >= 96) {
+        scale = "<td style=\"color:yellow\">Category Two";
+    } else {
+        scale = "<td style=\"color:lightyellow\">Category One";
+    }
 
     let record = {}; //Associative array
-    record.country = country;
-    record.celsius = celsius;
-    record.fahrenheit = fahrenheit;
-    // All 3 values in record
+    record.date = date;
+    record.storm = storm;
+    record.maximumSustainedWinds = maximumSustainedWinds;
+    record.milesPerHour = milesPerHour;
+    record.scale = scale;
+    // All 5 values in record
     return record;
 }
 
 function formatTable(records) {
-    let result = "<table><tr><th>Country</th>"
-    result += "<th>Celsius</th>";
-    result += "<th>Fahrenheit</th></tr>";
+    let result = "<table><tr><th>Date (YYYY-MM-DD)</th>";
+    result += "<th>Storm</th>";
+    result += "<th>Maximum Winds (KM/H)</th>";
+    result += "<th>Maximum Winds (MP/H)</th>";
+    result += "<th>Saffir-Simpson Scale</th></tr>";
     // Top Row of Table
 
     for (index = 0; index < records.length; index++) {
         let record = records[index];
-        result += "<tr><td>" + record.country + "</td>";
-        result += "<td>" + record.celsius.toFixed(1) + "° C</td>";
-        result += "<td>" + record.fahrenheit.toFixed(1) + "° F</td></tr>";        
+        result += "<tr><td>" + record.date + "</td>";
+        result += "<td>" + record.storm + "</td>";
+        result += "<td>" + record.maximumSustainedWinds + " km/h</td>";
+        result += "<td>" + record.milesPerHour + " mp/h</td>";
+        result += record.scale + "</td></tr>";        
     }
     // Input values for table
     
