@@ -29,3 +29,7 @@ In this session, we learned about arrays and processing multidimensional arrays 
 ## Assignment 7
 
 This assignment has us learning about associative arrays or dictionaries. I learned how to create dictionaries in JavaScript and insert data so that the array indexes are defined. This is useful so that our array has key values, which can be called. In some languages this allows us to map and do other functions such as insert, delete, and lookup parts of the data that we want access to. This lesson is starting to blur the line between databases and database languages such as SQL and JavaScript. I don't mean that in a way of mixing the two up, but the possible way JavaScript can work as a database. In the future using this will help keep data in arrays sorted, which is important when scaling upwards. 
+
+## Assignment 8
+
+In this session, I learned about some of the forms that data comes in over the internet. I have heard of JSON and XML but have never interacted with them. This lesson taught me interactions with these data types in a way that can query it like a database. To do this I had to learn how to request information from the page, and then sort the data when it's given. Doing this allowed me to extract data from each value that I needed. In the future, I will use this in order to query and sort information from various sources over the internet. The standards used are very common, being one of the de-facto standards from W3C.
