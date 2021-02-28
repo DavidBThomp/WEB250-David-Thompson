@@ -33,7 +33,7 @@ router.post("/", function (request, response) {
     } else {
         let file = request.files.file;
         result = "<h2>" + file.name + "</h2>"; //Top Title of file uploaded
-        result += "<table><tr><th>Date</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
+        result += "<table><tr><th>Date(YYYY-MM-DD)</th><th>Storm</th><th>MaximumSustainWinds</th><th>MilesPerHour</th><th>Saffir-SimpsonScale</th></tr>"; //Provides top 2 Table names
         result += processFile(file); //Runs processFile    
     }
 
@@ -66,8 +66,6 @@ function processFile(file) {
         }
     }
 
-
-    console.log(table);
     table.sort(function(a, b) {return b.milesPer - a.milesPer});
 
     result = formatTable(table);
@@ -82,17 +80,15 @@ function processLine(lines) {
 
     let array = lines.split(",");
     if (array.length < 0) {
-        throw "Invalid file format"
+        throw "Invalid file format";
     }
 
-    let date = array[0];
-    let dateIndex = date.indexOf("T");
+    let date = array[0].slice(0, 10);
     let dateCheck = date.length;
     if (dateCheck < 0) {
         throw "Invalid file format"
     }
-    date = (date.substring(0, dateIndex));
-    record.date = array[0]; // Puts thse result of array[0] as assoiative array "date"
+    record.date = date; // Puts thse result of array[0] as assoiative array "date"
 
     let storm = array[1]; //gets the value storm as values store in the 2nd column of array
     let stormCheck = storm.length;
@@ -103,10 +99,10 @@ function processLine(lines) {
 
 
     let winds = array[2]; //Get the value maximumSustatinedWinds as the 3rd column of array
-    let windsIndex = winds.indexOf(" ")
+    let windsIndex = winds.indexOf(" ");
     let windsCheck = winds.length;
     if (windsCheck < 0) {
-        throw "Invalid file format"
+        throw "Invalid file format";
     }
     winds = Number(winds.substring(0, windsIndex));
     record.winds = array[2];

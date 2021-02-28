@@ -29,3 +29,7 @@ table, th, td {
 td {
     padding: 3px;
 }
+
+table {
+    text-align: center;
+}
