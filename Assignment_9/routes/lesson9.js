@@ -14,7 +14,7 @@ const handlebars = require('handlebars');
 const sqlite3 = require("sqlite3")
 const router = express.Router();
 
-const DATABASE = "temperature.db";//Database Name, Created with .open ((name))
+const DATABASE = "pizza.db";//Database Name, Created with .open ((name))
 
 router.get("/", async (request, response) => {
     let result = "";
@@ -40,16 +40,17 @@ router.post("/", async (request, response) => {
     let result = "";
 
     try {
-        let country = request.body.country.trim();
-        let temperature = request.body.temperature.trim();
-        // Take value input from html input country and temp
+        let custName = request.body.custName.trim();
+        let address = request.body.address.trim();
+        let pNumber = request.body.pNumber.trim();
+        // Take value input from html input (Customer Name, Address, and Phone Number)
 
-        if (!await countryExists(country)) { //If country exists
-            await insertCountry(country, temperature) //Insert country with temp
-        } else if (temperature != "") { //if temp is not blank
-            await updateCountry(country, temperature) // update table with country and temp
+        if (!await countryExists(custName)) { //If country exists
+            await insertCountry(custName, address, pNumber) //Insert country with temp
+        } else if (address != "" || pNumber != "") { //if temp is not blank
+            await updateCountry(custName, address, pNumber) // update table with country and temp
         } else { //other wise, country name deletes sql row data
-            await deleteCountry(country) //deletes row data if country is only input
+            await deleteCountry(custName) //deletes row data if country is only input
         }
 
         result = await getData();
@@ -70,89 +71,95 @@ router.post("/", async (request, response) => {
 async function checkDatabase() {
     let sql = `
             SELECT COUNT(*) AS Count FROM sqlite_master
-            WHERE name = 'Countries';
-        `// Takes count of database amount where the name is Countires (temperature is DB, Countries is table)
+            WHERE name = 'pizzaOrder';
+        `// Takes count of database amount where the name is custName (pizza is DB, custName is table)
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
     if (rows[0].Count > 0) {
         return;
     }
     sql = `
-        CREATE TABLE Countries(
+        CREATE TABLE pizzaOrder(
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            Country TEXT UNIQUE NOT NULL,
-            Temperature REAL NOT NULL);
-        `// Creates the Table countries, with country and temperature as data
+            custName TEXT UNIQUE NOT NULL,
+            address TEXT NOT NULL,
+            pNumber REAL NOT NULL);
+        `// Creates the SQL table ID, custName, address, and pNumber
     parameters = {};
     await sqliteRun(sql, parameters);
 }
 
 async function getData() {
     let sql = `
-            SELECT ID, Country, Temperature FROM Countries;
-        `//Selects data from SQlite3 database
+            SELECT ID, custName, address, pNumber FROM pizzaOrder;
+        `//Selects data from SQlite3 pizza database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
-    
+
     let result = "<table><tr><th>ID</th>";
-    result += "<th>Country</th>";
-    result += "<th>Temperature</th></tr>";
+    result += "<th>custName</th>";
+    result += "<th>address</th>";
+    result += "<th>pNumber</th></tr>";
     for (i = 0; i < rows.length; i++) {
         result += "<tr><td>" + rows[i].ID + "</td>"
-        result += "<td>" + rows[i].Country + "</td>"
-        result += "<td>"+ rows[i].Temperature + "</td></tr>"
+        result += "<td>" + rows[i].custName + "</td>"
+        result += "<td>" + rows[i].address + "</td>"
+        result += "<td>"+ rows[i].pNumber + "</td></tr>"
     }
      // Takes data from SQLITE and puts into table
     result += "</table>"    
     return result;
 }
 
-async function countryExists(country) {
+async function countryExists(custName) {
     let sql = `
             SELECT EXISTS(
-                SELECT * FROM Countries
-                WHERE Country = $country) AS Count;
+                SELECT * FROM pizzaOrder
+                WHERE custName = $custName) AS Count;
         ` //Test of existence of rows and gets count
     let parameters = {
-        $country: country
-    }; // First dictonay for country
+        $custName: custName
+    }; // First dictonay for custName
     let rows = await sqliteAll(sql, parameters);
     let result = !!rows[0].Count;
     return result;
 }
 
-async function insertCountry(country, temperature) {
+async function insertCountry(custName, address, pNumber) {
     let sql = `
-            INSERT INTO Countries (Country, Temperature)
-            VALUES($country, $temperature);
-        ` //Inserts values from table form of values $country and $temperature
+            INSERT INTO pizzaOrder (custName, address, pNumber)
+            VALUES($custName, $address, $pNumber);
+        ` //Inserts values from table form of values $custName and $temperature
     let parameters = {
-        $country: country,
-        $temperature: temperature
+        $custName: custName,
+        $address: address,
+        $pNumber: pNumber
     };
     await sqliteRun(sql, parameters);
 }
 
-async function updateCountry(country, temperature) {
+async function updateCountry(custName, address, pNumber) {
     let sql = `
-            UPDATE Countries
-            SET Temperature = $temperature
-            WHERE Country = $country;
+            UPDATE pizzaOrder
+            SET address = $address, 
+            pNumber = $pNumber
+            WHERE custName = $custName;
         ` // Updates the countries tables with country and temp
     let parameters = {
-        $country: country,
-        $temperature: temperature
+        $custName: custName,
+        $address: address,
+        $pNumber: pNumber
     };
     await sqliteRun(sql, parameters);
 }
 
-async function deleteCountry(country) {
+async function deleteCountry(custName) {
     let sql = `
-            DELETE FROM Countries
-            WHERE Country = $country;
-        ` // Deletes country if only country is input
+            DELETE FROM pizzaOrder
+            WHERE custName = $custName;
+        ` // Deletes name if only country is input
     let parameters = {
-        $country: country
+        $custName: custName,
     };
     await sqliteRun(sql, parameters);
 }
