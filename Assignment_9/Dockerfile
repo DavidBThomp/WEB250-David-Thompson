@@ -23,7 +23,7 @@
 FROM node:alpine
 WORKDIR /usr/src/app
 
-RUN npm install express handlebars os express-fileupload node-fetch
+RUN npm install express handlebars os express-fileupload node-fetch sqlite3
 COPY . .
 
 EXPOSE 3000
