@@ -14,7 +14,7 @@ const handlebars = require('handlebars');
 const sqlite3 = require("sqlite3")
 const router = express.Router();
 
-const DATABASE = "pizza.db"; //Database Name, Created with .open ((name))
+const DATABASE = "temperature.db";//Database Name, Created with .open ((name))
 
 router.get("/", async (request, response) => {
     let result = "";
@@ -82,7 +82,7 @@ async function checkDatabase() {
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Country TEXT UNIQUE NOT NULL,
             Temperature REAL NOT NULL);
-        ` // Creates the Table countries, with country and temperature as data
+        `// Creates the Table countries, with country and temperature as data
     parameters = {};
     await sqliteRun(sql, parameters);
 }
@@ -90,7 +90,7 @@ async function checkDatabase() {
 async function getData() {
     let sql = `
             SELECT ID, Country, Temperature FROM Countries;
-        ` //Selects data from SQlite3 database
+        `//Selects data from SQlite3 database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
 
@@ -102,7 +102,7 @@ async function getData() {
         result += "<td>" + rows[i].Country + "</td>"
         result += "<td>"+ rows[i].Temperature + "</td></tr>"
     }
-    // Takes data from SQLITE and puts into table
+     // Takes data from SQLITE and puts into table
     result += "</table>"    
     return result;
 }
@@ -125,7 +125,7 @@ async function insertCountry(country, temperature) {
     let sql = `
             INSERT INTO Countries (Country, Temperature)
             VALUES($country, $temperature);
-        `//Inserts values from table form of values $country and $temperature
+        ` //Inserts values from table form of values $country and $temperature
     let parameters = {
         $country: country,
         $temperature: temperature
