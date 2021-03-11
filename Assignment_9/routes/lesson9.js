@@ -6,6 +6,7 @@
 //  https://zellwk.com/blog/async-await-express/
 //  https://github.com/mapbox/node-sqlite3/wiki
 //  https://blog.pagesd.info/2019/10/29/use-sqlite-node-async-await/
+//  FOR Information on SQL https://www.sqlitetutorial.net/
 
 const express = require("express");
 const fs = require("fs");
@@ -13,7 +14,7 @@ const handlebars = require('handlebars');
 const sqlite3 = require("sqlite3")
 const router = express.Router();
 
-const DATABASE = "temperature.db";
+const DATABASE = "pizza.db"; //Database Name, Created with .open ((name))
 
 router.get("/", async (request, response) => {
     let result = "";
@@ -69,7 +70,7 @@ async function checkDatabase() {
     let sql = `
             SELECT COUNT(*) AS Count FROM sqlite_master
             WHERE name = 'Countries';
-        `
+        `// Takes count of database amount where the name is Countires (temperature is DB, Countries is table)
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
     if (rows[0].Count > 0) {
@@ -81,7 +82,7 @@ async function checkDatabase() {
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Country TEXT UNIQUE NOT NULL,
             Temperature REAL NOT NULL);
-        `
+        ` // Creates the Table countries, with country and temperature as data
     parameters = {};
     await sqliteRun(sql, parameters);
 }
@@ -89,7 +90,7 @@ async function checkDatabase() {
 async function getData() {
     let sql = `
             SELECT ID, Country, Temperature FROM Countries;
-        `
+        ` //Selects data from SQlite3 database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
 
@@ -101,6 +102,7 @@ async function getData() {
         result += "<td>" + rows[i].Country + "</td>"
         result += "<td>"+ rows[i].Temperature + "</td></tr>"
     }
+    // Takes data from SQLITE and puts into table
     result += "</table>"    
     return result;
 }
@@ -110,10 +112,10 @@ async function countryExists(country) {
             SELECT EXISTS(
                 SELECT * FROM Countries
                 WHERE Country = $country) AS Count;
-        `
+        ` //Test of existence of rows and gets count
     let parameters = {
         $country: country
-    };
+    }; // First dictonay for country
     let rows = await sqliteAll(sql, parameters);
     let result = !!rows[0].Count;
     return result;
@@ -123,7 +125,7 @@ async function insertCountry(country, temperature) {
     let sql = `
             INSERT INTO Countries (Country, Temperature)
             VALUES($country, $temperature);
-        `
+        `//Inserts values from table form of values $country and $temperature
     let parameters = {
         $country: country,
         $temperature: temperature
@@ -136,7 +138,7 @@ async function updateCountry(country, temperature) {
             UPDATE Countries
             SET Temperature = $temperature
             WHERE Country = $country;
-        `
+        ` // Updates the countries tables with country and temp
     let parameters = {
         $country: country,
         $temperature: temperature
@@ -148,7 +150,7 @@ async function deleteCountry(country) {
     let sql = `
             DELETE FROM Countries
             WHERE Country = $country;
-        `
+        ` // Deletes country if only country is input
     let parameters = {
         $country: country
     };
