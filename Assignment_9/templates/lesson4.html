@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 4</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        p {
+            min-height: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Average of Numbers Calculator</h1>
+    <h2>Keeps a running average of numbers entered</h2>
+    <h2>Leave input box blank and submit to reset</h2>
+
+    <form method="GET">
+        <input type="hidden" id="total" name="total" value={{total}}>
+
+        <input type="hidden" id="count" name="count" value={{count}}>
+        <p>Numbers Entered: {{count}}</p>
+
+        <p><label for="number">Number:</label>
+            <input type="text" id="number" name="number" value={{inputNumber}}>
+        </p>
+
+        <p><input type="submit" name="submit" value="submit">
+        </p>
+    </form>
+    {{average}}
+</body>
+
+</html>
