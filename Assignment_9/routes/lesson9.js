@@ -22,7 +22,7 @@ router.get("/", async (request, response) => {
     try {
         await checkDatabase();
         result = await getData();
-    }
+    } //Checks for existence of Database
     catch(error) {
         result = error;
     }
@@ -42,13 +42,14 @@ router.post("/", async (request, response) => {
     try {
         let country = request.body.country.trim();
         let temperature = request.body.temperature.trim();
+        // Take value input from html input country and temp
 
-        if (!await countryExists(country)) {
-            await insertCountry(country, temperature)
-        } else if (temperature != "") {
-            await updateCountry(country, temperature)
-        } else {
-            await deleteCountry(country)
+        if (!await countryExists(country)) { //If country exists
+            await insertCountry(country, temperature) //Insert country with temp
+        } else if (temperature != "") { //if temp is not blank
+            await updateCountry(country, temperature) // update table with country and temp
+        } else { //other wise, country name deletes sql row data
+            await deleteCountry(country) //deletes row data if country is only input
         }
 
         result = await getData();
@@ -76,7 +77,6 @@ async function checkDatabase() {
     if (rows[0].Count > 0) {
         return;
     }
-
     sql = `
         CREATE TABLE Countries(
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +93,7 @@ async function getData() {
         `//Selects data from SQlite3 database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
-
+    
     let result = "<table><tr><th>ID</th>";
     result += "<th>Country</th>";
     result += "<th>Temperature</th></tr>";
@@ -156,6 +156,8 @@ async function deleteCountry(country) {
     };
     await sqliteRun(sql, parameters);
 }
+
+
 
 async function sqliteAll(sql, parameters) {
     let promise = new Promise((resolve, reject) => {
