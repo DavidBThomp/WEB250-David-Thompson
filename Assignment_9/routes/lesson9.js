@@ -11,7 +11,9 @@
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
-const sqlite3 = require("sqlite3")
+const { request } = require("http");
+const sqlite3 = require("sqlite3");
+const { resourceLimits } = require("worker_threads");
 const router = express.Router();
 
 const DATABASE = "pizza.db";//Database Name, Created with .open ((name))
@@ -40,24 +42,25 @@ router.post("/", async (request, response) => {
     let result = "";
 
     try {
-        let custName = request.body.custName.trim();
+        let custFName = request.body.custFName.trim();
+        let custLName = request.body.custLName.trim();
         let address = request.body.address.trim();
         let pNumber = request.body.pNumber.trim();
         // Take value input from html input (Customer Name, Address, and Phone Number)
 
-        if (!await countryExists(custName)) { //If country exists
-            await insertCountry(custName, address, pNumber) //Insert country with temp
-        } else if (address != "" || pNumber != "") { //if temp is not blank
-            await updateCountry(custName, address, pNumber) // update table with country and temp
-        } else { //other wise, country name deletes sql row data
-            await deleteCountry(custName) //deletes row data if country is only input
-        }
-
+        if (!await custNameExists(custFName)) { //If customer name exists
+            await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
+        } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
+            await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
+        } else { //other wise, delete the row
+            await deleteOrderInfo(custFName); //deletes row data if custFName is only input
+        } 
         result = await getData();
     }
     catch(error) {
         result = error;
     }
+
 
     let source = fs.readFileSync("./templates/lesson9.html");
     let template = handlebars.compile(source.toString());
@@ -72,7 +75,7 @@ async function checkDatabase() {
     let sql = `
             SELECT COUNT(*) AS Count FROM sqlite_master
             WHERE name = 'pizzaOrder';
-        `// Takes count of database amount where the name is custName (pizza is DB, custName is table)
+        `// Takes count of database amount where the name is custFName (pizza is DB, custFName is table)
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
     if (rows[0].Count > 0) {
@@ -81,90 +84,97 @@ async function checkDatabase() {
     sql = `
         CREATE TABLE pizzaOrder(
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            custName TEXT UNIQUE NOT NULL,
+            custFName TEXT NOT NULL,
+            custLName TEXT NOT NULL,
             address TEXT NOT NULL,
             pNumber REAL NOT NULL);
-        `// Creates the SQL table ID, custName, address, and pNumber
+        `// Creates the SQL table ID, custFName, address, and pNumber
     parameters = {};
     await sqliteRun(sql, parameters);
 }
 
 async function getData() {
     let sql = `
-            SELECT ID, custName, address, pNumber FROM pizzaOrder;
+            SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
         `//Selects data from SQlite3 pizza database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
 
+    rows.sort(function(a,b) {return b.pNumber - a.pNumber}); //Organizes by Phone Number
+
     let result = "<table><tr><th>ID</th>";
-    result += "<th>custName</th>";
-    result += "<th>address</th>";
-    result += "<th>pNumber</th></tr>";
+    result += "<th>First Name</th>";
+    result += "<th>Last Name</th>";
+    result += "<th>Address</th>";
+    result += "<th>Phone Number</th></tr>";
+
     for (i = 0; i < rows.length; i++) {
         result += "<tr><td>" + rows[i].ID + "</td>"
-        result += "<td>" + rows[i].custName + "</td>"
+        result += "<td>" + rows[i].custFName + "</td>"
+        result += "<td>" + rows[i].custLName + "</td>"
         result += "<td>" + rows[i].address + "</td>"
         result += "<td>"+ rows[i].pNumber + "</td></tr>"
     }
      // Takes data from SQLITE and puts into table
-    result += "</table>"    
+    result += "</table>" 
     return result;
 }
 
-async function countryExists(custName) {
+async function custNameExists(custFName) {
     let sql = `
             SELECT EXISTS(
                 SELECT * FROM pizzaOrder
-                WHERE custName = $custName) AS Count;
+                WHERE custFName = $custFName) AS Count;
         ` //Test of existence of rows and gets count
     let parameters = {
-        $custName: custName
-    }; // First dictonay for custName
+        $custFName: custFName
+    }; // First dictonay for custFName
     let rows = await sqliteAll(sql, parameters);
     let result = !!rows[0].Count;
     return result;
 }
 
-async function insertCountry(custName, address, pNumber) {
+async function insertOrderInfo(custFName, custLName, address, pNumber) {
     let sql = `
-            INSERT INTO pizzaOrder (custName, address, pNumber)
-            VALUES($custName, $address, $pNumber);
-        ` //Inserts values from table form of values $custName and $temperature
+            INSERT INTO pizzaOrder (custFName, custLName, address, pNumber)
+            VALUES($custFName, $custLName, $address, $pNumber);
+        ` //Inserts values from table form of values $custFName and $temperature
     let parameters = {
-        $custName: custName,
+        $custFName: custFName,
+        $custLName: custLName,
         $address: address,
         $pNumber: pNumber
     };
     await sqliteRun(sql, parameters);
 }
 
-async function updateCountry(custName, address, pNumber) {
+async function updateOrderInfo(custFName, custLName, address, pNumber) {
     let sql = `
             UPDATE pizzaOrder
             SET address = $address, 
-            pNumber = $pNumber
-            WHERE custName = $custName;
-        ` // Updates the countries tables with country and temp
+            pNumber = $pNumber,
+            custLName = $custLName;
+            WHERE custFName = $custFName;
+        ` // Updates the countries tables with phone number and address
     let parameters = {
-        $custName: custName,
+        $custFName: custFName,
+        $custLName: custLName,
         $address: address,
         $pNumber: pNumber
     };
     await sqliteRun(sql, parameters);
 }
 
-async function deleteCountry(custName) {
+async function deleteOrderInfo(custFName) {
     let sql = `
             DELETE FROM pizzaOrder
-            WHERE custName = $custName;
-        ` // Deletes name if only country is input
+            WHERE custFName = $custFName;
+        ` // Deletes row if custFName is only input
     let parameters = {
-        $custName: custName,
+        $custFName: custFName,
     };
     await sqliteRun(sql, parameters);
 }
-
-
 
 async function sqliteAll(sql, parameters) {
     let promise = new Promise((resolve, reject) => {
@@ -178,7 +188,6 @@ async function sqliteAll(sql, parameters) {
         });
         database.close();
     });
-
     let result = await promise;
     return result;
 }

@@ -10,21 +10,21 @@
 <body>
     <h1>Pizza Order Information</h1>
     <p>Enter name, address, and phone number. Enter again to update.</p>
-    <p>Enter name without other fields to delte order.</p>
-    <table>
-        
-    </table>
+    <p>Enter first name without other fields to delte order.</p>
     <form method="POST">
-        <p><label for="custName">Name:</label>
-            <input type="text" id="custName" name="custName" required>
+        <p><label for="custFName">First Name:</label>
+            <input type="text" id="custFName" name="custFName" required>
+        </p>
+        <p><label for="custLName">Last Name:</label>
+            <input type="text" id="custLName" name="custLName">
         </p>
         <p><label for="address">Address:</label>
             <input type="text" id="address" name="address">
         </p>
-        <p><label for="stop">Phone Number (123456789):</label>
+        <p><label for="pNumber">Phone Number (123456789):</label>
             <input type="tel" id="pNumber" name="pNumber">
         </p>
-        <p><input type="submit" name="submit" value="Submit"></p>
+        <p><input type="submit" name="action" value="Submit"></p>
     </form>
     <hr>
     {{{table}}}
