@@ -8,6 +8,7 @@
 //  https://blog.pagesd.info/2019/10/29/use-sqlite-node-async-await/
 //  FOR Information on SQL https://www.sqlitetutorial.net/
 
+const e = require("express");
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
@@ -47,7 +48,11 @@ router.post("/", async (request, response) => {
         let address = request.body.address.trim();
         let pNumber = request.body.pNumber.trim();
 
-        if (request.body.action) {
+        let submit = request.body.action;
+        let orderFName = request.body.fName;
+        let orderLName = request.body.lName;
+        let orderPNumber = request.body.phoneNumber;
+
             if (!await custNameExists(custFName)) { //If customer name exists
                 await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
             } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
@@ -55,27 +60,11 @@ router.post("/", async (request, response) => {
             } else { //other wise, delete the row
                 await deleteOrderInfo(custFName); //deletes row data if custFName is only input
             } 
-                result = await getData();
-        } else if (request.body.fName) {
-            result = await getDatafName();
-        } else if (request.body.lName) {
-            console.log("Order Last Name")
-        } else {
-            console.log("Order Phone Number")
+                result = await getData(submit, orderFName, orderLName, orderPNumber);
         }
-    }
     catch(error) {
        result = error;
     }
-
-    // if (request.body.fName) {
-    //     result = rows.sort(function(a,b) {return b.custFName - a.custFName});
-    // }
-    // } else if (request.body.lName) {
-    //     result = rows.sort(function(a,b) {return b.custLName - a.custLName});
-    // } else if (request.body.pNumber) {
-    //     rows.sort(function(a,b) {return b.pNumber - a.pNumber});
-    // }
 
     let source = fs.readFileSync("./templates/lesson9.html");
     let template = handlebars.compile(source.toString());
@@ -108,39 +97,35 @@ async function checkDatabase() {
     await sqliteRun(sql, parameters);
 }
 
-async function getDatafName() {
+async function getData(submit, orderFName, orderLName, orderPNumber) {
     let sql = `
             SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
         `//Selects data from SQlite3 pizza database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
-    
-    rows.sort(function(a,b) {return b.custFName - a.custFName});
 
-    let result = "<table><tr><th>ID</th>";
-    result += "<th>First Name</th>";
-    result += "<th>Last Name</th>";
-    result += "<th>Address</th>";
-    result += "<th>Phone Number</th></tr>";
-
-    for (i = 0; i < rows.length; i++) {
-        result += "<tr><td>" + rows[i].ID + "</td>"
-        result += "<td>" + rows[i].custFName + "</td>"
-        result += "<td>" + rows[i].custLName + "</td>"
-        result += "<td>" + rows[i].address + "</td>"
-        result += "<td>"+ rows[i].pNumber + "</td></tr>"
+    if (orderFName) {
+        rows.sort(function(a,b) {return b.custFName - a.custFName});
+    } else if (orderLName) {
+        rows.sort(function(a,b) {return b.custLName - a.custLName});
+    } else if (orderPNumber) {
+        rows.sort(function(a,b) {return b.pNumber - a.pNumber});
+    } else {
+        rows = await sqliteAll(sql, parameters);
     }
-     // Takes data from SQLITE and puts into table
-    result += "</table>" 
-    return result;
-}
 
-async function getData() {
-    let sql = `
-            SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
-        `//Selects data from SQlite3 pizza database
-    let parameters = {};
-    let rows = await sqliteAll(sql, parameters);
+
+
+
+    
+    // if (request.body.fName) {
+    //     result = rows.sort(function(a,b) {return b.custFName - a.custFName});
+    // }
+    // } else if (request.body.lName) {
+    //     result = rows.sort(function(a,b) {return b.custLName - a.custLName});
+    // } else if (request.body.pNumber) {
+    //     rows.sort(function(a,b) {return b.pNumber - a.pNumber});
+    // }
 
     let result = "<table><tr><th>ID</th>";
     result += "<th>First Name</th>";
