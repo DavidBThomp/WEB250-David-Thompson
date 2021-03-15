@@ -12,12 +12,16 @@ const e = require("express");
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
-const { request } = require("http");
+const {
+    request
+} = require("http");
 const sqlite3 = require("sqlite3");
-const { resourceLimits } = require("worker_threads");
+const {
+    resourceLimits
+} = require("worker_threads");
 const router = express.Router();
 
-const DATABASE = "pizza.db";//Database Name, Created with .open ((name))
+const DATABASE = "pizza.db"; //Database Name, Created with .open ((name))
 
 router.get("/", async (request, response) => {
     let result = "";
@@ -26,7 +30,7 @@ router.get("/", async (request, response) => {
         await checkDatabase();
         result = await getData();
     } //Checks for existence of Database
-    catch(error) {
+    catch (error) {
         result = error;
     }
 
@@ -53,17 +57,20 @@ router.post("/", async (request, response) => {
         let orderLName = request.body.lName;
         let orderPNumber = request.body.phoneNumber;
 
+        if (submit) {
             if (!await custNameExists(custFName)) { //If customer name exists
                 await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
             } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
                 await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
             } else { //other wise, delete the row
                 await deleteOrderInfo(custFName); //deletes row data if custFName is only input
-            } 
-                result = await getData(submit, orderFName, orderLName, orderPNumber);
+            }
+            result = await getData(submit, orderFName, orderLName, orderPNumber)
+        } else {
+            result = await getData(submit, orderFName, orderLName, orderPNumber);
         }
-    catch(error) {
-       result = error;
+    } catch (error) {
+        result = error;
     }
 
     let source = fs.readFileSync("./templates/lesson9.html");
@@ -79,7 +86,7 @@ async function checkDatabase() {
     let sql = `
             SELECT COUNT(*) AS Count FROM sqlite_master
             WHERE name = 'pizzaOrder';
-        `// Takes count of database amount where the name is custFName (pizza is DB, custFName is table)
+        ` // Takes count of database amount where the name is custFName (pizza is DB, custFName is table)
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
     if (rows[0].Count > 0) {
@@ -92,7 +99,7 @@ async function checkDatabase() {
             custLName TEXT NOT NULL,
             address TEXT NOT NULL,
             pNumber REAL NOT NULL);
-        `// Creates the SQL table ID, custFName, address, and pNumber
+        ` // Creates the SQL table ID, custFName, address, and pNumber
     parameters = {};
     await sqliteRun(sql, parameters);
 }
@@ -100,32 +107,25 @@ async function checkDatabase() {
 async function getData(submit, orderFName, orderLName, orderPNumber) {
     let sql = `
             SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
-        `//Selects data from SQlite3 pizza database
+        ` //Selects data from SQlite3 pizza database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
 
     if (orderFName) {
-        rows.sort(function(a,b) {return b.custFName - a.custFName});
+        rows.sort(function (a, b) {
+            return b.custFName - a.custFName
+        });
     } else if (orderLName) {
-        rows.sort(function(a,b) {return b.custLName - a.custLName});
+        rows.sort(function (a, b) {
+            return b.custLName - a.custLName
+        });
     } else if (orderPNumber) {
-        rows.sort(function(a,b) {return b.pNumber - a.pNumber});
+        rows.sort(function (a, b) {
+            return b.pNumber - a.pNumber
+        });
     } else {
         rows = await sqliteAll(sql, parameters);
     }
-
-
-
-
-    
-    // if (request.body.fName) {
-    //     result = rows.sort(function(a,b) {return b.custFName - a.custFName});
-    // }
-    // } else if (request.body.lName) {
-    //     result = rows.sort(function(a,b) {return b.custLName - a.custLName});
-    // } else if (request.body.pNumber) {
-    //     rows.sort(function(a,b) {return b.pNumber - a.pNumber});
-    // }
 
     let result = "<table><tr><th>ID</th>";
     result += "<th>First Name</th>";
@@ -138,10 +138,10 @@ async function getData(submit, orderFName, orderLName, orderPNumber) {
         result += "<td>" + rows[i].custFName + "</td>"
         result += "<td>" + rows[i].custLName + "</td>"
         result += "<td>" + rows[i].address + "</td>"
-        result += "<td>"+ rows[i].pNumber + "</td></tr>"
+        result += "<td>" + rows[i].pNumber + "</td></tr>"
     }
-     // Takes data from SQLITE and puts into table
-    result += "</table>" 
+    // Takes data from SQLITE and puts into table
+    result += "</table>"
     return result;
 }
 
@@ -205,7 +205,7 @@ async function sqliteAll(sql, parameters) {
     let promise = new Promise((resolve, reject) => {
         let database = new sqlite3.Database(DATABASE);
         database.serialize();
-        database.all(sql, parameters, function(error, rows) {
+        database.all(sql, parameters, function (error, rows) {
             if (error)
                 reject(error);
             else
@@ -221,7 +221,7 @@ async function sqliteRun(sql, parameters) {
     let promise = new Promise((resolve, reject) => {
         let database = new sqlite3.Database(DATABASE);
         database.serialize();
-        database.run(sql, parameters, function(error, rows) {
+        database.run(sql, parameters, function (error, rows) {
             if (error)
                 reject(error);
             else
