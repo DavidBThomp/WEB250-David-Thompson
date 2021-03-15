@@ -29,6 +29,7 @@ router.get("/", async (request, response) => {
         result = error;
     }
 
+
     let source = fs.readFileSync("./templates/lesson9.html");
     let template = handlebars.compile(source.toString());
     let data = {
@@ -55,12 +56,20 @@ router.post("/", async (request, response) => {
         } else { //other wise, delete the row
             await deleteOrderInfo(custFName); //deletes row data if custFName is only input
         } 
-        result = await getData();
+        result = await getDataFName();
     }
     catch(error) {
         result = error;
     }
 
+    // if (request.body.fName) {
+    //     console.log("firstname order")
+    // }
+    // } else if (request.body.lName) {
+    //     result = await rows.sort(function(a,b) {return b.custLName - a.custLName});
+    // } else if (request.body.pNumber) {
+    //     await rows.sort(function(a,b) {return b.pNumber - a.pNumber});
+    // }
 
     let source = fs.readFileSync("./templates/lesson9.html");
     let template = handlebars.compile(source.toString());
@@ -93,14 +102,15 @@ async function checkDatabase() {
     await sqliteRun(sql, parameters);
 }
 
-async function getData() {
+
+
+
+async function getDataFName() {
     let sql = `
             SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
         `//Selects data from SQlite3 pizza database
     let parameters = {};
     let rows = await sqliteAll(sql, parameters);
-
-    rows.sort(function(a,b) {return b.pNumber - a.pNumber}); //Organizes by Phone Number
 
     let result = "<table><tr><th>ID</th>";
     result += "<th>First Name</th>";
@@ -173,6 +183,17 @@ async function deleteOrderInfo(custFName) {
     let parameters = {
         $custFName: custFName,
     };
+    await sqliteRun(sql, parameters);
+}
+
+async function orderFname(custFName) {
+    let sql = `
+            SELECT * FROM pizzaOrder
+            ORDER BY custFName;
+        ` // Orders by custFName
+    let parameters = {
+        $custFName: custFName,
+    }
     await sqliteRun(sql, parameters);
 }
 

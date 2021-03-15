@@ -12,6 +12,7 @@
 #   npm install handlebars
 #   npm install express-fileupload
 #   npm install node-fetch
+#   npm install sqlite3
 #   Be in working directory and use "node app"
 
 #   Docker Testing Instructions: 
