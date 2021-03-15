@@ -41,34 +41,40 @@ router.get("/", async (request, response) => {
 
 router.post("/", async (request, response) => {
     let result = "";
-
     try {
         let custFName = request.body.custFName.trim();
         let custLName = request.body.custLName.trim();
         let address = request.body.address.trim();
         let pNumber = request.body.pNumber.trim();
-        // Take value input from html input (Customer Name, Address, and Phone Number)
 
-        if (!await custNameExists(custFName)) { //If customer name exists
-            await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
-        } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
-            await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
-        } else { //other wise, delete the row
-            await deleteOrderInfo(custFName); //deletes row data if custFName is only input
-        } 
-        result = await getDataFName();
+        if (request.body.action) {
+            if (!await custNameExists(custFName)) { //If customer name exists
+                await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
+            } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
+                await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
+            } else { //other wise, delete the row
+                await deleteOrderInfo(custFName); //deletes row data if custFName is only input
+            } 
+                result = await getData();
+        } else if (request.body.fName) {
+            result = await getDatafName();
+        } else if (request.body.lName) {
+            console.log("Order Last Name")
+        } else {
+            console.log("Order Phone Number")
+        }
     }
     catch(error) {
-        result = error;
+       result = error;
     }
 
     // if (request.body.fName) {
-    //     console.log("firstname order")
+    //     result = rows.sort(function(a,b) {return b.custFName - a.custFName});
     // }
     // } else if (request.body.lName) {
-    //     result = await rows.sort(function(a,b) {return b.custLName - a.custLName});
+    //     result = rows.sort(function(a,b) {return b.custLName - a.custLName});
     // } else if (request.body.pNumber) {
-    //     await rows.sort(function(a,b) {return b.pNumber - a.pNumber});
+    //     rows.sort(function(a,b) {return b.pNumber - a.pNumber});
     // }
 
     let source = fs.readFileSync("./templates/lesson9.html");
@@ -102,10 +108,34 @@ async function checkDatabase() {
     await sqliteRun(sql, parameters);
 }
 
+async function getDatafName() {
+    let sql = `
+            SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
+        `//Selects data from SQlite3 pizza database
+    let parameters = {};
+    let rows = await sqliteAll(sql, parameters);
+    
+    rows.sort(function(a,b) {return b.custFName - a.custFName});
 
+    let result = "<table><tr><th>ID</th>";
+    result += "<th>First Name</th>";
+    result += "<th>Last Name</th>";
+    result += "<th>Address</th>";
+    result += "<th>Phone Number</th></tr>";
 
+    for (i = 0; i < rows.length; i++) {
+        result += "<tr><td>" + rows[i].ID + "</td>"
+        result += "<td>" + rows[i].custFName + "</td>"
+        result += "<td>" + rows[i].custLName + "</td>"
+        result += "<td>" + rows[i].address + "</td>"
+        result += "<td>"+ rows[i].pNumber + "</td></tr>"
+    }
+     // Takes data from SQLITE and puts into table
+    result += "</table>" 
+    return result;
+}
 
-async function getDataFName() {
+async function getData() {
     let sql = `
             SELECT ID, custFName, custLName, address, pNumber FROM pizzaOrder
         `//Selects data from SQlite3 pizza database
@@ -183,17 +213,6 @@ async function deleteOrderInfo(custFName) {
     let parameters = {
         $custFName: custFName,
     };
-    await sqliteRun(sql, parameters);
-}
-
-async function orderFname(custFName) {
-    let sql = `
-            SELECT * FROM pizzaOrder
-            ORDER BY custFName;
-        ` // Orders by custFName
-    let parameters = {
-        $custFName: custFName,
-    }
     await sqliteRun(sql, parameters);
 }
 
