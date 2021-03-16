@@ -34,7 +34,6 @@ router.get("/", async (request, response) => {
         result = error;
     }
 
-
     let source = fs.readFileSync("./templates/lesson9.html");
     let template = handlebars.compile(source.toString());
     let data = {
@@ -47,23 +46,20 @@ router.get("/", async (request, response) => {
 router.post("/", async (request, response) => {
     let result = "";
     try {
-        let custFName = request.body.custFName.trim();
-        let custLName = request.body.custLName.trim();
-        let address = request.body.address.trim();
-        let pNumber = request.body.pNumber.trim();
-
         let submit = request.body.action;
         let orderFName = request.body.fName;
         let orderLName = request.body.lName;
         let orderPNumber = request.body.phoneNumber;
 
         if (submit) {
+            let custFName = request.body.custFName.trim();
+            let custLName = request.body.custLName.trim();
+            let address = request.body.address.trim();
+            let pNumber = request.body.pNumber.trim();
             if (!await custNameExists(custFName)) { //If customer name exists
                 await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
             } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
                 await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
-            } else { //other wise, delete the row
-                await deleteOrderInfo(custFName); //deletes row data if custFName is only input
             }
             result = await getData(submit, orderFName, orderLName, orderPNumber)
         } else {
@@ -186,17 +182,6 @@ async function updateOrderInfo(custFName, custLName, address, pNumber) {
         $custLName: custLName,
         $address: address,
         $pNumber: pNumber
-    };
-    await sqliteRun(sql, parameters);
-}
-
-async function deleteOrderInfo(custFName) {
-    let sql = `
-            DELETE FROM pizzaOrder
-            WHERE custFName = $custFName;
-        ` // Deletes row if custFName is only input
-    let parameters = {
-        $custFName: custFName,
     };
     await sqliteRun(sql, parameters);
 }
