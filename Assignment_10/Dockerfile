@@ -13,6 +13,7 @@
 #   npm install express-fileupload
 #   npm install node-fetch
 #   npm install sqlite3
+#   npm install mongodb
 #   Be in working directory and use "node app"
 
 #   Docker Testing Instructions: 

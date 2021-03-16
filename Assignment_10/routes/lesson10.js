@@ -21,17 +21,16 @@ const router = express.Router();
 // for the mongodb host address.
 
 // const HOST = "mongodb://172.17.0.2";
-const HOST = "mongodb://127.0.0.1";
-const DATABASE = "temperature";
-const COLLECTION = "countries";
+const HOST = "mongodb://localhost:27017";
+const DATABASE = "pizzaOrder";
+const COLLECTION = "orders";
 
 router.get("/", async (request, response) => {
     let result = "";
 
     try {
         result = await getData();
-    }
-    catch(error) {
+    } catch (error) {
         result = error;
     }
 
@@ -48,20 +47,26 @@ router.post("/", async (request, response) => {
     let result = "";
 
     try {
-        let country = request.body.country.trim();
-        let temperature = request.body.temperature.trim();
+        // Pizza Information
+        let submit = request.body.action;
+        let update = request.body.update;
+        let order = request.body.order;
 
-        if (!await countryExists(country)) {
-            await insertCountry(country, temperature)
-        } else if (temperature != "") {
-            await updateCountry(country, temperature)
-        } else {
-            await deleteCountry(country)
-        }
+        // Customer Info
+        let firstName = request.body.firstName.trim();
+        let lastName = request.body.lastName.trim();
+        let address = request.body.address.trim();
+        let phoneNumber = request.body.phoneNumber.trim();
 
+        if (submit) {
+            await custInfoExists(firstName,lastName,address,phoneNumber);
+            await insertCustInfo(firstName,lastName,address,phoneNumber);
+        } else if (update) {
+            await updateCustInfo(firstName,lastName,address,phoneNumber);
+        } 
         result = await getData();
-    }
-    catch(error) {
+
+    } catch (error) {
         result = error;
     }
 
@@ -82,12 +87,16 @@ async function getData() {
     const documents = await getDocuments(collection);
 
     let result = "<table><tr><th>ID</th>";
-    result += "<th>Country</th>";
-    result += "<th>Temperature</th></tr>";
+    result += "<th>First Name</th>";
+    result += "<th>Last Name</th>";
+    result += "<th>Address</th>";
+    result += "<th>Phone Number</th></tr>";
     for (i = 0; i < documents.length; i++) {
         result += "<tr><td>" + documents[i]._id + "</td>";
-        result += "<td>" + documents[i].country + "</td>";
-        result += "<td>"+ documents[i].temperature + "</td></tr>";
+        result += "<td>" + documents[i].firstName + "</td>";
+        result += "<td>" + documents[i].lastName + "</td>";
+        result += "<td>" + documents[i].address + "</td>";
+        result += "<td>" + documents[i].phoneNumber + "</td></tr>";
     }
     result += "</table>";
     await client.close();
@@ -95,66 +104,63 @@ async function getData() {
 }
 
 async function getDocuments(collection) {
-    return new Promise(function(resolve, reject) {
-       collection.find().toArray( function(err, documents) {
-        if (err)
-            reject(err);
-        else
-            resolve(documents);
+    return new Promise(function (resolve, reject) {
+        collection.find().toArray(function (err, documents) {
+            if (err)
+                reject(err);
+            else
+                resolve(documents);
         });
     });
 }
 
-async function countryExists(country) {
+async function custInfoExists(firstName,lastName,address,phoneNumber) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
     const filter = {
-        country: country
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        phoneNumber: phoneNumber
     };
     const count = await collection.countDocuments(filter);
     await client.close();
     return !!(count);
 }
 
-async function insertCountry(country, temperature) {
+async function insertCustInfo(firstName,lastName,address,phoneNumber) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
     const document = {
-        country: country,
-        temperature: temperature
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        phoneNumber: phoneNumber
     };
     await collection.insertOne(document);
     await client.close();
 }
 
-async function updateCountry(country, temperature) {
+async function updateCustInfo(firstName,lastName,address,phoneNumber) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
     const filter = {
-        country: country
+        firstName: firstName
     };
     const update = {
-        "$set": { "temperature": temperature }
+        "$set": {
+            "lastName": lastName,
+            "address": address,
+            "phoneNumber": phoneNumber,
+        }
     };
     await collection.updateOne(filter, update);
-    await client.close();
-}
-
-async function deleteCountry(country) {
-    const client = mongodb.MongoClient(HOST);
-    await client.connect();
-    const database = client.db(DATABASE);
-    const collection = database.collection(COLLECTION);
-    const filter = {
-        country: country
-    };
-    await collection.deleteOne(filter);
     await client.close();
 }
 

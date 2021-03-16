@@ -58,7 +58,7 @@ router.post("/", async (request, response) => {
             let pNumber = request.body.pNumber.trim();
             if (!await custNameExists(custFName)) { //If customer name exists
                 await insertOrderInfo(custFName, custLName, address, pNumber); //Insert name with address and phone number
-            } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone numer NOT blank
+            } else if (address != "" || pNumber != "" || custLName != "") { //if address or phone number NOT blank
                 await updateOrderInfo(custFName, custLName, address, pNumber); // update table with new phone number and address
             }
             result = await getData(submit, orderFName, orderLName, orderPNumber)

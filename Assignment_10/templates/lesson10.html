@@ -8,20 +8,50 @@
 </head>
 
 <body>
-    <h1>Temperature Data Entry</h1>
-    <p>Enter country and temperature. Enter again to update.</p>
-    <p>Enter country without temperature to delete.</p>
+    <h1>Order Info</h1>
+    <p>Enter name, address, and phone number. Enter again to update.</p>
     <form method="POST">
-        <p><label for="country">Country:</label>
-            <input type="text" id="country" name="country" required>
+        <p><label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
         </p>
-        <p><label for="stop">Temperature:</label>
-            <input type="text" id="temperature" name="temperature">
+        <p><label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="" required>
         </p>
-        <p><input type="submit" name="submit" value="Submit"></p>
+        <p><label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="" required>
+        </p>
+        <p><label for="phoneNumber">Phone Number (1234567890):</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" value="" required>
+        </p>
+        <p><input type="submit" name="action" id="action" value="Submit"></p>
+        <p>
+            <input type="submit" name="update" id="update" value="Update">
+        </p>
     </form>
+    {{{table}}} 
+
     <hr>
-    {{{table}}}
+    <h1>Pizza Info</h1>
+    <form method="POST">
+        <p><label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </p>
+
+        <label for="size">Size:</label>
+        <select id="size" name="size">
+          <option value="small">Small</option>
+          <option value="med">Medium</option>
+          <option value="large">Large</option>
+          <option value="xlarge">X-Large</option>
+        </select><br><br>
+
+        <input type="checkbox" id="pepperoni" name="pepperoni" value="pepperoni">
+        <label for="pepperoni">Pepperoni</label><br>
+        <input type="checkbox" id="bacon" name="bacon" value="bacon">
+        <label for="bacon">Bacon</label><br>
+        <input type="checkbox" id="sausage" name="sausage" value="sausage">
+        <label for="sausage">Sausage</label><br><br>
+    </form>
 </body>
 
 </html>
