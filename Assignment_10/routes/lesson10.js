@@ -69,6 +69,9 @@ router.post("/", async (request, response) => {
             let address = request.body.address.trim();
             let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
+        } else if (order) {
+            let firstNameQuery = request.body.firstNameQuery.trim();
+            await queryCustInfo(firstNameQuery);
         }
         result = await getData();
     } catch (error) {
@@ -166,6 +169,19 @@ async function updateCustInfo(firstName,lastName,address,phoneNumber) {
         }
     };
     await collection.updateOne(filter, update);
+    await client.close();
+}
+
+async function queryCustInfo(firstNameQuery) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const query = {
+        firstName: firstNameQuery
+    };
+    await collection.findOne(query);
     await client.close();
 }
 
