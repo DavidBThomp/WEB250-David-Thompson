@@ -9,6 +9,7 @@
 const e = require("express");
 const express = require("express");
 const fs = require("fs");
+const { unregisterDecorator } = require("handlebars");
 const handlebars = require('handlebars');
 const mongodb = require("mongodb")
 const router = express.Router();
@@ -55,11 +56,7 @@ router.post("/", async (request, response) => {
         let order = request.body.order;
 
 
-        // Pizza Toppings
-        let size = request.body.size;
-        let pepperoni = request.body.pepperoni;
-        let bacon = request.body.bacon;
-        let sausage = request.body.sausage;
+
 
         //CODE IS NOT VERY DRY
 
@@ -79,7 +76,27 @@ router.post("/", async (request, response) => {
             let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
         }
-        result = await getData(order, firstNameQuery);
+        // Pizza Toppings
+        let size = request.body.size;
+        let pepperoni = request.body.pepperoni;
+        let bacon = request.body.bacon;
+        let sausage = request.body.sausage;
+        let noToppings = "";
+
+        if (pepperoni === undefined) {
+            pepperoni = "";
+        }
+        if (bacon === undefined) {
+            bacon = "";
+        }
+        if (sausage === undefined) {
+            sausage = "";
+        }
+        if ((pepperoni === undefined) || (bacon === undefined) || (sausage === undefined)) {
+            noToppings = "No Toppings";
+        }
+
+        result = await getData(order, firstNameQuery, size, pepperoni, bacon, sausage, noToppings);
     } catch (error) {
         result = error;
     }
@@ -93,7 +110,7 @@ router.post("/", async (request, response) => {
     response.send(result);
 });
 
-async function getData(order, firstNameQuery) {
+async function getData(order, firstNameQuery, size, pepperoni, bacon, sausage, noToppings) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -122,6 +139,12 @@ async function getData(order, firstNameQuery) {
         result += "<td>" + documents[i].phoneNumber + "</td></tr>";
     }
     result += "</table>";
+
+    if (order) {
+        result += "<br><table><tr><th>Size</th><th>Toppings</th></tr>";
+        result += "<tr><td>" + size + "</td><td>" + pepperoni + " " + sausage + " " + bacon + " " + noToppings + "</td>";
+    }
+
     await client.close();
     return result;
 }
