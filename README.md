@@ -34,8 +34,10 @@ This assignment has us learning about associative arrays or dictionaries. I lear
 
 In this session, I learned about some of the forms that data comes in over the internet. I have heard of JSON and XML but have never interacted with them. This lesson taught me interactions with these data types in a way that can query it like a database. To do this I had to learn how to request information from the page, and then sort the data when it's given. Doing this allowed me to extract data from each value that I needed. In the future, I will use this in order to query and sort information from various sources over the internet. The standards used are very common, being one of the de-facto standards from W3C.
 
-
 ## Assignment 9
 
 In this lesson, we learned about integrating SQL into our code to create a database. This was done by creating a database and using SQL commands to manipulate the data. I learned how to insert, delete, update, and create tables for SQLite. I also learned the purpose and function of how a database can interpret data from our HTML. In the future, using a database to store data whether for an E-Commerce site, user login data, or information tracking will be common practice. 
 
+## Assignment 10
+
+This lesson introduced me to NoSQL, more specifically MongoDB. To use MongoDB I had to learn the associated terms and methods that are used to create, query, and delete data in the database.  The most in-depth part I came to understand was querying and the format of how a NoSQL database would look. Instead of a relational database, there are key pair values that are used instead. This allows for a lot more flexibility and size. Using NoSQL databases in the future will be important to understand, they seem to become more and more relevant with big data every year. 
