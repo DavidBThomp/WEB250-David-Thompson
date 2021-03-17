@@ -6,6 +6,7 @@
 //  https://zellwk.com/blog/async-await-express/
 //  https://docs.mongodb.com/drivers/node/usage-examples
 
+const e = require("express");
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
@@ -47,14 +48,10 @@ router.post("/", async (request, response) => {
     let result = "";
 
     try {
-        // Pizza Information
+        // Button Information
         let submit = request.body.action;
         let update = request.body.update;
         let order = request.body.order;
-
-
-
-
 
         if (submit) {
             // Customer Info
@@ -66,10 +63,14 @@ router.post("/", async (request, response) => {
             await custInfoExists(firstName, lastName, address, phoneNumber);
             await insertCustInfo(firstName,lastName,address,phoneNumber);
         } else if (update) {
+            // Customer Info
+            let firstName = request.body.firstName.trim();
+            let lastName = request.body.lastName.trim();
+            let address = request.body.address.trim();
+            let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
         }
         result = await getData();
-
     } catch (error) {
         result = error;
     }
