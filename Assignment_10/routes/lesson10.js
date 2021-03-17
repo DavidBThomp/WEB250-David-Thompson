@@ -53,13 +53,14 @@ router.post("/", async (request, response) => {
         let update = request.body.update;
         let order = request.body.order;
 
+        //CODE IS NOT VERY DRY
+
         if (submit) {
             // Customer Info
             let firstName = request.body.firstName.trim();
             let lastName = request.body.lastName.trim();
             let address = request.body.address.trim();
             let phoneNumber = request.body.phoneNumber.trim();
-            console.log(firstName, lastName, address, phoneNumber);
             await custInfoExists(firstName, lastName, address, phoneNumber);
             await insertCustInfo(firstName,lastName,address,phoneNumber);
         } else if (update) {
@@ -181,8 +182,12 @@ async function queryCustInfo(firstNameQuery) {
     const query = {
         firstName: firstNameQuery
     };
+    
     await collection.findOne(query);
+
     await client.close();
+
+    // How to return this into getData?
 }
 
 module.exports = router;
