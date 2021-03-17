@@ -138,7 +138,6 @@ async function getDocuments(collection) {
 }
 
 async function getQuery(collection, firstNameQuery) {
-    console.log(firstNameQuery);
     return new Promise(function (resolve, reject) {
         collection.find( { firstName: firstNameQuery } ).toArray(function (err, documents) {
             if (err)
