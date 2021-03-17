@@ -52,18 +52,22 @@ router.post("/", async (request, response) => {
         let update = request.body.update;
         let order = request.body.order;
 
-        // Customer Info
-        let firstName = request.body.firstName.trim();
-        let lastName = request.body.lastName.trim();
-        let address = request.body.address.trim();
-        let phoneNumber = request.body.phoneNumber.trim();
+
+
+
 
         if (submit) {
-            await custInfoExists(firstName,lastName,address,phoneNumber);
+            // Customer Info
+            let firstName = request.body.firstName.trim();
+            let lastName = request.body.lastName.trim();
+            let address = request.body.address.trim();
+            let phoneNumber = request.body.phoneNumber.trim();
+            console.log(firstName, lastName, address, phoneNumber);
+            await custInfoExists(firstName, lastName, address, phoneNumber);
             await insertCustInfo(firstName,lastName,address,phoneNumber);
         } else if (update) {
             await updateCustInfo(firstName,lastName,address,phoneNumber);
-        } 
+        }
         result = await getData();
 
     } catch (error) {
