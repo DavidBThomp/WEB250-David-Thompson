@@ -46,12 +46,14 @@ router.get("/", async (request, response) => {
 
 router.post("/", async (request, response) => {
     let result = "";
+    let firstNameQuery = request.body.firstNameQuery;
 
     try {
         // Button Information
         let submit = request.body.action;
         let update = request.body.update;
         let order = request.body.order;
+
 
         // Pizza Toppings
         let size = request.body.size;
@@ -96,6 +98,7 @@ async function getData(order) {
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
+
     let documents = "";
     const defaultPage = await getDocuments(collection);
     const query = await getQuery(collection);
@@ -134,9 +137,10 @@ async function getDocuments(collection) {
     });
 }
 
-async function getQuery(collection) {
+async function getQuery(collection, firstNameQuery) {
+    console.log(firstNameQuery);
     return new Promise(function (resolve, reject) {
-        collection.find( { firstName: "David" } ).toArray(function (err, documents) {
+        collection.find( { firstName: firstNameQuery } ).toArray(function (err, documents) {
             if (err)
                 reject(err);
             else
