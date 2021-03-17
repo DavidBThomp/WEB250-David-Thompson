@@ -76,11 +76,8 @@ router.post("/", async (request, response) => {
             let address = request.body.address.trim();
             let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
-        } else if (order) {
-            let firstNameQuery = request.body.firstNameQuery.trim();
-            await queryCustInfo(firstNameQuery);
         }
-        result = await getData();
+        result = await getData(order);
     } catch (error) {
         result = error;
     }
@@ -94,12 +91,20 @@ router.post("/", async (request, response) => {
     response.send(result);
 });
 
-async function getData() {
+async function getData(order) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
-    const documents = await getDocuments(collection);
+    let documents = "";
+    const defaultPage = await getDocuments(collection);
+    const query = await getQuery(collection);
+
+    if (order) {
+        documents = query;
+    } else {
+        documents = defaultPage;
+    }
 
     let result = "<table><tr><th>ID</th>";
     result += "<th>First Name</th>";
@@ -121,6 +126,17 @@ async function getData() {
 async function getDocuments(collection) {
     return new Promise(function (resolve, reject) {
         collection.find().toArray(function (err, documents) {
+            if (err)
+                reject(err);
+            else
+                resolve(documents);
+        });
+    });
+}
+
+async function getQuery(collection) {
+    return new Promise(function (resolve, reject) {
+        collection.find( { firstName: "David" } ).toArray(function (err, documents) {
             if (err)
                 reject(err);
             else
@@ -177,23 +193,6 @@ async function updateCustInfo(firstName,lastName,address,phoneNumber) {
     };
     await collection.updateOne(filter, update);
     await client.close();
-}
-
-async function queryCustInfo(firstNameQuery) {
-    const client = mongodb.MongoClient(HOST);
-    await client.connect();
-    const database = client.db(DATABASE);
-    const collection = database.collection(COLLECTION);
-
-    const query = {
-        firstName: firstNameQuery
-    };
-    
-    await collection.findOne(query);
-
-    await client.close();
-
-    // How to return this into getData?
 }
 
 module.exports = router;
