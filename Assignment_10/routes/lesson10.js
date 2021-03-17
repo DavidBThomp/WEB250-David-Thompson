@@ -53,6 +53,12 @@ router.post("/", async (request, response) => {
         let update = request.body.update;
         let order = request.body.order;
 
+        // Pizza Toppings
+        let size = request.body.size;
+        let pepperoni = request.body.pepperoni;
+        let bacon = request.body.bacon;
+        let sausage = request.body.sausage;
+
         //CODE IS NOT VERY DRY
 
         if (submit) {
