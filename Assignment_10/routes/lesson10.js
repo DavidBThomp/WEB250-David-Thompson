@@ -79,7 +79,7 @@ router.post("/", async (request, response) => {
             let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
         }
-        result = await getData(order);
+        result = await getData(order, firstNameQuery);
     } catch (error) {
         result = error;
     }
@@ -93,7 +93,7 @@ router.post("/", async (request, response) => {
     response.send(result);
 });
 
-async function getData(order) {
+async function getData(order, firstNameQuery) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -101,7 +101,7 @@ async function getData(order) {
 
     let documents = "";
     const defaultPage = await getDocuments(collection);
-    const query = await getQuery(collection);
+    const query = await getQuery(collection, firstNameQuery);
 
     if (order) {
         documents = query;
