@@ -5,6 +5,24 @@ body {
     background-color: black;
 }
 
+.wrapper {
+    width: 40%;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+#submit,
+#update {
+    display: inline-flex;   
+}
+
+#phoneNumber {
+    margin-bottom: 0px;
+}
+
 a {
     text-decoration: none;
     font-size: 2rem;
@@ -32,4 +50,9 @@ td {
 
 table {
     text-align: center;
+    margin: auto;
+}
+
+.margin-top {
+    margin-top: 0px;
 }
