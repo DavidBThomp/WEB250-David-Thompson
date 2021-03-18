@@ -24,7 +24,7 @@ const router = express.Router();
 
 // const HOST = "mongodb://172.17.0.2";
 // mongodb://localhost:27017 for Local server
-const HOST = "mongodb://localhost:27017";
+const HOST = "mongodb://172.17.0.2";
 const DATABASE = "pizzaOrder";
 const COLLECTION = "orders";
 
