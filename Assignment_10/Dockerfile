@@ -22,14 +22,15 @@
 #   docker build -t express-server .
 #   docker run -d -p 3000:3000 --name=express-server express-server
 
-FROM node:alpine
-WORKDIR /usr/src/app
+#   If a container fails use: docker logs express-server
 
-RUN npm install express handlebars os express-fileupload node-fetch sqlite3 mongodb
+FROM python:alpine
+
+WORKDIR /usr/src/app
 COPY . .
+
+RUN apk update && apk add build-base nodejs nodejs-npm sqlite
+RUN npm install
 
 EXPOSE 3000
 CMD ["node", "app.js"]
-
-
-#   If a container fails use: docker logs express-server

@@ -1,0 +1,15 @@
+version: "3"
+services:
+  express-server:
+    container_name: express-server
+    restart: always
+    build: .
+    depends_on:
+      - mongo-server
+    ports:
+      - "3000:3000"
+  mongo-server:
+    container_name: mongo-server
+    image: mongo
+    ports:
+      - "27017:27017"
