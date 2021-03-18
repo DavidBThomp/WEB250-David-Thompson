@@ -24,7 +24,7 @@ const router = express.Router();
 
 // const HOST = "mongodb://172.17.0.2";
 // mongodb://localhost:27017 for Local server
-const HOST = "mongodb://172.17.0.2";
+const HOST = "mongodb://localhost:27017";
 const DATABASE = "pizzaOrder";
 const COLLECTION = "orders";
 
@@ -56,9 +56,6 @@ router.post("/", async (request, response) => {
         let update = request.body.update;
         let order = request.body.order;
 
-
-
-
         //CODE IS NOT VERY DRY
 
         if (submit) {
@@ -67,8 +64,30 @@ router.post("/", async (request, response) => {
             let lastName = request.body.lastName.trim();
             let address = request.body.address.trim();
             let phoneNumber = request.body.phoneNumber.trim();
-            await custInfoExists(firstName, lastName, address, phoneNumber);
-            await insertCustInfo(firstName,lastName,address,phoneNumber);
+
+            // Pizza Toppings
+            let size = request.body.size;
+            let pepperoni = request.body.pepperoni;
+            let bacon = request.body.bacon;
+            let sausage = request.body.sausage;
+            let noToppings = "";
+
+            if (pepperoni === undefined) {
+                pepperoni = "";
+            }
+            if (bacon === undefined) {
+                bacon = "";
+            }
+            if (sausage === undefined) {
+                sausage = "";
+            }
+            if ((pepperoni === undefined) || (bacon === undefined) || (sausage === undefined)) {
+                noToppings = "No Toppings";
+            }
+
+            await custInfoExists(firstName, lastName, address, phoneNumber, size, pepperoni, bacon, sausage, noToppings);
+            await insertCustInfo(firstName,lastName,address, phoneNumber, size, pepperoni, bacon, sausage, noToppings);
+
         } else if (update) {
             // Customer Info
             let firstName = request.body.firstName.trim();
@@ -76,28 +95,31 @@ router.post("/", async (request, response) => {
             let address = request.body.address.trim();
             let phoneNumber = request.body.phoneNumber.trim();
             await updateCustInfo(firstName,lastName,address,phoneNumber);
-        }
-        // Pizza Toppings
-        let size = request.body.size;
-        let pepperoni = request.body.pepperoni;
-        let bacon = request.body.bacon;
-        let sausage = request.body.sausage;
-        let noToppings = "";
+        } else if (order) {
+            // Pizza Toppings
+            let size = request.body.size;
+            let pepperoni = request.body.pepperoni;
+            let bacon = request.body.bacon;
+            let sausage = request.body.sausage;
+            let noToppings = "No Toppings";
 
-        if (pepperoni === undefined) {
-            pepperoni = "";
-        }
-        if (bacon === undefined) {
-            bacon = "";
-        }
-        if (sausage === undefined) {
-            sausage = "";
-        }
-        if ((pepperoni === undefined) || (bacon === undefined) || (sausage === undefined)) {
-            noToppings = "No Toppings";
+            if (pepperoni === undefined) {
+                pepperoni = "";
+            }
+            if (bacon === undefined) {
+                bacon = "";
+            }
+            if (sausage === undefined) {
+                sausage = "";
+            }
+            if ((pepperoni === "True") || (bacon === "True") || (sausage === "True")) {
+                noToppings = "";
+            }
+            await updatePizzaInfo(firstNameQuery, size, pepperoni, bacon, sausage, noToppings);
         }
 
-        result = await getData(order, firstNameQuery, size, pepperoni, bacon, sausage, noToppings);
+
+        result = await getData(order, firstNameQuery);
     } catch (error) {
         result = error;
     }
@@ -111,7 +133,7 @@ router.post("/", async (request, response) => {
     response.send(result);
 });
 
-async function getData(order, firstNameQuery, size, pepperoni, bacon, sausage, noToppings) {
+async function getData(order, firstNameQuery) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -142,8 +164,19 @@ async function getData(order, firstNameQuery, size, pepperoni, bacon, sausage, n
     result += "</table>";
 
     if (order) {
-        result += "<br><table><tr><th>Size</th><th>Toppings</th></tr>";
-        result += "<tr><td>" + size + "</td><td>" + pepperoni + " " + sausage + " " + bacon + " " + noToppings + "</td>";
+        result += "<br><table><tr><th>Size</th>";
+        result += "<th>Pepperoni</th>";
+        result += "<th>Bacon</th>";
+        result += "<th>Sausage</th>";
+        result += "<th>No Toppings</th></tr>";
+        for (i = 0; i < documents.length; i++) {
+            result += "<tr><td>" + documents[i].size + "</td>";
+            result += "<td>" + documents[i].pepperoni + "</td>";
+            result += "<td>" + documents[i].bacon + "</td>";
+            result += "<td>" + documents[i].sausage + "</td>";
+            result += "<td>" + documents[i].noToppings + "</td></tr>";
+        }
+        result += "</table>";
     }
 
     await client.close();
@@ -172,7 +205,7 @@ async function getQuery(collection, firstNameQuery) {
     });
 }
 
-async function custInfoExists(firstName,lastName,address,phoneNumber) {
+async function custInfoExists(firstName, lastName, address, phoneNumber,size, pepperoni, bacon, sausage, noToppings) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -181,14 +214,19 @@ async function custInfoExists(firstName,lastName,address,phoneNumber) {
         firstName: firstName,
         lastName: lastName,
         address: address,
-        phoneNumber: phoneNumber
+        phoneNumber: phoneNumber,
+        size: size,
+        pepperoni: pepperoni,
+        bacon: bacon,
+        sausage: sausage,
+        noToppings: noToppings
     };
     const count = await collection.countDocuments(filter);
     await client.close();
     return !!(count);
 }
 
-async function insertCustInfo(firstName,lastName,address,phoneNumber) {
+async function insertCustInfo(firstName, lastName,address ,phoneNumber, size, pepperoni, bacon, sausage, noToppings) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -197,7 +235,12 @@ async function insertCustInfo(firstName,lastName,address,phoneNumber) {
         firstName: firstName,
         lastName: lastName,
         address: address,
-        phoneNumber: phoneNumber
+        phoneNumber: phoneNumber,
+        size: size,
+        pepperoni: pepperoni,
+        bacon: bacon,
+        sausage: sausage,
+        noToppings: noToppings
     };
     await collection.insertOne(document);
     await client.close();
@@ -222,4 +265,24 @@ async function updateCustInfo(firstName,lastName,address,phoneNumber) {
     await client.close();
 }
 
+async function updatePizzaInfo(firstNameQuery, size, pepperoni, bacon, sausage, noToppings) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const filter = {
+        firstName: firstNameQuery
+    };
+    const update = {
+        "$set": {
+            "size": size,
+            "pepperoni": pepperoni,
+            "bacon": bacon,
+            "sausage": sausage,
+            "noToppings": noToppings
+        }
+    };
+    await collection.updateOne(filter, update);
+    await client.close();
+}
 module.exports = router;
