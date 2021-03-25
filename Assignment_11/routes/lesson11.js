@@ -52,18 +52,23 @@ router.post("/", async (request, response) => {
     let result = "";
     let submit = request.body.submit;
     let update = request.body.update;
-    let username = request.body.username.trim();
-    let password = request.body.password.trim();
+
 
 
     try {
         client = redis.createClient({host: HOST, db: DATABASE})
-    
+        
+        if (submit) {
+            let username = request.body.username.trim();
+            let password = request.body.password.trim();
         if (await userExists(username)) { // Check if username exists
             result = await getDataSingleUser(username);
         } else {
             result = await NoUser();
         }
+    } else if (update) {
+        console.log("Update Info")
+    }
         //     await insertCountry(country, temperature) //Insert country into database
         // } else if (temperature != "") { // if temperture is not  empty, update country
         //     await updateCountry(country, temperature) //update country temp
@@ -91,12 +96,13 @@ async function getData() {
     result += "<th>Password</th></tr>";
     let users = "";
     users = await getUsers();
+    users.sort();
 
     for (i = 0; i < users.length; i++) {
         let user = users[i];
-        let password = await getUser(username); //
+        let passwords = await getUsers();
         result += "<tr><td>" + user + "</td>";
-        result += "<td>"+ password + "</td></tr>";
+        result += "<td>"+ passwords + "</td></tr>";
     }
     result += "</table>";
     return result;
@@ -142,7 +148,8 @@ async function userExists(username) {
 // }
 
 async function getDataSingleUser(username) {
-    let result = "<table><tr><th>User</th>";
+    let result = "<h2>Username and password exists</h2>"
+    result += "<table><tr><th>User</th>";
     result += "<th>Password</th></tr>";
     let users = "";
     users = await getSingleUser(username);
