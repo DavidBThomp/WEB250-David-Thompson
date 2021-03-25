@@ -6,6 +6,7 @@
 //  https://zellwk.com/blog/async-await-express/
 //  https://www.npmjs.com/package/redis
 
+const { NODATA } = require("dns");
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
@@ -49,21 +50,28 @@ router.get("/", async (request, response) => {
 
 router.post("/", async (request, response) => {
     let result = "";
+    let submit = request.body.submit;
+    let update = request.body.update;
+    let username = request.body.username.trim();
+    let password = request.body.password.trim();
+
 
     try {
         client = redis.createClient({host: HOST, db: DATABASE})
-        let country = request.body.country.trim();
-        let temperature = request.body.temperature.trim();
-
-        if (!await countryExists(country)) { // Check if country Exists
-            await insertCountry(country, temperature) //Insert country into database
-        } else if (temperature != "") { // if temperture is not  empty, update country
-            await updateCountry(country, temperature) //update country temp
-        } else { //if country with no temp, delete country
-            await deleteCountry(country)
+    
+        if (await userExists(username)) { // Check if username exists
+            result = await getDataSingleUser(username);
+        } else {
+            result = await NoUser();
         }
+        //     await insertCountry(country, temperature) //Insert country into database
+        // } else if (temperature != "") { // if temperture is not  empty, update country
+        //     await updateCountry(country, temperature) //update country temp
+        // } else { //if country with no temp, delete country
+        //     await deleteCountry(country)
+        // }
 
-        result = await getData();
+
     }
     catch(error) {
         result = error;
@@ -79,23 +87,29 @@ router.post("/", async (request, response) => {
 });
 
 async function getData() {
-    let result = "<table><tr><th>Country</th>";
-    result += "<th>Temperature</th></tr>";
-    let countries = await getCountries(); //gets all key values from database
-    countries.sort(); // sorts data
-    for (i = 0; i < countries.length; i++) {
-        let country = countries[i];
-        let temperature = await getCountry(country); //
-        result += "<tr><td>" + country + "</td>";
-        result += "<td>"+ temperature + "</td></tr>";
+    let result = "<table><tr><th>User</th>";
+    result += "<th>Password</th></tr>";
+    let users = "";
+    users = await getUsers();
+
+    for (i = 0; i < users.length; i++) {
+        let user = users[i];
+        let password = await getUser(username); //
+        result += "<tr><td>" + user + "</td>";
+        result += "<td>"+ password + "</td></tr>";
     }
     result += "</table>";
     return result;
 }
 
-async function countryExists(country) {
+async function NoUser() {
+    let result = "No users found for this username or password.";
+    return result;
+}
+
+async function userExists(username) {
     return new Promise(function(resolve, reject) {
-        client.exists(country, function(err, key) {
+        client.exists(username, function(err, key) {
          if (err)
              reject(err);
          else
@@ -104,21 +118,48 @@ async function countryExists(country) {
      });
 }
 
-async function insertCountry(country, temperature) {
-    return new Promise(function(resolve, reject) {
-        client.set(country, temperature, function(err, key) { //Client.set puts the country name in, replaces existing set key
-         if (err)
-             reject(err);
-         else
-             resolve(key);
-             console.log(key);
-         });
-     });
- }
+// async function insertCountry(country, temperature) {
+//     return new Promise(function(resolve, reject) {
+//         client.set(country, temperature, function(err, key) { //Client.set puts the country name in, replaces existing set key
+//          if (err)
+//              reject(err);
+//          else
+//              resolve(key);
+//              console.log(key);
+//          });
+//      });
+//  }
 
- async function updateCountry(country, temperature) {
+//  async function updateCountry(country, temperature) {
+//     return new Promise(function(resolve, reject) {
+//         client.set(country, temperature, function(err, key) {
+//          if (err)
+//              reject(err);
+//          else
+//              resolve(key);
+//          });
+//      });
+// }
+
+async function getDataSingleUser(username) {
+    let result = "<table><tr><th>User</th>";
+    result += "<th>Password</th></tr>";
+    let users = "";
+    users = await getSingleUser(username);
+
+    for (i = 0; i < users.length; i++) {
+        let user = users[i];
+        let password = await getUser(username); //
+        result += "<tr><td>" + user + "</td>";
+        result += "<td>"+ password + "</td></tr>";
+    }
+    result += "</table>";
+    return result;
+}
+
+async function getSingleUser(username) {
     return new Promise(function(resolve, reject) {
-        client.set(country, temperature, function(err, key) {
+        client.keys(username, function(err, key) {
          if (err)
              reject(err);
          else
@@ -127,18 +168,7 @@ async function insertCountry(country, temperature) {
      });
 }
 
-async function deleteCountry(country) {
-    return new Promise(function(resolve, reject) {
-        client.del(country, function(err, key) { // deletes country (Key)
-         if (err)
-             reject(err);
-         else
-             resolve(key);
-         });
-     });
-}
-
-async function getCountries() {
+async function getUsers() {
     return new Promise(function(resolve, reject) {
        client.keys("*", function(err, keys) { //gets all key values from database
         if (err)
@@ -149,9 +179,9 @@ async function getCountries() {
     });
 }
 
-async function getCountry(country) {
+async function getUser(username) {
     return new Promise(function(resolve, reject) {
-       client.get(country, function(err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
+       client.get(username, function(err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
         if (err)
             reject(err);
         else
