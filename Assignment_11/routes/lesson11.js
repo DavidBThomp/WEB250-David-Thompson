@@ -55,11 +55,11 @@ router.post("/", async (request, response) => {
         let country = request.body.country.trim();
         let temperature = request.body.temperature.trim();
 
-        if (!await countryExists(country)) {
-            await insertCountry(country, temperature)
-        } else if (temperature != "") {
-            await updateCountry(country, temperature)
-        } else {
+        if (!await countryExists(country)) { // Check if country Exists
+            await insertCountry(country, temperature) //Insert country into database
+        } else if (temperature != "") { // if temperture is not  empty, update country
+            await updateCountry(country, temperature) //update country temp
+        } else { //if country with no temp, delete country
             await deleteCountry(country)
         }
 
@@ -81,38 +81,16 @@ router.post("/", async (request, response) => {
 async function getData() {
     let result = "<table><tr><th>Country</th>";
     result += "<th>Temperature</th></tr>";
-    let countries = await getCountries();
-    countries.sort();
+    let countries = await getCountries(); //gets all key values from database
+    countries.sort(); // sorts data
     for (i = 0; i < countries.length; i++) {
         let country = countries[i];
-        let temperature = await getCountry(country);
+        let temperature = await getCountry(country); //
         result += "<tr><td>" + country + "</td>";
         result += "<td>"+ temperature + "</td></tr>";
     }
     result += "</table>";
     return result;
-}
-
-async function getCountries() {
-    return new Promise(function(resolve, reject) {
-       client.keys("*", function(err, keys) {
-        if (err)
-            reject(err);
-        else
-            resolve(keys);
-        });
-    });
-}
-
-async function getCountry(country) {
-    return new Promise(function(resolve, reject) {
-       client.get(country, function(err, key) {
-        if (err)
-            reject(err);
-        else
-            resolve(key);
-        });
-    });
 }
 
 async function countryExists(country) {
@@ -121,23 +99,24 @@ async function countryExists(country) {
          if (err)
              reject(err);
          else
-             resolve(key);
+             resolve(key); //If the Country already Exists, key returns as 1(True)
          });
      });
 }
 
 async function insertCountry(country, temperature) {
     return new Promise(function(resolve, reject) {
-        client.set(country, temperature, function(err, key) {
+        client.set(country, temperature, function(err, key) { //Client.set puts the country name in, replaces existing set key
          if (err)
              reject(err);
          else
              resolve(key);
+             console.log(key);
          });
      });
  }
 
-async function updateCountry(country, temperature) {
+ async function updateCountry(country, temperature) {
     return new Promise(function(resolve, reject) {
         client.set(country, temperature, function(err, key) {
          if (err)
@@ -150,13 +129,35 @@ async function updateCountry(country, temperature) {
 
 async function deleteCountry(country) {
     return new Promise(function(resolve, reject) {
-        client.del(country, function(err, key) {
+        client.del(country, function(err, key) { // deletes country (Key)
          if (err)
              reject(err);
          else
              resolve(key);
          });
      });
+}
+
+async function getCountries() {
+    return new Promise(function(resolve, reject) {
+       client.keys("*", function(err, keys) { //gets all key values from database
+        if (err)
+            reject(err);
+        else
+            resolve(keys);
+        });
+    });
+}
+
+async function getCountry(country) {
+    return new Promise(function(resolve, reject) {
+       client.get(country, function(err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
+        if (err)
+            reject(err);
+        else
+            resolve(key);
+        });
+    });
 }
 
 module.exports = router;
