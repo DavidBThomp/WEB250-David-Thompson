@@ -69,7 +69,7 @@ router.post("/", async (request, response) => {
         
         if (submit) {
             let username = request.body.username.trim();
-            let password = request.body.password.trim(); //Not actually validating
+            // let password = request.body.password.trim(); //Not actually validating
             if (await userExists(username)) { // Check if username exists
                 result = await getDataSingleUser(username);
             } else {
@@ -77,14 +77,14 @@ router.post("/", async (request, response) => {
             }
 
         } else if (update) {
-            let newUsername = request.body.newUsername.trim();
+            let username = request.body.oldUsername.trim();
             let newPassword = request.body.newPassword.trim();
             let firstName = request.body.firstName.trim();
             let lastName = request.body.lastName.trim();
             let status = request.body.status;
-            if (!await userExists(username))
-                // await insertUser(newUsername, newPassword, firstName, lastName, status);
-                console.log("update info");
+            await insertUser(username, newPassword);
+            // await insertAll(newPassword, firstName, lastName, status);
+            console.log("update info");
         }
     } catch (error) {
         result = error;
@@ -133,14 +133,24 @@ async function userExists(username) {
     });
 }
 
-// async function insertUser(country, temperature) {
+async function insertUser(username, newPassword) {
+    return new Promise(function(resolve, reject) {
+        client.set(username, newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
+         if (err)
+             reject(err);
+         else
+             resolve(key);
+         });
+     });
+ }
+
+//  async function insertAll(newPassword, firstName, lastName, status) {
 //     return new Promise(function(resolve, reject) {
-//         client.set(country, temperature, function(err, key) { //Client.set puts the country name in, replaces existing set key
+//         client.hset(newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
 //          if (err)
 //              reject(err);
 //          else
 //              resolve(key);
-//              console.log(key);
 //          });
 //      });
 //  }
