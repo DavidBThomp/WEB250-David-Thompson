@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 10</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Order Info</h1>
+        <p>Enter name, address, and phone number. Click Update with first name to update.</p>
+        <form method="POST">
+            <p><label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" value="" required>
+            </p>
+            <p><label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" value="" required>
+            </p>
+            <p><label for="address">Address:</label>
+                <input type="text" id="address" name="address" value="" required>
+            </p>
+            <p id="phoneNumber"><label for="phoneNumber">Phone Number (1234567890):</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" value="" required>
+            </p>
+            <p id="submit"><input type="submit" name="action" id="action" value="Submit"></p>
+            <p id="update">
+                <input type="submit" name="update" id="update" value="Update">
+            </p>
+        </form>
+
+        <hr>
+
+        <h1>Pizza Info</h1>
+        <p>Please use first name and then input pizza information.</p>
+        <form method="POST">
+            <p><label for="firstNameQuery">First Name:</label>
+                <input type="text" id="firstNameQuery" name="firstNameQuery" value="" required>
+            </p>
+
+            <label for="size">Size:</label>
+            <select id="size" name="size">
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+                <option value="X-Large">X-Large</option>
+            </select><br><br>
+
+            <p class="margin-top">Toppings:</p>
+            <input type="checkbox" id="pepperoni" name="pepperoni" value="True">
+            <label for="pepperoni">Pepperoni</label><br>
+            <input type="checkbox" id="bacon" name="bacon" value="True">
+            <label for="bacon">Bacon</label><br>
+            <input type="checkbox" id="sausage" name="sausage" value="True">
+            <label for="sausage">Sausage</label><br><br>
+
+            <p>
+                <input type="submit" name="order" id="order" value="Order">
+            </p>
+        </form>
+        {{{table}}}
+    </div>
+</body>
+
+</html>
