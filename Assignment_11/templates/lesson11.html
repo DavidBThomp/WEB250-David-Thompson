@@ -8,17 +8,38 @@
 </head>
 
 <body>
-    <h1>Temperature Data Entry</h1>
-    <p>Enter country and temperature. Enter again to update.</p>
-    <p>Enter country without temperature to delete.</p>
+    <h1>Employee Data Entry</h1>
     <form method="POST">
-        <p><label for="country">Country:</label>
-            <input type="text" id="country" name="country" required>
+        <p><label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
         </p>
-        <p><label for="stop">Temperature:</label>
-            <input type="text" id="temperature" name="temperature">
+        <p><label for="password">Password:</label>
+            <input type="text" id="password" name="password" required>
         </p>
         <p><input type="submit" name="submit" value="Submit"></p>
+    </form>
+    <hr>
+    <h2>If Account doesn't exist, or to update account, please enter information</h2>
+    <form method="POST">
+        <p><label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </p>
+        <p><label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </p>
+        <p><label for="status">Status:</label>
+            <input type="text" id="status" name="status" required>
+        </p>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="employee">Employee</option>
+            <option value="manager">Manager</option>
+            <option value="disabled">Disabled User</option>
+            <option value="teminated">Terminated</option>
+        </select><br><br>
+
+        <p><input type="submit" name="update" value="Update"></p>
     </form>
     <hr>
     {{{table}}}
