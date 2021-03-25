@@ -6,7 +6,9 @@
 //  https://zellwk.com/blog/async-await-express/
 //  https://www.npmjs.com/package/redis
 
-const { NODATA } = require("dns");
+const {
+    NODATA
+} = require("dns");
 const express = require("express");
 const fs = require("fs");
 const handlebars = require('handlebars');
@@ -32,10 +34,12 @@ router.get("/", async (request, response) => {
     let result = "";
 
     try {
-        client = redis.createClient({host: HOST, db: DATABASE})
+        client = redis.createClient({
+            host: HOST,
+            db: DATABASE
+        })
         let result = await getData();
-    }
-    catch(error) {
+    } catch (error) {
         result = error;
     }
 
@@ -56,29 +60,33 @@ router.post("/", async (request, response) => {
 
 
     try {
-        client = redis.createClient({host: HOST, db: DATABASE})
+        client = redis.createClient({
+            host: HOST,
+            db: DATABASE
+        })
+
+
         
         if (submit) {
             let username = request.body.username.trim();
-            let password = request.body.password.trim();
-        if (await userExists(username)) { // Check if username exists
-            result = await getDataSingleUser(username);
-        } else {
-            result = await NoUser();
+            let password = request.body.password.trim(); //Not actually validating
+            if (await userExists(username)) { // Check if username exists
+                result = await getDataSingleUser(username);
+            } else {
+                result = await NoUser();
+            }
+
+        } else if (update) {
+            let newUsername = request.body.newUsername.trim();
+            let newPassword = request.body.newPassword.trim();
+            let firstName = request.body.firstName.trim();
+            let lastName = request.body.lastName.trim();
+            let status = request.body.status;
+            if (!await userExists(username))
+                // await insertUser(newUsername, newPassword, firstName, lastName, status);
+                console.log("update info");
         }
-    } else if (update) {
-        console.log("Update Info")
-    }
-        //     await insertCountry(country, temperature) //Insert country into database
-        // } else if (temperature != "") { // if temperture is not  empty, update country
-        //     await updateCountry(country, temperature) //update country temp
-        // } else { //if country with no temp, delete country
-        //     await deleteCountry(country)
-        // }
-
-
-    }
-    catch(error) {
+    } catch (error) {
         result = error;
     }
 
@@ -92,6 +100,7 @@ router.post("/", async (request, response) => {
 });
 
 async function getData() {
+    let username = "";
     let result = "<table><tr><th>User</th>";
     result += "<th>Password</th></tr>";
     let users = "";
@@ -100,9 +109,9 @@ async function getData() {
 
     for (i = 0; i < users.length; i++) {
         let user = users[i];
-        let passwords = await getUsers();
+        let passwords = await getUser(username);
         result += "<tr><td>" + user + "</td>";
-        result += "<td>"+ passwords + "</td></tr>";
+        result += "<td>" + passwords + "</td></tr>";
     }
     result += "</table>";
     return result;
@@ -114,17 +123,17 @@ async function NoUser() {
 }
 
 async function userExists(username) {
-    return new Promise(function(resolve, reject) {
-        client.exists(username, function(err, key) {
-         if (err)
-             reject(err);
-         else
-             resolve(key); //If the Country already Exists, key returns as 1(True)
-         });
-     });
+    return new Promise(function (resolve, reject) {
+        client.exists(username, function (err, key) {
+            if (err)
+                reject(err);
+            else
+                resolve(key); //If the Country already Exists, key returns as 1(True)
+        });
+    });
 }
 
-// async function insertCountry(country, temperature) {
+// async function insertUser(country, temperature) {
 //     return new Promise(function(resolve, reject) {
 //         client.set(country, temperature, function(err, key) { //Client.set puts the country name in, replaces existing set key
 //          if (err)
@@ -158,41 +167,41 @@ async function getDataSingleUser(username) {
         let user = users[i];
         let password = await getUser(username); //
         result += "<tr><td>" + user + "</td>";
-        result += "<td>"+ password + "</td></tr>";
+        result += "<td>" + password + "</td></tr>";
     }
     result += "</table>";
     return result;
 }
 
 async function getSingleUser(username) {
-    return new Promise(function(resolve, reject) {
-        client.keys(username, function(err, key) {
-         if (err)
-             reject(err);
-         else
-             resolve(key);
-         });
-     });
+    return new Promise(function (resolve, reject) {
+        client.keys(username, function (err, key) {
+            if (err)
+                reject(err);
+            else
+                resolve(key);
+        });
+    });
 }
 
 async function getUsers() {
-    return new Promise(function(resolve, reject) {
-       client.keys("*", function(err, keys) { //gets all key values from database
-        if (err)
-            reject(err);
-        else
-            resolve(keys);
+    return new Promise(function (resolve, reject) {
+        client.keys("*", function (err, keys) { //gets all key values from database
+            if (err)
+                reject(err);
+            else
+                resolve(keys);
         });
     });
 }
 
 async function getUser(username) {
-    return new Promise(function(resolve, reject) {
-       client.get(username, function(err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
-        if (err)
-            reject(err);
-        else
-            resolve(key);
+    return new Promise(function (resolve, reject) {
+        client.get(username, function (err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
+            if (err)
+                reject(err);
+            else
+                resolve(key);
         });
     });
 }
