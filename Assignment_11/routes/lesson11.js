@@ -69,8 +69,8 @@ router.post("/", async (request, response) => {
         
         if (submit) {
             let username = request.body.username.trim();
-            // let password = request.body.password.trim(); //Not actually validating
-            if (await userExists(username)) { // Check if username exists
+            let password = request.body.password.trim(); //Not actually validating
+            if (await userExists(username, password)) { // Check if username exists
                 result = await getDataSingleUser(username);
             } else {
                 result = await NoUser();
@@ -82,8 +82,8 @@ router.post("/", async (request, response) => {
             let firstName = request.body.firstName.trim();
             let lastName = request.body.lastName.trim();
             let status = request.body.status;
-            await insertUser(username, newPassword);
-            // await insertAll(newPassword, firstName, lastName, status);
+            await insertUserKey(username, newPassword)
+           // await insertUserHash(username, newPassword, firstName, lastName, status);
             console.log("update info");
         }
     } catch (error) {
@@ -122,7 +122,7 @@ async function NoUser() {
     return result;
 }
 
-async function userExists(username) {
+async function userExists(username, password) {
     return new Promise(function (resolve, reject) {
         client.exists(username, function (err, key) {
             if (err)
@@ -133,20 +133,20 @@ async function userExists(username) {
     });
 }
 
-async function insertUser(username, newPassword) {
-    return new Promise(function(resolve, reject) {
-        client.set(username, newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
-         if (err)
-             reject(err);
-         else
-             resolve(key);
+async function insertUserKey(username, newPassword) {
+        return new Promise(function(resolve, reject) {
+            client.set(username, newPassword, function(err, key) {
+             if (err)
+                 reject(err);
+             else
+                 resolve(key);
+             });
          });
-     });
- }
+    }
 
-//  async function insertAll(newPassword, firstName, lastName, status) {
+// async function insertUserHash(username, newPassword, firstName, lastName, status) {
 //     return new Promise(function(resolve, reject) {
-//         client.hset(newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
+//         client.hmset(username, "field1", newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
 //          if (err)
 //              reject(err);
 //          else
@@ -154,17 +154,6 @@ async function insertUser(username, newPassword) {
 //          });
 //      });
 //  }
-
-//  async function updateCountry(country, temperature) {
-//     return new Promise(function(resolve, reject) {
-//         client.set(country, temperature, function(err, key) {
-//          if (err)
-//              reject(err);
-//          else
-//              resolve(key);
-//          });
-//      });
-// }
 
 async function getDataSingleUser(username) {
     let result = "<h2>Username and password exists</h2>"
