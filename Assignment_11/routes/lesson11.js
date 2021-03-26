@@ -57,6 +57,7 @@ router.post("/", async (request, response) => {
     let submit = request.body.submit;
     let update = request.body.update;
     let alldata = request.body.alldata;
+    let alldatakeys = request.body.alldatakeys;
 
 
 
@@ -89,6 +90,8 @@ router.post("/", async (request, response) => {
         } else if (alldata) {
             let username = request.body.allDataUser;
             result = await getDataFullHash(username);
+        } else if (alldatakeys) {
+            result = await getData();
         }
     } catch (error) {
         result = error;
@@ -104,18 +107,14 @@ router.post("/", async (request, response) => {
 });
 
 async function getData() {
-    let username = "";
-    let result = "<table><tr><th>User</th>";
-    result += "<th>Password</th></tr>";
+    let result = "<table><tr><th>Users</th></tr>";
     let users = "";
     users = await getUsers();
     users.sort();
 
     for (i = 0; i < users.length; i++) {
         let user = users[i];
-        let passwords = await getUser(username);
-        result += "<tr><td>" + user + "</td>";
-        result += "<td>" + passwords + "</td></tr>";
+        result += "<tr><td>" + user + "</td></tr>";
     }
     result += "</table>";
     return result;
@@ -154,13 +153,19 @@ async function insertUserKey(username, newPassword) {
         result += "<th>Password</th>";
         result += "<th>First Name</th>";
         result += "<th>Last Name</th>";
-        result += "<th>Status</th>";
+        result += "<th>Status</th></tr>";
         let users = "";
         users = await getSingleHash(username);
-        console.log(username);
+        let password = (users["field1"]);
+        let firstName = (users["field2"]);
+        let lastName = (users["field3"]);
+        let status = (users["field4"]);
 
-        result += "<tr><td>" + "blah2" + "</td>";
-        result += "<td>" + "blah" + "</td></tr>";
+        result += "<tr><td>" + "User" + "</td>";
+        result += "<td>" + password + "</td>";
+        result += "<td>" + firstName + "</td>";
+        result += "<td>" + lastName + "</td>";
+        result += "<td>" + status + "</td></tr>";
         result += "</table>";
         return result;
     }
@@ -172,7 +177,6 @@ async function insertUserKey(username, newPassword) {
                     reject(err);
                 else
                     resolve(key);
-                    console.log(key);
             });
         });
     }
@@ -185,7 +189,6 @@ async function insertUserHash(username, newPassword, firstName, lastName, status
              reject(err);
          else
              resolve(key);
-             console.log(key);
          });
      });
  }
