@@ -56,6 +56,7 @@ router.post("/", async (request, response) => {
     let result = "";
     let submit = request.body.submit;
     let update = request.body.update;
+    let alldata = request.body.alldata;
 
 
 
@@ -83,8 +84,11 @@ router.post("/", async (request, response) => {
             let lastName = request.body.lastName.trim();
             let status = request.body.status;
             await insertUserKey(username, newPassword)
-           // await insertUserHash(username, newPassword, firstName, lastName, status);
-            console.log("update info");
+            await insertUserHash(username, newPassword, firstName, lastName, status);
+            result = "<h2>Information updated.</h2>"
+        } else if (alldata) {
+            let username = request.body.allDataUser;
+            result = await getDataFullHash(username);
         }
     } catch (error) {
         result = error;
@@ -144,16 +148,47 @@ async function insertUserKey(username, newPassword) {
          });
     }
 
-// async function insertUserHash(username, newPassword, firstName, lastName, status) {
-//     return new Promise(function(resolve, reject) {
-//         client.hmset(username, "field1", newPassword, function(err, key) { //Client.set puts the country name in, replaces existing set key
-//          if (err)
-//              reject(err);
-//          else
-//              resolve(key);
-//          });
-//      });
-//  }
+    async function getDataFullHash(username) {
+        let result = "<h2>User Data</h2>"
+        result += "<table><tr><th>User</th>";
+        result += "<th>Password</th>";
+        result += "<th>First Name</th>";
+        result += "<th>Last Name</th>";
+        result += "<th>Status</th>";
+        let users = "";
+        users = await getSingleHash(username);
+        console.log(username);
+
+        result += "<tr><td>" + "blah2" + "</td>";
+        result += "<td>" + "blah" + "</td></tr>";
+        result += "</table>";
+        return result;
+    }
+
+    async function getSingleHash(username) {
+        return new Promise(function (resolve, reject) {
+            client.hgetall(username + "1",  function (err, key) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(key);
+                    console.log(key);
+            });
+        });
+    }
+
+async function insertUserHash(username, newPassword, firstName, lastName, status) {
+    return new Promise(function(resolve, reject) {
+        client.hdel(username + "1", "field1", "field2", "field3", "field4");
+        client.hmset(username + "1", "field1", newPassword, "field2", firstName, "field3", lastName, "field4", status, function(err, key) {
+         if (err)
+             reject(err);
+         else
+             resolve(key);
+             console.log(key);
+         });
+     });
+ }
 
 async function getDataSingleUser(username) {
     let result = "<h2>Username and password exists</h2>"
@@ -185,11 +220,11 @@ async function getSingleUser(username) {
 
 async function getUsers() {
     return new Promise(function (resolve, reject) {
-        client.keys("*", function (err, keys) { //gets all key values from database
+        client.keys("*", function (err, key) { //gets all key values from database
             if (err)
                 reject(err);
             else
-                resolve(keys);
+                resolve(key);
         });
     });
 }
