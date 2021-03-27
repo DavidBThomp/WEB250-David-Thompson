@@ -155,13 +155,13 @@ async function insertUserKey(username, newPassword) {
         result += "<th>Last Name</th>";
         result += "<th>Status</th></tr>";
         let users = "";
-        users = await getSingleHash(username);
+        users = await getSingleHash(username);  
         let password = (users["field1"]);
         let firstName = (users["field2"]);
         let lastName = (users["field3"]);
         let status = (users["field4"]);
 
-        result += "<tr><td>" + "User" + "</td>";
+        result += "<tr><td>" + username + "</td>";
         result += "<td>" + password + "</td>";
         result += "<td>" + firstName + "</td>";
         result += "<td>" + lastName + "</td>";
