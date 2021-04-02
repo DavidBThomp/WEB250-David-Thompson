@@ -249,6 +249,3 @@ async function getUser(username) {
 }
 
 module.exports = router;
-
-
-// Userdata can read Null

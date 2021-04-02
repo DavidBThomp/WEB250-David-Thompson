@@ -8,7 +8,7 @@ services:
       - mongo-server
       - redis-server
     ports:
-      - "3000:3000"
+      - "80:80"
   mongo-server:
     container_name: mongo-server
     image: mongo
