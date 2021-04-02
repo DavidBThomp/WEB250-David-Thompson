@@ -131,7 +131,7 @@ async function userExists(username, password) {
             if (err)
                 reject(err);
             else
-                resolve(key); //If the Country already Exists, key returns as 1(True)
+                resolve(key); //If the username already Exists, key returns as 1(True)
         });
     });
 }
@@ -202,7 +202,7 @@ async function getDataSingleUser(username) {
 
     for (i = 0; i < users.length; i++) {
         let user = users[i];
-        let password = await getUser(username); //
+        let password = await getUser(username);
         result += "<tr><td>" + user + "</td>";
         result += "<td>" + password + "</td></tr>";
     }
@@ -234,7 +234,7 @@ async function getUsers() {
 
 async function getUser(username) {
     return new Promise(function (resolve, reject) {
-        client.get(username, function (err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
+        client.get(username, function (err, key) { //gets the value of key -- example being key of username, gets the value of password
             if (err)
                 reject(err);
             else
