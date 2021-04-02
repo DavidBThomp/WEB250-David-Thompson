@@ -32,5 +32,5 @@ COPY . .
 RUN apk update && apk add build-base nodejs nodejs-npm
 RUN npm install
 
-EXPOSE 3000
+EXPOSE 80
 CMD ["node", "app.js"]

@@ -24,7 +24,8 @@ const router = express.Router();
 // for the Redis host address.
 
 // const HOST = "172.17.0.2";
-const HOST = "127.0.0.1";
+// const HOST = "127.0.0.1";
+const HOST = "redis-server";
 const DATABASE = 0;
 
 // Redis client
