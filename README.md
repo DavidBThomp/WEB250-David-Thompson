@@ -41,3 +41,7 @@ In this lesson, we learned about integrating SQL into our code to create a datab
 ## Assignment 10
 
 This lesson introduced me to NoSQL, more specifically MongoDB. To use MongoDB I had to learn the associated terms and methods that are used to create, query, and delete data in the database.  The most in-depth part I came to understand was querying and the format of how a NoSQL database would look. Instead of a relational database, there are key pair values that are used instead. This allows for a lot more flexibility and size. Using NoSQL databases in the future will be important to understand, they seem to become more and more relevant with big data every year. 
+
+# Assignment 11
+
+In this session, I learned about Redis, a key-value database that allows us to store data. I learned about the different ways to use the database to create specific data types, such as hashes, strings, and lists. I learned how these all differ in very subtle ways, that change the way data is stored. I also learned how to use the commands in Redis to store, create, and update a database. I found out that key-value databases do a great job of being lightweight and quick, making their use to get and store data extremely robust. The data itself though isn't super organized as a tradeoff. In the future using key-value databases will allow me to store information and retrieve it in a JSON-like format. 

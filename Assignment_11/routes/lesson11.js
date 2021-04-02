@@ -89,8 +89,13 @@ router.post("/", async (request, response) => {
             await insertUserHash(username, newPassword, firstName, lastName, status);
             result = "<h2>Information updated.</h2>"
         } else if (alldata) {
-            let username = request.body.allDataUser;
-            result = await getDataFullHash(username);
+            try{
+                let username = request.body.allDataUser;
+                result = await getDataFullHash(username);
+            } catch (error) {
+                result = "<h2>Invalid user</h2>";
+            }
+
         } else if (alldatakeys) {
             result = await getData();
         }
@@ -122,7 +127,7 @@ async function getData() {
 }
 
 async function NoUser() {
-    let result = "No users found for this username or password.";
+    let result = "<h2>No users found for this username or password.</h2>";
     return result;
 }
 
@@ -132,7 +137,7 @@ async function userExists(username, password) {
             if (err)
                 reject(err);
             else
-                resolve(key); //If the Country already Exists, key returns as 1(True)
+                resolve(key); //If the username already Exists, key returns as 1(True)
         });
     });
 }
@@ -203,7 +208,7 @@ async function getDataSingleUser(username) {
 
     for (i = 0; i < users.length; i++) {
         let user = users[i];
-        let password = await getUser(username); //
+        let password = await getUser(username);
         result += "<tr><td>" + user + "</td>";
         result += "<td>" + password + "</td></tr>";
     }
@@ -235,7 +240,7 @@ async function getUsers() {
 
 async function getUser(username) {
     return new Promise(function (resolve, reject) {
-        client.get(username, function (err, key) { //gets the value of key -- example being key of Russia, gets the value of 23 temp
+        client.get(username, function (err, key) { //gets the value of key -- example being key of username, gets the value of password
             if (err)
                 reject(err);
             else
