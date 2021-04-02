@@ -88,8 +88,13 @@ router.post("/", async (request, response) => {
             await insertUserHash(username, newPassword, firstName, lastName, status);
             result = "<h2>Information updated.</h2>"
         } else if (alldata) {
-            let username = request.body.allDataUser;
-            result = await getDataFullHash(username);
+            try{
+                let username = request.body.allDataUser;
+                result = await getDataFullHash(username);
+            } catch (error) {
+                result = "<h2>Invalid user</h2>";
+            }
+
         } else if (alldatakeys) {
             result = await getData();
         }
@@ -121,7 +126,7 @@ async function getData() {
 }
 
 async function NoUser() {
-    let result = "No users found for this username or password.";
+    let result = "<h2>No users found for this username or password.</h2>";
     return result;
 }
 
