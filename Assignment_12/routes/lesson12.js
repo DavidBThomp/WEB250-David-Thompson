@@ -26,32 +26,32 @@ users = [
 
 router.get("/", function (request, response) {
     let username = request.cookies.username;
-    let userid = request.session.userid;
-    result = build_form(username, userid);
+    let userid = request.session.userid; //If the session is remembered, build form using remembered session
+    result = build_form(username, userid); //Function build form to make data (if there is any)
     response.send(result);
 });
 
 router.post("/", function (request, response) {
-    if (request.body["reload"]) {
-        response.redirect(request.originalUrl);
+    if (request.body["reload"]) { //reload button pressed
+        response.redirect(request.originalUrl); //Send back to /lesson12
     }
-    else if (request.body["log-out"]) {
-        request.session.destroy();
-        let username = request.cookies.username;
-        let userid = null;
-        result = build_form(username, userid);
+    else if (request.body["log-out"]) { //Log Out button pressed
+        request.session.destroy(); //forget the session
+        let username = request.cookies.username; //requests if username cookie exists
+        let userid = null; //Userid is no longer valid, meaning password/session not valid
+        result = build_form(username, userid); //build page with username valid but userID not
         response.send(result);
     }
-    else if (request.body["forget-me"]) {
-        request.session.destroy();
-        result = build_form(null, null);
-        response.cookie("username", "", { expires: 0 });
+    else if (request.body["forget-me"]) { //foget me button
+        request.session.destroy(); //forget session
+        result = build_form(null, null); //username and userid null
+        response.cookie("username", "", { expires: 0 }); //cookie forgetting information
         response.send(result);
     }
     else {
-        let username = request.body.username;
-        let password = request.body.password;
-        let userid = authenticateUser(username, password);
+        let username = request.body.username; //Get username
+        let password = request.body.password; //Get Password
+        let userid = authenticateUser(username, password); //authenticated username and password in function
         if (userid) {
             request.session.userid = userid;
             result = build_form(username, userid);
@@ -65,15 +65,15 @@ router.post("/", function (request, response) {
 });
 
 function build_form(username, userid) {
-    let cookie = !!username;
-    let session = !!userid;
-    if (username && userid) {
+    let cookie = !!username; //Username valid
+    let session = !!userid; //The ID associated with password and username is the session
+    if (username && userid) { //If the username matches the session
         welcome = "Welcome back " + username + "! You are logged in.";
     }
-    else if (username) {
+    else if (username) { //If the username is remembered but the the session
         welcome = "Welcome back " + username + "! Please log in.";
     }
-    else {
+    else { //If neither username is remembered nor the session existing
         welcome = "Welcome! Please log in.";
     }
 
@@ -86,7 +86,7 @@ function build_form(username, userid) {
         username: username
     }
     result = template(data);
-    return result
+    return result;
 }
 
 function authenticateUser(username, password) {
