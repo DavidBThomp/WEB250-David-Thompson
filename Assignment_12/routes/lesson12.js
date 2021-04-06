@@ -59,7 +59,7 @@ router.post("/", function (request, response) {
             response.send(result);    
         }
         else {
-            response.redirect(303, request.originalUrl);
+            response.redirect(303, request.originalUrl); //see other, original URL
         }
     }
 });
@@ -110,7 +110,7 @@ function generateHashedPassword(password) {
     // the users list or a database.
     let salt = bcrypt.genSaltSync(); //creates variable for hashing password
     let hashed = bcrypt.hashSync(password, salt); //takes password and hashes
-    return hashed; //returns the hashed password
+    return hashed; //returns the hashed data
 }    
 
 module.exports = router;
