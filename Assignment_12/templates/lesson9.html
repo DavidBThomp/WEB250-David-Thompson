@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 9</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Pizza Order Information</h1>
+    <p>Enter name, address, and phone number. Enter again to update.</p>
+    <form method="POST">
+        <p><label for="custFName">First Name:</label>
+            <input type="text" id="custFName" name="custFName" required>
+        </p>
+        <p><label for="custLName">Last Name:</label>
+            <input type="text" id="custLName" name="custLName" value="">
+        </p>
+        <p><label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="" required>
+        </p>
+        <p><label for="pNumber">Phone Number (1234567890):</label>
+            <input type="tel" id="pNumber" name="pNumber" value="" required>
+        </p>
+        <p><input type="submit" name="action" id="action" value="Submit"></p>
+    </form>
+
+    <form method="POST">
+        <p>
+            <label for="fName">Order by First Name</label>
+            <input type="submit" name="fName" id="fName" value="SUBMIT">
+        </p>
+    </form>
+
+    <form method="POST">
+        <p>
+            <label for="lName">Order by Last Name</label>
+            <input type="submit" name="lName" id="lName" value="SUBMIT">
+        </p>
+    </form>
+
+    <form method="POST">
+        <p>
+            <label for="phoneNumber">Order by Phone Number</label>
+            <input type="submit" name="phoneNumber" id="phoneNumber" value="SUBMIT">
+        </p>
+    </form>
+    <hr>
+    {{{table}}}
+</body>
+
+</html>

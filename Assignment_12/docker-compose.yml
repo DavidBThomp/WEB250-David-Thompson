@@ -1,0 +1,21 @@
+version: "3"
+services:
+  express-server:
+    container_name: express-server
+    restart: always
+    build: .
+    depends_on:
+      - mongo-server
+      - redis-server
+    ports:
+      - "80:80"
+  mongo-server:
+    container_name: mongo-server
+    image: mongo
+    ports:
+      - "27017:27017"
+  redis-server:
+    container_name: redis-server
+    image: redis
+    ports:
+      - "6379:6379"
