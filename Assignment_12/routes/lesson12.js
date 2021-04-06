@@ -13,6 +13,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const handlebars = require('handlebars');
+const { count } = require("console");
 const router = express.Router();
 
 users = [
@@ -83,7 +84,7 @@ function build_form(username, userid) {
         cookie: cookie,
         session: session,
         welcome: welcome,
-        username: username
+        username: username,
     }
     result = template(data);
     return result;
@@ -114,3 +115,21 @@ function generateHashedPassword(password) {
 }    
 
 module.exports = router;
+
+
+// Designing Ideas:
+// Use mongoDB
+// store information in collections with documents in those collections
+
+// Use hashed keys all across the board -- Redis
+// Key: Username
+// Value1: UniqueID
+// Value2: Password   -   Encrypted
+// Value3: Firstname
+// Value4: Lastname
+// Value5: Status
+
+// Redirection of users to their respective page.
+// let source = fs.readFileSync("./templates/lesson2.html"); or static page.
+
+// Find a way to use code above integrated into a revised lesson11
