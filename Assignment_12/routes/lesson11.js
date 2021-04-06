@@ -1,5 +1,4 @@
-// This program creates and displays a temperature database
-// with options to insert, update, and delete records.
+// Creates a database in redis and stores, updates, and read user information
 //
 // References:
 //  https://en.wikibooks.org/wiki/JavaScript
