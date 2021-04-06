@@ -91,11 +91,11 @@ function build_form(username, userid) {
 
 function authenticateUser(username, password) {
     for (let index = 0; index < users.length; index++) {
-        let user = users[index];
-        if (user.username == username) {
-            if (bcrypt.compareSync(password, user.password)) {
+        let user = users[index]; //cycle through the users in database
+        if (user.username == username) { //if username matches user
+            if (bcrypt.compareSync(password, user.password)) { //compares user input password to database password
                 // Should track successful logins
-                return user.userid;
+                return user.userid; //returns userID
             } else {
                 // Should track failed attempts, lock account, etc.
                 return null;
@@ -108,9 +108,9 @@ function authenticateUser(username, password) {
 function generateHashedPassword(password) {
     // Use this function to generate hashed passwords to save in 
     // the users list or a database.
-    let salt = bcrypt.genSaltSync();
-    let hashed = bcrypt.hashSync(password, salt);
-    return hashed    
+    let salt = bcrypt.genSaltSync(); //creates variable for hashing password
+    let hashed = bcrypt.hashSync(password, salt); //takes password and hashes
+    return hashed; //returns the hashed password
 }    
 
 module.exports = router;
