@@ -1,135 +1,172 @@
-// Demonstrates session and cookie processing. The username is stored
-// as a cookie and an internal userid is saved in a session variable.
-// Also demonstrates secure password authentication using bcrypt salt
-// and hash.
+// This program uses MongoDB to login
 //
 // References:
 //  https://en.wikibooks.org/wiki/JavaScript
-//  https://www.geeksforgeeks.org/http-cookies-in-node-js/
-//  https://www.geeksforgeeks.org/session-cookies-in-nodejs/
-//  https://www.npmjs.com/package/bcrypt
+//  https://zellwk.com/blog/async-await-express/
+//  https://docs.mongodb.com/drivers/node/usage-examples
 
 const express = require("express");
-const bcrypt = require("bcrypt");
 const fs = require("fs");
+const { unregisterDecorator } = require("handlebars");
 const handlebars = require('handlebars');
+const mongodb = require("mongodb")
+const bcrypt = require("bcrypt");
 const { count } = require("console");
 const router = express.Router();
 
-users = [
-    // Password is the same as the username, just salted and hashed.
-    // Don't do this in a production application! Use custom passwords.
-    { "userid": 1, "username": "admin", 
-        "password": "$2b$10$l20wKFNqyzWl9NgeexjQ9el9KY7HzbTAPefSyntaZE.jqJlHZI0Ba" },
-    { "userid": 2, "username": "test", 
-        "password": "$2b$10$T.7DuAdfGVzq8uP1.xYZLe8rbPrOE6/DtMqbT5.O/bYwTFMZDC6ru" }
-]
+// Requires a Mongo installation to manage the database.
+// Use of a Docker container is recommended.
+// See https://en.wikiversity.org/wiki/Docker/MongoDB .
+// If both the Node website and Mongo are running in containers, 
+// use 172.17.0.2 for the mongodb host address.
+// If the Node website and/or Mongo are running locally, use 127.0.0.1
+// for the mongodb host address.
 
-router.get("/", function (request, response) {
-    let username = request.cookies.username;
-    let userid = request.session.userid; //If the session is remembered, build form using remembered session
-    result = build_form(username, userid); //Function build form to make data (if there is any)
-    response.send(result);
-});
+// const HOST = "mongodb://172.17.0.2";
+// mongodb://localhost:27017 for Local server
 
-router.post("/", function (request, response) {
-    if (request.body["reload"]) { //reload button pressed
-        response.redirect(request.originalUrl); //Send back to /lesson12
-    }
-    else if (request.body["log-out"]) { //Log Out button pressed
-        request.session.destroy(); //forget the session
-        let username = request.cookies.username; //requests if username cookie exists
-        let userid = null; //Userid is no longer valid, meaning password/session not valid
-        result = build_form(username, userid); //build page with username valid but userID not
-        response.send(result);
-    }
-    else if (request.body["forget-me"]) { //foget me button
-        request.session.destroy(); //forget session
-        result = build_form(null, null); //username and userid null
-        response.cookie("username", "", { expires: 0 }); //cookie forgetting information
-        response.send(result);
-    }
-    else {
-        let username = request.body.username; //Get username
-        let password = request.body.password; //Get Password
-        let userid = authenticateUser(username, password); //authenticated username and password in function
-        if (userid) {
-            request.session.userid = userid;
-            result = build_form(username, userid);
-            response.cookie("username", username);
-            response.send(result);    
-        }
-        else {
-            response.redirect(303, request.originalUrl); //see other, original URL
-        }
-    }
-});
+// Logins Already Created:
+// Brendan, Password
+// admin, admin
+// user, user
 
-function build_form(username, userid) {
-    let cookie = !!username; //Username valid
-    let session = !!userid; //The ID associated with password and username is the session
-    if (username && userid) { //If the username matches the session
-        welcome = "Welcome back " + username + "! You are logged in.";
-    }
-    else if (username) { //If the username is remembered but the the session
-        welcome = "Welcome back " + username + "! Please log in.";
-    }
-    else { //If neither username is remembered nor the session existing
-        welcome = "Welcome! Please log in.";
+const HOST = "mongodb://localhost:27017";
+const DATABASE = "pizzaOrder";
+const COLLECTION = "users";
+const COLLECTIONORDER = "orders";
+
+
+router.get("/", async (request, response) => {
+    let result = "";
+
+    try {
+        result = await collectionsExists();
+    } catch (error) {
+        result = error;
     }
 
     let source = fs.readFileSync("./templates/lesson12.html");
     let template = handlebars.compile(source.toString());
     let data = {
-        cookie: cookie,
-        session: session,
-        welcome: welcome,
-        username: username,
+        table: result
     }
     result = template(data);
-    return result;
-}
+    response.send(result);
+});
 
-function authenticateUser(username, password) {
-    for (let index = 0; index < users.length; index++) {
-        let user = users[index]; //cycle through the users in database
-        if (user.username == username) { //if username matches user
-            if (bcrypt.compareSync(password, user.password)) { //compares user input password to database password
-                // Should track successful logins
-                return user.userid; //returns userID
+router.post("/", async (request, response) => {
+    let result = "";
+    let username = request.body.username;
+    let password = request.body.password;
+    let createLogin = request.body["createLogin"];
+    let logIn = request.body["log-in"];
+
+    await findCollections();
+
+    try {
+
+        if (createLogin) {
+
+            if (!await userExists(username, password)) {
+                await insertNewUser(username, password);
             } else {
-                // Should track failed attempts, lock account, etc.
-                return null;
+                console.log("User already Exists!");
             }
-        }        
+
+        }
+
+
+
+
+    } catch (error) {
+        result = error;
     }
-    return null;
+
+    let source = fs.readFileSync("./templates/lesson12.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        table: result
+    }
+    result = template(data);
+    response.send(result);
+});
+
+async function findCollections() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+
+    const database = client.db(DATABASE);
+
+    const collection = database.collection(COLLECTION);
+    const collectionOrder = database.collection(COLLECTIONORDER);
+
+    const usersDocument = await getUsers(collection);
+    const orderDocuemnt = await getOrders(collectionOrder);
+
+
 }
 
-function generateHashedPassword(password) {
-    // Use this function to generate hashed passwords to save in 
-    // the users list or a database.
-    let salt = bcrypt.genSaltSync(); //creates variable for hashing password
-    let hashed = bcrypt.hashSync(password, salt); //takes password and hashes
-    return hashed; //returns the hashed data
-}    
+async function getUsers(collection) {
+    return new Promise(function (resolve, reject) {
+        collection.find().toArray(function (err, documents) {
+            if (err)
+                reject(err);
+            else
+                resolve(documents);
+                console.log("Users Exist")
+        });
+    });
+}
+
+async function getOrders(collectionOrder) {
+    return new Promise(function (resolve, reject) {
+        collectionOrder.find().toArray(function (err, documents) {
+            if (err)
+                reject(err);
+            else
+                resolve(documents);
+                console.log("Orders Exist")
+        });
+    });
+}
+
+async function userExists (username, password) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const filter = {
+        username: username,
+        password: password
+    };
+    const count = await collection.countDocuments(filter);
+    console.log(count);
+    await client.close();
+    return !!(count);
+}
+
+
+async function insertNewUser(username, password) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const document = {
+        username: username,
+        password: password
+    };
+    await collection.insertOne(document);
+    await client.close();
+}
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
-
-
-// Designing Ideas:
-// Use mongoDB
-// store information in collections with documents in those collections
-
-// Use hashed keys all across the board -- Redis
-// Key: Username
-// Value1: UniqueID
-// Value2: Password   -   Encrypted
-// Value3: Firstname
-// Value4: Lastname
-// Value5: Status
-
-// Redirection of users to their respective page.
-// let source = fs.readFileSync("./templates/lesson2.html"); or static page.
-
-// Find a way to use code above integrated into a revised lesson11
