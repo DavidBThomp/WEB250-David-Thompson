@@ -67,15 +67,12 @@ router.post("/", async (request, response) => {
     let login = request.body["log-in"];
 
     let generatedHashedPassword = generateHashedPassword(password);
-    // authenticateUser(username, password)
 
 
 
     await findCollections();
 
     try {
-
-
 
         if (createLogin) {
             if (!await usernameExists(username)) {
@@ -96,19 +93,19 @@ router.post("/", async (request, response) => {
 
         } else if (login) {
 
-            if (await usernameExists(username)) {
-                let user = await findSingleUser(username);
-                password = user.password;
-                if (await userExists(username, password)) {
-                    result = "User logged in!";
+
+
+                if (await usernameExists(username)) {
+                    if (await authenticateUser(username, password)) {
+                        result = "User logged in!";
+                    } else {
+                        result = "Wrong Password!";
+                    }
                 } else {
                     result = "Invalid username or password, please try again.";
                 }
-            }else {
-                result = "User or Password Doesn't Exist.";
             }
-        } 
-
+    
 
     } catch (error) {
         result = error;
@@ -244,26 +241,29 @@ async function findSingleUser(username) {
 // Does this have to be async or will run instantly due to hoisting?       -----------------------------------------------------------------
 function generateHashedPassword(password) {
     let salt = bcrypt.genSaltSync();
-    let hashed = bcrypt.hashSync(password, salt);
-    return hashed;
+    generatedHashedPassword = bcrypt.hashSync(password, salt);
+    return generatedHashedPassword;
 }
 
 
 
-// function authenticateUser(username, password) {
-//         if (users.username == username) {
-//             if (bcrypt.compareSync(password, users.password)) {
-//                 // Should track successful logins
-//                     console.log("Correct Username and Password");
-//                 return user.userid;
-//             } else {
-//                 // Should track failed attempts, lock account, etc.
-//                     console.log("Wrong Username or Password");
-//                 return null;
-//             }
-//         }       
-//         return null; 
-//     }
+async function authenticateUser(username, password) {
+
+    let user = await findSingleUser(username);
+    let hashedCorrectPassword = user.password;
+    let userid = user.userid
+
+
+    if (bcrypt.compareSync(password, hashedCorrectPassword)) {
+        // Should track successful logins
+        console.log("Correct Username and Password");
+        return true;
+    } else {
+        // Should track failed attempts, lock account, etc.
+        console.log("Wrong Username or Password");
+        return null;
+    }
+}
 
 
 
