@@ -7,11 +7,15 @@
 
 const express = require("express");
 const fs = require("fs");
-const { unregisterDecorator } = require("handlebars");
+const {
+    unregisterDecorator
+} = require("handlebars");
 const handlebars = require('handlebars');
 const mongodb = require("mongodb")
 const bcrypt = require("bcrypt");
-const { count } = require("console");
+const {
+    count
+} = require("console");
 const router = express.Router();
 
 // Requires a Mongo installation to manage the database.
@@ -62,23 +66,29 @@ router.post("/", async (request, response) => {
     let updateLogin = request.body["updateLogin"];
     let login = request.body["log-in"];
 
+    let generatedHashedPassword = generateHashedPassword(password);
+    // authenticateUser(username, password)
+
+
+
     await findCollections();
 
     try {
 
-        if (createLogin) {
 
-            if (!await userExists(username, password)) {
-                await insertNewUser(username, password);
+
+        if (createLogin) {
+            if (!await usernameExists(username)) {
+                await insertNewUser(username, generatedHashedPassword);
                 result = "Login and Password Info Recorded.";
             } else {
-                result = "User Already Exists.";
+                result = "Username Already Exists or Taken.";
             }
 
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
-                await updateUser(username, password);
+                await updateUser(username, generatedHashedPassword);
                 result = "User information updated.";
             } else {
                 result = "User doesn't Exist.";
@@ -86,15 +96,18 @@ router.post("/", async (request, response) => {
 
         } else if (login) {
 
-            if (await userExists(username, password)) {
-                result = "User logged in!";
-            } else {
-                result = "Invalid username or password, please try again.";
+            if (await usernameExists(username)) {
+                let user = await findSingleUser(username);
+                password = user.password;
+                if (await userExists(username, password)) {
+                    result = "User logged in!";
+                } else {
+                    result = "Invalid username or password, please try again.";
+                }
+            }else {
+                result = "User or Password Doesn't Exist.";
             }
-
-        }
-
-
+        } 
 
 
     } catch (error) {
@@ -147,7 +160,7 @@ async function getOrders(collectionOrder) {
     });
 }
 
-async function userExists (username, password) {
+async function userExists(username, password) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -209,7 +222,48 @@ async function updateUser(username, password) {
     await client.close();
 }
 
+async function findSingleUser(username) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
 
+    const filter = {
+        username: username
+    };
+
+    let user = await collection.findOne(filter);
+    await client.close();
+    return user;
+}
+
+
+
+// Use this function to generate hashed passwords to save in 
+// the users list or a database.
+// Does this have to be async or will run instantly due to hoisting?       -----------------------------------------------------------------
+function generateHashedPassword(password) {
+    let salt = bcrypt.genSaltSync();
+    let hashed = bcrypt.hashSync(password, salt);
+    return hashed;
+}
+
+
+
+// function authenticateUser(username, password) {
+//         if (users.username == username) {
+//             if (bcrypt.compareSync(password, users.password)) {
+//                 // Should track successful logins
+//                     console.log("Correct Username and Password");
+//                 return user.userid;
+//             } else {
+//                 // Should track failed attempts, lock account, etc.
+//                     console.log("Wrong Username or Password");
+//                 return null;
+//             }
+//         }       
+//         return null; 
+//     }
 
 
 
