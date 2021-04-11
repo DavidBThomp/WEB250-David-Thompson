@@ -40,7 +40,7 @@ router.get("/", async (request, response) => {
     let result = "";
 
     try {
-        result = await collectionsExists();
+        result = await findCollections();
     } catch (error) {
         result = error;
     }
@@ -59,6 +59,7 @@ router.post("/", async (request, response) => {
     let username = request.body.username;
     let password = request.body.password;
     let createLogin = request.body["createLogin"];
+    let updateLogin = request.body["updateLogin"];
     let logIn = request.body["log-in"];
 
     await findCollections();
@@ -69,8 +70,18 @@ router.post("/", async (request, response) => {
 
             if (!await userExists(username, password)) {
                 await insertNewUser(username, password);
+                result = "Login and Password Info Recorded."
             } else {
-                console.log("User already Exists!");
+                result = "User Already Exists."
+            }
+
+        } else if (updateLogin) {
+
+            if (await usernameExists(username)) {
+                await updateUser(username, password);
+                result = "User information updated."
+            } else {
+                result = "User doesn't Exist."
             }
 
         }
@@ -140,7 +151,19 @@ async function userExists (username, password) {
         password: password
     };
     const count = await collection.countDocuments(filter);
-    console.log(count);
+    await client.close();
+    return !!(count);
+}
+
+async function usernameExists(username) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const filter = {
+        username: username
+    };
+    const count = await collection.countDocuments(filter);
     await client.close();
     return !!(count);
 }
@@ -159,6 +182,26 @@ async function insertNewUser(username, password) {
     await client.close();
 }
 
+async function updateUser(username, password) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {
+        username: username
+    };
+
+    const update = {
+        "$set": {
+            "username": username,
+            "password": password
+        }
+    };
+
+    await collection.updateOne(filter, update);
+    await client.close();
+}
 
 
 
