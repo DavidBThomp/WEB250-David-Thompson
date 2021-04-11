@@ -60,7 +60,7 @@ router.post("/", async (request, response) => {
     let password = request.body.password;
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
-    let logIn = request.body["log-in"];
+    let login = request.body["log-in"];
 
     await findCollections();
 
@@ -70,18 +70,26 @@ router.post("/", async (request, response) => {
 
             if (!await userExists(username, password)) {
                 await insertNewUser(username, password);
-                result = "Login and Password Info Recorded."
+                result = "Login and Password Info Recorded.";
             } else {
-                result = "User Already Exists."
+                result = "User Already Exists.";
             }
 
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
                 await updateUser(username, password);
-                result = "User information updated."
+                result = "User information updated.";
             } else {
-                result = "User doesn't Exist."
+                result = "User doesn't Exist.";
+            }
+
+        } else if (login) {
+
+            if (await userExists(username, password)) {
+                result = "User logged in!";
+            } else {
+                result = "Invalid username or password, please try again.";
             }
 
         }
@@ -124,7 +132,6 @@ async function getUsers(collection) {
                 reject(err);
             else
                 resolve(documents);
-                console.log("Users Exist")
         });
     });
 }
@@ -136,7 +143,6 @@ async function getOrders(collectionOrder) {
                 reject(err);
             else
                 resolve(documents);
-                console.log("Orders Exist")
         });
     });
 }
