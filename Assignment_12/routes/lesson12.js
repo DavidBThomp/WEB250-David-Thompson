@@ -117,11 +117,12 @@ router.post("/", async (request, response) => {
 
                     if (request.session.page_views) {
                         request.session.page_views++;
-                        console.log("You visited this page " + request.session.page_views + " times");
+                        inputConfirmed = ("You visited this page " + request.session.page_views + " times");
                     } else if (request.session.page_views = 1) {
-                        console.log("Welcome to this page for the first time!");
+                        inputConfirmed=("Welcome to this page for the first time!");
                     }
 
+                    let sucessfulLogins = request.session.page_views
                     let userid = user._id;
                     request.session.userid = userid;
                     result = build_form(username, userid, inputConfirmed);
@@ -131,12 +132,11 @@ router.post("/", async (request, response) => {
 
                     if (request.session.fail_views) {
                         request.session.fail_views++;
-                        console.log("You visited failed page " + request.session.fail_views + " times");
+                        inputConfirmed = "Invalid password, please try again. There have been " + request.session.fail_views + " failed attempts."
                     } else if (request.session.fail_views = 1) {
-                        console.log("Welcome to this fail page for the first time!");
+                        inputConfirmed = ("Welcome to this fail login attempt page for the first time!");
                     }
 
-                    let inputConfirmed = "Invalid password, please try again."
                     result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
                     response.send(result);
@@ -338,14 +338,14 @@ async function authenticateUser(username, password) {
     let hashedCorrectPassword = user.password;
 
     if (bcrypt.compareSync(password, hashedCorrectPassword)) {
-        // Should track successful logins
 
         console.log("Correct Username and Password");
         return true;
+
     } else {
-        // Should track failed attempts, lock account, etc.
-        console.log("Wrong Username or Password");
+
         return null;
+
     }
 }
 
