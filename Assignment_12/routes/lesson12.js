@@ -82,11 +82,13 @@ router.post("/", async (request, response) => {
 
         } else if (login) {
 
-
-
                 if (await usernameExists(username)) {
                     if (await authenticateUser(username, password)) {
-                        result = "User logged in!";
+                        let userid = await authenticateUser(username, password);
+                        request.session.userid = userid;
+                        result = build_form(username, userid);
+                        response.cookie("username", username);
+                        response.send(result);
                     } else {
                         result = "Wrong Password!";
                     }
