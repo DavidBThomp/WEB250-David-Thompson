@@ -16,6 +16,7 @@ const bcrypt = require("bcrypt");
 const {
     count
 } = require("console");
+const { request } = require("express");
 const router = express.Router();
 
 // Requires a Mongo installation to manage the database.
@@ -39,7 +40,6 @@ const DATABASE = "pizzaOrder";
 const COLLECTION = "users";
 const COLLECTIONORDER = "orders";
 
-
 router.get("/", async (request, response) => {
     let username = request.cookies.username;
     if (username = "j:null") {
@@ -55,6 +55,7 @@ router.post("/", async (request, response) => {
     let userid = "";
     let username = request.body.username;
     let password = request.body.password;
+    let status = request.body.status;
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
     let login = request.body["log-in"];
@@ -73,7 +74,7 @@ router.post("/", async (request, response) => {
 
         if (createLogin) {
             if (!await usernameExists(username)) {
-                await insertNewUser(username, generatedHashedPassword);
+                await insertNewUser(username, generatedHashedPassword, status);
                 username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
                 result = build_form(username, userid, inputConfirmed);
@@ -90,8 +91,8 @@ router.post("/", async (request, response) => {
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
-                await updateUser(username, generatedHashedPassword);
-                let userid = await updateUser(username, generatedHashedPassword);
+                await updateUser(username, generatedHashedPassword, status);
+                let userid = await updateUser(username, generatedHashedPassword, status);
                 username = null;
                 inputConfirmed = "User login has been updated, please login again."
                 result = build_form(username, userid, inputConfirmed);
@@ -112,7 +113,7 @@ router.post("/", async (request, response) => {
                 if (await authenticateUser(username, password)) {
                     let userid = user._id;
                     request.session.userid = userid;
-                    result = build_form(username, userid, inputConfirmed);
+                    result = build_form(username, userid, inputConfirmed, pageviews);
                     response.cookie("username", username);
                     response.send(result);
                 } else {
@@ -150,17 +151,18 @@ router.post("/", async (request, response) => {
 
         }
 
-
     } catch (error) {
         result = error;
     }
 });
 
-function build_form(username, userid, inputConfirmed) {
+
+// Also does this have to be async? Nothing awaiting...
+function build_form(username, userid, inputConfirmed, pageviews) {
     let cookie = !!username;
     let session = !!userid;
     if (username && userid) {
-        welcome = "Welcome back " + username + "! You are logged in.";
+        welcome = "Welcome back " + username + "! You are logged in. You have views this page " + pageviews + " times.";
     } else if (username) {
         welcome = "Welcome back " + username + "! Please log in.";
     } else {
@@ -245,20 +247,21 @@ async function usernameExists(username) {
 }
 
 
-async function insertNewUser(username, password) {
+async function insertNewUser(username, password, status) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
     const document = {
         username: username,
-        password: password
+        password: password,
+        status: status
     };
     await collection.insertOne(document);
     await client.close();
 }
 
-async function updateUser(username, password) {
+async function updateUser(username, password, status) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -271,7 +274,8 @@ async function updateUser(username, password) {
     const update = {
         "$set": {
             "username": username,
-            "password": password
+            "password": password,
+            "status": status
         }
     };
 
@@ -314,6 +318,7 @@ async function authenticateUser(username, password) {
 
     if (bcrypt.compareSync(password, hashedCorrectPassword)) {
         // Should track successful logins
+        
         console.log("Correct Username and Password");
         return true;
     } else {
