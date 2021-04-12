@@ -41,6 +41,7 @@ app.use(express.urlencoded({
 app.use(fileUpload({
     limits: { fileSize: 1 * 1024 * 1024 },
 }));
+
 app.use(cookieParser());
 app.use(session({
     resave: false,
