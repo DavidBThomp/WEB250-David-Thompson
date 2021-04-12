@@ -123,7 +123,23 @@ router.post("/", async (request, response) => {
                     }
 
                     let userid = user._id;
+                    let status = user.status;
                     request.session.userid = userid;
+
+                    if (status = "employee") {
+                        //bring to employee page
+                        console.log('employee');
+                    } else if (status = "manager") {
+                        //bring to manager page
+                        console.log('manager');
+                    } else if (status = 'disable') {
+                        // remain on page but display account is disabled
+                        console.log("account disabled");
+                    } else if (status = "customer") {
+                        //bring to customer page
+                        console.log("customer");
+                    }
+
                     result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
                     response.send(result);
