@@ -129,6 +129,12 @@ router.post("/", async (request, response) => {
                     response.send(result);
                 } else {
 
+                    if (request.session.fail_views) {
+                        request.session.fail_views++;
+                        console.log("You visited failed page " + request.session.fail_views + " times");
+                    } else if (request.session.fail_views = 1) {
+                        console.log("Welcome to this fail page for the first time!");
+                    }
 
                     let inputConfirmed = "Invalid password, please try again."
                     result = build_form(username, userid, inputConfirmed);
