@@ -1,4 +1,4 @@
-// This program uses MongoDB to login
+// This program uses MongoDB to login, password encryption, and different page results
 //
 // References:
 //  https://en.wikibooks.org/wiki/JavaScript
@@ -30,6 +30,7 @@ const router = express.Router();
 // for the mongodb host address.
 
 // const HOST = "mongodb://172.17.0.2";
+// const HOST = "mongodb://mongo-server";
 // mongodb://localhost:27017 for Local server
 
 // Logins Already Created:
@@ -37,7 +38,7 @@ const router = express.Router();
 // admin, admin
 // user, user
 
-const HOST = "mongodb://localhost:27017";
+const HOST = "mongodb://mongo-server";
 const DATABASE = "pizzaOrder";
 const COLLECTION = "users";
 const COLLECTIONORDER = "orders";
@@ -125,7 +126,7 @@ router.post("/", async (request, response) => {
                         request.session.page_views++;
                         inputConfirmed = ("You successfully logged in " + request.session.page_views + " times");
                     } else if (request.session.page_views = 1) {
-                        inputConfirmed=("Welcome to this page for the first time!");
+                        inputConfirmed = ("Welcome to this page for the first time!");
                     }
 
                     let userid = user._id;
@@ -417,7 +418,7 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
 
 
     await collection.insertOne(employee);
-    
+
     await collection.insertOne(manager);
 
     await collection.insertOne(disabledUser);
