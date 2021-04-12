@@ -113,7 +113,7 @@ router.post("/", async (request, response) => {
                 if (await authenticateUser(username, password)) {
                     let userid = user._id;
                     request.session.userid = userid;
-                    result = build_form(username, userid, inputConfirmed, pageviews);
+                    result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
                     response.send(result);
                 } else {
@@ -158,11 +158,11 @@ router.post("/", async (request, response) => {
 
 
 // Also does this have to be async? Nothing awaiting...
-function build_form(username, userid, inputConfirmed, pageviews) {
+function build_form(username, userid, inputConfirmed) {
     let cookie = !!username;
     let session = !!userid;
     if (username && userid) {
-        welcome = "Welcome back " + username + "! You are logged in. You have views this page " + pageviews + " times.";
+        welcome = "Welcome back " + username + "! You are logged in. You have views this page " + "pageviewsAmount" + " times.";
     } else if (username) {
         welcome = "Welcome back " + username + "! Please log in.";
     } else {
@@ -179,7 +179,7 @@ function build_form(username, userid, inputConfirmed, pageviews) {
         table: inputConfirmed
     }
     result = template(data);
-    return result
+    return result;
 }
 
 async function findCollections() {
