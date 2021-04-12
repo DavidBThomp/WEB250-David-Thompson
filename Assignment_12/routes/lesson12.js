@@ -41,20 +41,9 @@ const COLLECTIONORDER = "orders";
 
 
 router.get("/", async (request, response) => {
-    let result = "";
-
-    try {
-        result = await findCollections();
-    } catch (error) {
-        result = error;
-    }
-
-    let source = fs.readFileSync("./templates/lesson12.html");
-    let template = handlebars.compile(source.toString());
-    let data = {
-        table: result
-    }
-    result = template(data);
+    let username = request.cookies.username;
+    let userid = request.session.userid;
+    result = build_form(username, userid);
     response.send(result);
 });
 
@@ -119,6 +108,31 @@ router.post("/", async (request, response) => {
     result = template(data);
     response.send(result);
 });
+
+function build_form(username, userid) {
+    let cookie = !!username;
+    let session = !!userid;
+    if (username && userid) {
+        welcome = "Welcome back " + username + "! You are logged in.";
+    }
+    else if (username) {
+        welcome = "Welcome back " + username + "! Please log in.";
+    }
+    else {
+        welcome = "Welcome! Please log in.";
+    }
+
+    let source = fs.readFileSync("./templates/lesson12.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        cookie: cookie,
+        session: session,
+        welcome: welcome,
+        username: username
+    }
+    result = template(data);
+    return result
+}
 
 async function findCollections() {
     const client = mongodb.MongoClient(HOST);
