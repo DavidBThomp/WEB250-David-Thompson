@@ -45,3 +45,7 @@ This lesson introduced me to NoSQL, more specifically MongoDB. To use MongoDB I 
 # Assignment 11
 
 In this session, I learned about Redis, a key-value database that allows us to store data. I learned about the different ways to use the database to create specific data types, such as hashes, strings, and lists. I learned how these all differ in very subtle ways, that change the way data is stored. I also learned how to use the commands in Redis to store, create, and update a database. I found out that key-value databases do a great job of being lightweight and quick, making their use to get and store data extremely robust. The data itself though isn't super organized as a tradeoff. In the future using key-value databases will allow me to store information and retrieve it in a JSON-like format. 
+
+# Assignment 12
+
+In this session, I learned about cookies and sessions. I learned that using cookies allows the user to store data in the browser. This can be useful to cache information that might be used over and over again. Sessions operate in a similar capacity to cookies, but the database or server will access this information. This works more like a read and writes operation rather than just write and delete for cookies. In the future, I will use these skills to help auto-complete forms, as well as using sessions to get information about what pages users should have access to. 
