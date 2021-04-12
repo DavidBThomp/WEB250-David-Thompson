@@ -145,8 +145,7 @@ router.post("/", async (request, response) => {
             response.send(result);
 
         } else if (reload) {
-         
-            // Not refreshing or reloading
+            
             response.redirect(request.originalUrl);
 
         }
