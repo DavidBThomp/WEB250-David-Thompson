@@ -42,7 +42,7 @@ const COLLECTIONORDER = "orders";
 
 router.get("/", async (request, response) => {
     let username = request.cookies.username;
-    if (username = "j:null"){
+    if (username = "j:null") {
         username = null;
     }
     let userid = request.session.userid;
@@ -58,10 +58,14 @@ router.post("/", async (request, response) => {
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
     let login = request.body["log-in"];
+    let logout = request.body["log-out"];
+    let forgetme = request.body["forget-me"];
+    let reload = request.body["reload"];
 
     let generatedHashedPassword = generateHashedPassword(password);
 
     let inputConfirmed = "";
+
 
     await findCollections();
 
@@ -103,9 +107,10 @@ router.post("/", async (request, response) => {
 
         } else if (login) {
 
+            let user = await findSingleUser(username);
             if (await usernameExists(username)) {
                 if (await authenticateUser(username, password)) {
-                    let userid = await authenticateUser(username, password);
+                    let userid = user._id;
                     request.session.userid = userid;
                     result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
@@ -123,20 +128,33 @@ router.post("/", async (request, response) => {
                 response.cookie("username", username);
                 response.send(result)
             }
+
+        } else if (logout) {
+
+            request.session.destroy();
+            let username = request.cookies.username;
+            let userid = null;
+            result = build_form(username, userid, inputConfirmed);
+            response.send(result);
+
+        } else if (forgetme) {
+
+            request.session.destroy();
+            result = build_form(null, null);
+            response.cookie("username", "", { expires: 0 });
+            response.send(result);
+
+        } else if (reload) {
+         
+            // Not refreshing or reloading
+            response.redirect(request.originalUrl);
+
         }
 
 
     } catch (error) {
         result = error;
     }
-
-    let source = fs.readFileSync("./templates/lesson12.html");
-    let template = handlebars.compile(source.toString());
-    let data = {
-        table: result
-    }
-    result = template(data);
-    response.send(result);
 });
 
 function build_form(username, userid, inputConfirmed) {
@@ -294,8 +312,6 @@ async function authenticateUser(username, password) {
 
     let user = await findSingleUser(username);
     let hashedCorrectPassword = user.password;
-    let userid = user.userid
-
 
     if (bcrypt.compareSync(password, hashedCorrectPassword)) {
         // Should track successful logins
