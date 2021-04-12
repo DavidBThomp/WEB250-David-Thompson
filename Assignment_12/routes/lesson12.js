@@ -16,7 +16,9 @@ const bcrypt = require("bcrypt");
 const {
     count
 } = require("console");
-const { request } = require("express");
+const {
+    request
+} = require("express");
 const router = express.Router();
 
 // Requires a Mongo installation to manage the database.
@@ -108,15 +110,26 @@ router.post("/", async (request, response) => {
 
         } else if (login) {
 
+
             let user = await findSingleUser(username);
             if (await usernameExists(username)) {
                 if (await authenticateUser(username, password)) {
+
+                    if (request.session.page_views) {
+                        request.session.page_views++;
+                        console.log("You visited this page " + request.session.page_views + " times");
+                    } else if (request.session.page_views = 1) {
+                        console.log("Welcome to this page for the first time!");
+                    }
+
                     let userid = user._id;
                     request.session.userid = userid;
                     result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
                     response.send(result);
                 } else {
+
+
                     let inputConfirmed = "Invalid password, please try again."
                     result = build_form(username, userid, inputConfirmed);
                     response.cookie("username", username);
@@ -142,11 +155,13 @@ router.post("/", async (request, response) => {
 
             request.session.destroy();
             result = build_form(null, null);
-            response.cookie("username", "", { expires: 0 });
+            response.cookie("username", "", {
+                expires: 0
+            });
             response.send(result);
 
         } else if (reload) {
-            
+
             response.redirect(request.originalUrl);
 
         }
@@ -318,7 +333,7 @@ async function authenticateUser(username, password) {
 
     if (bcrypt.compareSync(password, hashedCorrectPassword)) {
         // Should track successful logins
-        
+
         console.log("Correct Username and Password");
         return true;
     } else {
