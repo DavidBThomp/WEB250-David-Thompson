@@ -122,7 +122,6 @@ router.post("/", async (request, response) => {
                         inputConfirmed=("Welcome to this page for the first time!");
                     }
 
-                    let sucessfulLogins = request.session.page_views
                     let userid = user._id;
                     request.session.userid = userid;
                     result = build_form(username, userid, inputConfirmed);
@@ -183,7 +182,7 @@ function build_form(username, userid, inputConfirmed) {
     let cookie = !!username;
     let session = !!userid;
     if (username && userid) {
-        welcome = "Welcome back " + username + "! You are logged in. You have views this page " + "pageviewsAmount" + " times.";
+        welcome = "Welcome back " + username + "! You are logged in."
     } else if (username) {
         welcome = "Welcome back " + username + "! Please log in.";
     } else {
