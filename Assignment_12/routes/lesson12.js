@@ -126,23 +126,25 @@ router.post("/", async (request, response) => {
 
                     let userid = user._id;
                     let status = user.status;
+                    console.log(status);
                     request.session.userid = userid;
 
-                    if (status = "employee") {
-                        //bring to employee page
+                    if (status === "employee") {
+                        result = build_formEmployee(username, userid, inputConfirmed);
                         console.log('employee');
-                    } else if (status = "manager") {
-                        //bring to manager page
+                    } else if (status === "manager") {
+                        result = build_formManager(username, userid, inputConfirmed);
                         console.log('manager');
-                    } else if (status = 'disable') {
-                        // remain on page but display account is disabled
+                    } else if (status === 'disable') {
+                        inputConfirmed = "This account has been disabled."
+                        result = build_formCustomer(username, userid, inputConfirmed);
                         console.log("account disabled");
-                    } else if (status = "customer") {
-                        //bring to customer page
+                    } else if (status === "customer") {
+                        result = build_formCustomer(username, userid, inputConfirmed);
                         console.log("customer");
                     }
 
-                    result = build_form(username, userid, inputConfirmed);
+
                     response.cookie("username", username);
                     response.send(result);
                 } else {
@@ -194,6 +196,77 @@ router.post("/", async (request, response) => {
     }
 });
 
+function build_formCustomer(username, userid, inputConfirmed) {
+    let cookie = !!username;
+    let session = !!userid;
+    if (username && userid) {
+        welcome = "Welcome back " + username + "! You are logged in."
+    } else if (username) {
+        welcome = "Welcome back " + username + "! Please log in.";
+    } else {
+        welcome = "Welcome! Please log in.";
+    }
+
+    let source = fs.readFileSync("./templates/lesson12customer.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        cookie: cookie,
+        session: session,
+        welcome: welcome,
+        username: username,
+        table: inputConfirmed
+    }
+    result = template(data);
+    return result;
+}
+
+function build_formEmployee(username, userid, inputConfirmed) {
+    let cookie = !!username;
+    let session = !!userid;
+    if (username && userid) {
+        welcome = "Welcome back " + username + "! You are logged in."
+    } else if (username) {
+        welcome = "Welcome back " + username + "! Please log in.";
+    } else {
+        welcome = "Welcome! Please log in.";
+    }
+
+    let source = fs.readFileSync("./templates/lesson12employee.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        cookie: cookie,
+        session: session,
+        welcome: welcome,
+        username: username,
+        table: inputConfirmed
+    }
+    result = template(data);
+    return result;
+}
+
+function build_formManager(username, userid, inputConfirmed) {
+    let cookie = !!username;
+    let session = !!userid;
+    if (username && userid) {
+        welcome = "Welcome back " + username + "! You are logged in."
+    } else if (username) {
+        welcome = "Welcome back " + username + "! Please log in.";
+    } else {
+        welcome = "Welcome! Please log in.";
+    }
+
+    let source = fs.readFileSync("./templates/lesson12manager.html");
+    let template = handlebars.compile(source.toString());
+    let data = {
+        cookie: cookie,
+        session: session,
+        welcome: welcome,
+        username: username,
+        table: inputConfirmed
+    }
+    result = template(data);
+    return result;
+}
 
 // Also does this have to be async? Nothing awaiting...
 function build_form(username, userid, inputConfirmed) {
