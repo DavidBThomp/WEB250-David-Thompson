@@ -42,7 +42,7 @@ const DATABASE = "pizzaOrder";
 const COLLECTION = "users";
 const COLLECTIONORDER = "orders";
 
-insertBaseUsers();
+
 
 router.get("/", async (request, response) => {
     let username = request.cookies.username;
@@ -75,6 +75,10 @@ router.post("/", async (request, response) => {
     await findCollections();
 
     try {
+
+        if (await findBaseUsers() === null) {
+            await insertBaseUsers();
+        }
 
         if (createLogin) {
             if (!await usernameExists(username)) {
@@ -126,22 +130,17 @@ router.post("/", async (request, response) => {
 
                     let userid = user._id;
                     let status = user.status;
-                    console.log(status);
                     request.session.userid = userid;
 
                     if (status === "employee") {
                         result = build_formEmployee(username, userid, inputConfirmed);
-                        console.log('employee');
                     } else if (status === "manager") {
                         result = build_formManager(username, userid, inputConfirmed);
-                        console.log('manager');
                     } else if (status === 'disable') {
                         inputConfirmed = "This account has been disabled."
                         result = build_formCustomer(username, userid, inputConfirmed);
-                        console.log("account disabled");
                     } else if (status === "customer") {
                         result = build_formCustomer(username, userid, inputConfirmed);
-                        console.log("customer");
                     }
 
 
@@ -372,7 +371,22 @@ async function insertNewUser(username, password, status) {
     await client.close();
 }
 
-async function insertBaseUsers() {
+async function findBaseUsers() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {
+        username: "employee"
+    };
+
+    let baseUser = await collection.findOne(filter);
+    await client.close();
+    return baseUser;
+}
+
+async function insertBaseUsers() { // Clean up and make insert multiple users
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
