@@ -42,6 +42,9 @@ const COLLECTIONORDER = "orders";
 
 router.get("/", async (request, response) => {
     let username = request.cookies.username;
+    if (username = "j:null"){
+        username = null;
+    }
     let userid = request.session.userid;
     result = build_form(username, userid);
     response.send(result);
@@ -49,6 +52,7 @@ router.get("/", async (request, response) => {
 
 router.post("/", async (request, response) => {
     let result = "";
+    let userid = "";
     let username = request.body.username;
     let password = request.body.password;
     let createLogin = request.body["createLogin"];
@@ -57,7 +61,7 @@ router.post("/", async (request, response) => {
 
     let generatedHashedPassword = generateHashedPassword(password);
 
-
+    let inputConfirmed = "";
 
     await findCollections();
 
@@ -66,37 +70,61 @@ router.post("/", async (request, response) => {
         if (createLogin) {
             if (!await usernameExists(username)) {
                 await insertNewUser(username, generatedHashedPassword);
-                result = "Login and Password Info Recorded.";
+                username = null;
+                inputConfirmed = "Login and Password info recorded, please login again.";
+                result = build_form(username, userid, inputConfirmed);
+                response.cookie("username", username);
+                response.send(result);
             } else {
-                result = "Username Already Exists or Taken.";
+                inputConfirmed = "Username already exists or is taken, please create unique username and password.";
+                username = null;
+                result = build_form(username, userid, inputConfirmed);
+                response.cookie("username", username);
+                response.send(result)
             }
 
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
                 await updateUser(username, generatedHashedPassword);
-                result = "User information updated.";
+                let userid = await updateUser(username, generatedHashedPassword);
+                username = null;
+                inputConfirmed = "User login has been updated, please login again."
+                result = build_form(username, userid, inputConfirmed);
+                response.cookie("username", username);
+                response.send(result);
             } else {
-                result = "User doesn't Exist.";
+                username = null;
+                inputConfirmed = "User doesn't exist, please submit valid username."
+                result = build_form(username, userid, inputConfirmed);
+                response.cookie("username", username);
+                response.send(result);
             }
 
         } else if (login) {
 
-                if (await usernameExists(username)) {
-                    if (await authenticateUser(username, password)) {
-                        let userid = await authenticateUser(username, password);
-                        request.session.userid = userid;
-                        result = build_form(username, userid);
-                        response.cookie("username", username);
-                        response.send(result);
-                    } else {
-                        result = "Wrong Password!";
-                    }
+            if (await usernameExists(username)) {
+                if (await authenticateUser(username, password)) {
+                    let userid = await authenticateUser(username, password);
+                    request.session.userid = userid;
+                    result = build_form(username, userid, inputConfirmed);
+                    response.cookie("username", username);
+                    response.send(result);
                 } else {
-                    result = "Invalid username or password, please try again.";
+                    let inputConfirmed = "Invalid password, please try again."
+                    result = build_form(username, userid, inputConfirmed);
+                    response.cookie("username", username);
+                    response.send(result);
                 }
+            } else {
+                let inputConfirmed = "Invalid username, please try again.";
+                username = null;
+                result = build_form(username, userid, inputConfirmed);
+                response.cookie("username", username);
+                response.send(result)
             }
-    
+        }
+
 
     } catch (error) {
         result = error;
@@ -111,16 +139,14 @@ router.post("/", async (request, response) => {
     response.send(result);
 });
 
-function build_form(username, userid) {
+function build_form(username, userid, inputConfirmed) {
     let cookie = !!username;
     let session = !!userid;
     if (username && userid) {
         welcome = "Welcome back " + username + "! You are logged in.";
-    }
-    else if (username) {
+    } else if (username) {
         welcome = "Welcome back " + username + "! Please log in.";
-    }
-    else {
+    } else {
         welcome = "Welcome! Please log in.";
     }
 
@@ -130,7 +156,8 @@ function build_form(username, userid) {
         cookie: cookie,
         session: session,
         welcome: welcome,
-        username: username
+        username: username,
+        table: inputConfirmed
     }
     result = template(data);
     return result
