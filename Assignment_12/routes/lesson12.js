@@ -42,6 +42,8 @@ const DATABASE = "pizzaOrder";
 const COLLECTION = "users";
 const COLLECTIONORDER = "orders";
 
+insertBaseUsers();
+
 router.get("/", async (request, response) => {
     let username = request.cookies.username;
     if (username = "j:null") {
@@ -117,7 +119,7 @@ router.post("/", async (request, response) => {
 
                     if (request.session.page_views) {
                         request.session.page_views++;
-                        inputConfirmed = ("You visited this page " + request.session.page_views + " times");
+                        inputConfirmed = ("You successfully logged in " + request.session.page_views + " times");
                     } else if (request.session.page_views = 1) {
                         inputConfirmed=("Welcome to this page for the first time!");
                     }
@@ -147,7 +149,7 @@ router.post("/", async (request, response) => {
 
                     if (request.session.fail_views) {
                         request.session.fail_views++;
-                        inputConfirmed = "Invalid password, please try again. There have been " + request.session.fail_views + " failed attempts."
+                        inputConfirmed = "Invalid password, please try again. There have been " + request.session.fail_views + " failed login attempts."
                     } else if (request.session.fail_views = 1) {
                         inputConfirmed = ("Welcome to this fail login attempt page for the first time!");
                     }
@@ -297,6 +299,47 @@ async function insertNewUser(username, password, status) {
     await client.close();
 }
 
+async function insertBaseUsers() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const employee = {
+        username: "employee",
+        password: "$2b$10$3a/yKpp2TDIkCl8MbQe1nelRhJDox0TleZodsQXcKq2yRQV4BDCPu",
+        status: "employee"
+    };
+
+    const manager = {
+        username: "manager",
+        password: "$2b$10$hx9gYevjOrJSCgytWB8GWOPhU5IkF4sQSZVJafyFJfIv1nIMWkh7G",
+        status: "manager"
+    };
+
+    const disabledUser = {
+        username: "disabled user",
+        password: "$2b$10$.IagCDjlAqKJgwmrn.N2a.PUx.Fw41i0i3zK00N.OKuqf0JkvCgzG",
+        status: "disabled"
+    };
+
+    const customer = {
+        username: "customer",
+        password: "$2b$10$Ue/NxrUKcDjx7VYz38RKSuIweaemYH8g52qops.iJfyaGrDh7LAv.",
+        status: "customer"
+    }
+
+
+    await collection.insertOne(employee);
+    
+    await collection.insertOne(manager);
+
+    await collection.insertOne(disabledUser);
+
+    await collection.insertOne(customer);
+
+    await client.close();
+}
+
 async function updateUser(username, password, status) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
@@ -354,7 +397,6 @@ async function authenticateUser(username, password) {
 
     if (bcrypt.compareSync(password, hashedCorrectPassword)) {
 
-        console.log("Correct Username and Password");
         return true;
 
     } else {
