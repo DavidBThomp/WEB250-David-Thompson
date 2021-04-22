@@ -49,3 +49,7 @@ In this session, I learned about Redis, a key-value database that allows us to s
 # Assignment 12
 
 In this session, I learned about cookies and sessions. I learned that using cookies allows the user to store data in the browser. This can be useful to cache information that might be used over and over again. Sessions operate in a similar capacity to cookies, but the database or server will access this information. This works more like a read and writes operation rather than just write and delete for cookies. In the future, I will use these skills to help auto-complete forms, as well as using sessions to get information about what pages users should have access to. 
+
+## Assignment 13
+
+In this session, we learned about REST APIs and their function. I learned that making a site RESTful means being able to access resources from pages without changing their destination. I also learned how RESTful applications are intended to ease communication between the different resources. This typically includes formatting data in a way such as JSON. This communication is stateless, meaning no client information is stored between requests. Typically we can query a site using the URL with query parameters. RESTful sites also allow for different methods such as GET, POST, PUT, and DELETE, each used to do different functions.
