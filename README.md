@@ -53,3 +53,8 @@ In this session, I learned about cookies and sessions. I learned that using cook
 ## Assignment 13
 
 In this session, we learned about REST APIs and their function. I learned that making a site RESTful means being able to access resources from pages without changing their destination. I also learned how RESTful applications are intended to ease communication between the different resources. This typically includes formatting data in a way such as JSON. This communication is stateless, meaning no client information is stored between requests. Typically we can query a site using the URL with query parameters. RESTful sites also allow for different methods such as GET, POST, PUT, and DELETE, each used to do different functions.
+
+## Assignment 14
+
+In this session, we learned about testing software for our websites. More specifically, I learned about web testing, which is used to test different parts of websites. This is typically done in prototyping and allows for mistakes to be found, as well as things that might not be considered such as security and load-bearing. I also learned about how some testing software creates virtual users to check performance metrics. This will be useful in the future because websites that aren't able to perform speedily, typically lose a lot of the viewers. This also can expose possible security issues that wouldn't be found until the site is live, and those issues are already exploited. 
+
