@@ -417,7 +417,7 @@ async function findBaseOrders() {
     const collection = database.collection(COLLECTIONORDER);
 
     const filter = {
-        topping: "pepperoni"
+        pizza: "order"
     };
 
     let baseOrder = await collection.findOne(filter);
