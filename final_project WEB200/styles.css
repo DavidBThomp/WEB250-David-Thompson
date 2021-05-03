@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    text-align: center;
+    max-width: 100%;
+}
+
+.wrapper {
+    width: 1000px;
+    margin: auto;
+}
+
+ul,
+li {
+    text-decoration: none;
+    list-style-type: none;
+}
+
+ul {
+    display: flex;
+    justify-content: space-around;
+}
+
+.col {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+}
+
+.create {
+    width: 250px;
+}
+
+.order {
+    width: 400px;
+}
+
+.login {
+    text-align: center;
+}
