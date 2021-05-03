@@ -100,8 +100,7 @@ router.post("/", async (request, response) => {
     let logout = request.body["log-out"];
     let forgetme = request.body["forget-me"];
     let reload = request.body["reload"];
-
-    let generatedHashedPassword = generateHashedPassword(password);
+    let order = request.body["order"];
 
     let inputConfirmed = "";
 
@@ -121,6 +120,7 @@ router.post("/", async (request, response) => {
 
         if (createLogin) {
             if (!await usernameExists(username)) {
+                let generatedHashedPassword = generateHashedPassword(password);
                 await insertNewUser(username, generatedHashedPassword, status);
                 username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
@@ -135,6 +135,76 @@ router.post("/", async (request, response) => {
                 response.send(result)
             }
 
+        } else if (order) {
+            let salad = request.body.salad;
+            let wings = request.body.wings;
+            let fries = request.body.fries;
+
+            let size = request.body.size;
+
+            let pepperoni = request.body.pepperoni;
+            let bacon = request.body.bacon;
+            let sausage = request.body.sausage;
+            let pineapple = request.body.pineapple;
+            let onions = request.body.onions;
+            let olives = request.body.olives;
+            let bellpepper = request.body.bellpepper;
+            let mushrooms = request.body.mushrooms;
+
+            let note = request.body.notes;
+            
+            let sides = "";
+
+            if (salad) {
+                sides += "salad ";
+            }
+            if (wings) {
+                sides += "wings ";
+            }
+            if (fries) {
+                sides += "fires ";
+            }
+            if (sides === "") {
+                sides += "None";
+            }
+    
+            sides = sides.trim();
+
+            let toppings = "";
+
+            if (pepperoni) {
+                toppings += "Pepperoni ";
+            }
+            if (bacon) {
+                toppings += "Bacon ";
+            }
+            if (sausage) {
+                toppings += "Sausage ";
+            }
+            if (pineapple) {
+                toppings += "Pineapple ";
+            }
+            if (onions) {
+                toppings += "Onions ";
+            }
+            if (olives) {
+                toppings += "Olives ";
+            }
+            if (bellpepper) {
+                toppings += "Bellpepper ";
+            }
+            if (mushrooms) {
+                toppings += "Mushrooms ";
+            }
+    
+            if (toppings === "") {
+                toppings += "None";
+            }
+    
+            toppings = toppings.trim();
+
+            
+            
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
@@ -226,6 +296,8 @@ router.post("/", async (request, response) => {
         } else if (reload) {
 
             response.redirect(request.originalUrl);
+
+        } else if (order) {
 
         }
 
