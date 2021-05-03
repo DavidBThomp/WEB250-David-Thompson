@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 12</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Login</h1>
+        <p>Cookie: {{cookie}}<br>Session: {{session}}</p>
+        <p>{{welcome}}</p>
+        <form method="POST">
+            <p><label for="userName">Username:</label>
+                <input type="text" id="username" name="username" value="{{username}}">
+            </p>
+            <p><label for="password">Password:</label>
+                <input type="text" id="password" name="password" value="">
+                <p>
+                    <input type="submit" id="updateLogin" name="updateLogin" value="Update Login">&nbsp;
+                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;<br>
+                    <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
+                    <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
+                    <input type="submit" id="reload" name="reload" value="Reload">
+                </p>
+        </form>
+        <hr>
+        {{{table}}}
+    </div>
+
+
+</body>
+
+</html>

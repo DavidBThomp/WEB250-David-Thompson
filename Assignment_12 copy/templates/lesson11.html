@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 11</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Employee Data Entry</h1>
+        <div id="large-container">
+            <div id="login">
+                <h2>Enter Username and password</h2>
+                <form method="POST">
+                    <p><label for="username">Username:</label><br>
+                        <input type="text" id="username" name="username" required>
+                    </p>
+                    <p><label for="password">Password:</label><br>
+                        <input type="text" id="password" name="password" required>
+                    </p>
+                    <p><input type="submit" name="submit" value="Login"></p>
+                </form>
+            </div>
+            <div id="accountUpdate">
+                <h2>To Create or Update Account, use form below</h2>
+                <form method="POST">
+                    <p><label for="oldUsername">New Username:</label><br>
+                        <input type="text" id="oldUsername" name="oldUsername" required>
+                    </p>
+                    <p><label for="newPassword">New Password:</label><br>
+                        <input type="text" id="newPassword" name="newPassword" required>
+                    </p>
+                    <p><label for="firstName">First Name:</label><br>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </p>
+                    <p><label for="lastName">Last Name:</label><br>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </p>
+
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        <option value="employee">Employee</option>
+                        <option value="manager">Manager</option>
+                        <option value="disabled">Disabled User</option>
+                        <option value="teminated">Terminated</option>
+                    </select>
+
+                    <p><input type="submit" name="update" value="Update"></p>
+                </form>
+            </div>
+        </div><br>
+        <hr>
+        <div id="bottom-form">
+            <form method="POST">
+                <p><label for="allDataUser">For specific user info input username and click "User Data":</label>
+                    <input type="text" id="allDataUser" name="allDataUser" required>
+                </p>
+                <p><input type="submit" name="alldata" value="User Data"></p>
+            </form>
+            <hr>
+            <form method="POST">
+                <p><label for="alldatakeys">For all usernames, click this button:</label>
+                    <input type="submit" name="alldatakeys" value="This Button"></p>
+            </form>
+            <p>Usernames with "1" at end are placeholders. These are NOT be valid usernames.</p>
+        </div>
+        <hr>
+        {{{table}}}
+    </div>
+</body>
+
+</html>
