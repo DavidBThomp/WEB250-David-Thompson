@@ -417,7 +417,7 @@ async function findBaseOrders() {
     const collection = database.collection(COLLECTIONORDER);
 
     const filter = {
-        pizza: "order1"
+        topping: "pepperoni"
     };
 
     let baseOrder = await collection.findOne(filter);
@@ -432,10 +432,11 @@ async function insertBaseOrders(user) { // Clean up and make insert multiple ord
     const collection = database.collection(COLLECTIONORDER);
     const order = {
         users_id: `${user._id}`,
-        pizza: "order1",
+        topping: "pepperoni",
         size: "small",
-        toppings: "pepperoni",
-        side: "fries"
+        side: "fries",
+        price: "5.99",
+        notes: "basenotes"
     };
 
     await collection.insertOne(order);
