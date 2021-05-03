@@ -115,6 +115,11 @@ router.post("/", async (request, response) => {
             await insertBaseUsers();
         }
 
+        if (await findBaseOrders() === null) {
+            let user = await findBaseUser(username);
+            await insertBaseOrders(user);
+        }
+
         if (createLogin) {
             if (!await usernameExists(username)) {
                 await insertNewUser(username, generatedHashedPassword, status);
@@ -406,6 +411,38 @@ async function insertNewUser(username, password, status) {
     await client.close();
 }
 
+async function findBaseOrders() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        pizza: "order1"
+    };
+
+    let baseOrder = await collection.findOne(filter);
+    await client.close();
+    return baseOrder;
+}
+
+async function insertBaseOrders(user) { // Clean up and make insert multiple orders
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+    const order = {
+        users_id: `${user._id}`,
+        pizza: "order1",
+        size: "small",
+        toppings: "pepperoni",
+        side: "fries"
+    };
+
+    await collection.insertOne(order);
+    await client.close();
+}
+
 async function findBaseUsers() {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
@@ -492,6 +529,21 @@ async function findSingleUser(username) {
 
     const filter = {
         username: username
+    };
+
+    let user = await collection.findOne(filter);
+    await client.close();
+    return user;
+}
+
+async function findBaseUser(username) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {
+        username: "customer"
     };
 
     let user = await collection.findOne(filter);
