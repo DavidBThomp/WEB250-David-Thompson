@@ -1,9 +1,48 @@
+// FINAL PROJECT
+// The final project for this course extends the WEB 200 final project. The WEB 200 final project is:
+
+// Create a functional pizza order application using HTML, JavaScript, AJAX, and JSON.
+// Include fields for name, address, and phone number.
+// Allow for multiple toppings per pizza, with at least six toppings to choose from.
+// Allow for multiple pizzas per order.
+// Include support for at least three pizza sizes, with different prices for toppings based on pizza size.
+// Dynamically display order information and price total as pizzas and toppings are added.
+// Include 10% sales tax.
+// Include a comments section for special notes and/or delivery instructions.
+// Your solution will include an Order object, which contains a Customer object, an array of Pizza objects, and a nested array of toppings for each pizza.
+// Use AJAX and JSON to submit order information. (AJAX use is optional for WEB 250)
+
+
+// This project extends the requirements above as follows:
+// Create a new server-based website for your WEB 200 final project described above.
+// Update the website routing structure to include the pizza order application.
+// Update the pizza order application as needed based on your current understanding of server-side scripting and web development best practices.
+// Create a database to record pizza order information. Your design should follow best practices for your selected database platform (relational SQL database, document database, or key-value database).
+// Provide a way for customers to log in to the pizza order application to display and reorder their previous orders.
+// Use a REST API to retrieve sales tax information based on the customer's zip code. Update order information based on the retrieved sales tax.
+// Provide a way for staff to log in to the pizza order application and display current orders.
+// Provide a way for staff to place, complete, and cancel orders.
+// Provide a way for managers to display order and tax summary information.
+// Validate all user input using server-side scripts.
+// Validate all generated HTML and CSS.
+// Record Selenium IDE tests to demonstrate functionality for each page of your website. Include a separate test for each page.
+// Create a zip file of your entire website and Dockerfile and update your AWS Elastic Beanstalk web server application and verify that it works correctly.
+// Update your git repository by adding a final project folder containing your entire unzipped website content, Dockerfile, and Selenium IDE tests.
+// Update the README for your repository to add a paragraph that describes what you learned about server-side scripting in this course. Include how you intend to apply this learning in your world (educational goals, career opportunities, etc.).
+// Use grammarly.com to proofread your work
+
 // This program uses MongoDB to login, password encryption, and different page results
 //
 // References:
 //  https://en.wikibooks.org/wiki/JavaScript
 //  https://zellwk.com/blog/async-await-express/
 //  https://docs.mongodb.com/drivers/node/usage-examples
+
+
+
+// TO - DO
+// Document for orders, include _id from other document
+// Redirect Users to their pages and lock out users if access is denied
 
 const express = require("express");
 const fs = require("fs");
@@ -33,12 +72,7 @@ const router = express.Router();
 // const HOST = "mongodb://mongo-server";
 // mongodb://localhost:27017 for Local server
 
-// Logins Already Created:
-// Brendan, Password
-// admin, admin
-// user, user
-
-const HOST = "mongodb://mongo-server";
+const HOST = "mongodb://localhost:27017";
 const DATABASE = "pizzaOrder";
 const COLLECTION = "users";
 const COLLECTIONORDER = "orders";
@@ -465,8 +499,7 @@ async function findSingleUser(username) {
     return user;
 }
 
-
-
+ 
 // Use this function to generate hashed passwords to save in 
 // the users list or a database.
 // Does this have to be async or will run instantly due to hoisting?       -----------------------------------------------------------------
@@ -475,8 +508,6 @@ function generateHashedPassword(password) {
     generatedHashedPassword = bcrypt.hashSync(password, salt);
     return generatedHashedPassword;
 }
-
-
 
 async function authenticateUser(username, password) {
 
@@ -493,7 +524,5 @@ async function authenticateUser(username, password) {
 
     }
 }
-
-
 
 module.exports = router;
