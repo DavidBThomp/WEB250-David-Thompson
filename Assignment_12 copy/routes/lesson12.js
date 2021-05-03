@@ -151,7 +151,7 @@ router.post("/", async (request, response) => {
             let bellpepper = request.body.bellpepper;
             let mushrooms = request.body.mushrooms;
 
-            let note = request.body.notes;
+            let notes = request.body.notes;
             
             let sides = "";
 
@@ -203,7 +203,11 @@ router.post("/", async (request, response) => {
     
             toppings = toppings.trim();
 
-            
+            let user = request.session.userid;
+
+            await insertNewOrder(user, toppings, size, sides, notes);
+
+
             
         } else if (updateLogin) {
 
@@ -465,6 +469,23 @@ async function usernameExists(username) {
     const count = await collection.countDocuments(filter);
     await client.close();
     return !!(count);
+}
+
+async function insertNewOrder(user, toppings, size, sides, notes) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+    const document = {
+        users_id: `${user._id}`,
+        topping: toppings,
+        size: size,
+        side: sides,
+        price: "5.99",
+        notes: notes
+    };
+    await collection.insertOne(document);
+    await client.close();
 }
 
 
