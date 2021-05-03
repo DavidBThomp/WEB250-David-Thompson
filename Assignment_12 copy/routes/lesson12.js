@@ -41,7 +41,6 @@
 
 
 // TO - DO
-// Document for orders, include _id from other document
 // Redirect Users to their pages and lock out users if access is denied
 
 const express = require("express");
