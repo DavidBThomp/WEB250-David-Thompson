@@ -1,20 +1,5 @@
 // FINAL PROJECT
-// The final project for this course extends the WEB 200 final project. The WEB 200 final project is:
 
-// Create a functional pizza order application using HTML, JavaScript, AJAX, and JSON.
-// Include fields for name, address, and phone number.
-// Allow for multiple toppings per pizza, with at least six toppings to choose from.
-// Allow for multiple pizzas per order.
-// Include support for at least three pizza sizes, with different prices for toppings based on pizza size.
-// Dynamically display order information and price total as pizzas and toppings are added.
-// Include 10% sales tax.
-// Include a comments section for special notes and/or delivery instructions.
-// Your solution will include an Order object, which contains a Customer object, an array of Pizza objects, and a nested array of toppings for each pizza.
-// Use AJAX and JSON to submit order information. (AJAX use is optional for WEB 250)
-
-
-// This project extends the requirements above as follows:
-// Create a new server-based website for your WEB 200 final project described above.
 // Update the website routing structure to include the pizza order application.
 // Update the pizza order application as needed based on your current understanding of server-side scripting and web development best practices.
 // Create a database to record pizza order information. Your design should follow best practices for your selected database platform (relational SQL database, document database, or key-value database).
@@ -156,13 +141,13 @@ router.post("/", async (request, response) => {
             let sides = "";
 
             if (salad) {
-                sides += "salad ";
+                sides += "Salad ";
             }
             if (wings) {
-                sides += "wings ";
+                sides += "Wings ";
             }
             if (fries) {
-                sides += "fires ";
+                sides += "Fries ";
             }
             if (sides === "") {
                 sides += "None";
@@ -477,7 +462,7 @@ async function insertNewOrder(user, toppings, size, sides, notes) {
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTIONORDER);
     const document = {
-        users_id: `${user._id}`,
+        users_id: `${user}`,
         topping: toppings,
         size: size,
         side: sides,
