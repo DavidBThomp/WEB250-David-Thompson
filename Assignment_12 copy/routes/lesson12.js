@@ -79,6 +79,8 @@ router.post("/", async (request, response) => {
     let userid = "";
     let username = request.body.username;
     let password = request.body.password;
+
+    // Buttons
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
     let deleteLogin = request.body["deleteLogin"];
@@ -87,7 +89,8 @@ router.post("/", async (request, response) => {
     let forgetme = request.body["forget-me"];
     let reload = request.body["reload"];
     let order = request.body["order"];
-
+    let getLogin = request.body["getLogin"];
+    let getAllLogin = request.body["getAllLogin"];
 
     let inputConfirmed = "";
 
@@ -139,6 +142,8 @@ router.post("/", async (request, response) => {
                 response.cookie("username", username);
                 response.send(result)
             }
+
+        } else if (getLogin) {
 
         } else if (deleteLogin) {
             let phone = request.body.phone;
