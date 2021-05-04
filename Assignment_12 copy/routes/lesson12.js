@@ -44,6 +44,7 @@ const {
 } = require("express");
 const router = express.Router();
 
+
 // Requires a Mongo installation to manage the database.
 // Use of a Docker container is recommended.
 // See https://en.wikiversity.org/wiki/Docker/MongoDB .
@@ -189,6 +190,8 @@ router.post("/", async (request, response) => {
             toppings = toppings.trim();
 
             let user = request.session.userid;
+
+
 
             await insertNewOrder(user, toppings, size, sides, notes);
 
