@@ -484,6 +484,19 @@ async function usernameExists(username) {
     return !!(count);
 }
 
+async function phoneExists(phone) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+    const filter = {
+        phone: phone
+    };
+    const count = await collection.countDocuments(filter);
+    await client.close();
+    return !!(count);
+}
+
 async function insertNewOrder(user, toppings, size, sides, price, notes) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
@@ -572,24 +585,56 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
     const employee = {
         username: "employee",
         password: "$2b$10$3a/yKpp2TDIkCl8MbQe1nelRhJDox0TleZodsQXcKq2yRQV4BDCPu",
+        fName: "firstName employee",
+        lName: "lastName employee",
+        address: "123 Employee Ave",
+        city: "Employee City",
+        state: "Employee State",
+        postalCode: "123456",
+        email: "employee@gmail.com",
+        phone: "12345678910",
         status: "employee"
     };
 
     const manager = {
         username: "manager",
         password: "$2b$10$hx9gYevjOrJSCgytWB8GWOPhU5IkF4sQSZVJafyFJfIv1nIMWkh7G",
+        fName: "firstName manager",
+        lName: "lastName manager",
+        address: "123 Manager Ave",
+        city: "Manager City",
+        state: "Manager State",
+        postalCode: "123456",
+        email: "Manager@gmail.com",
+        phone: "12345678910",
         status: "manager"
     };
 
     const disabledUser = {
         username: "disabled user",
         password: "$2b$10$.IagCDjlAqKJgwmrn.N2a.PUx.Fw41i0i3zK00N.OKuqf0JkvCgzG",
+        fName: "firstName disabled",
+        lName: "lastName disabled",
+        address: "123 disabled Ave",
+        city: "disabled City",
+        state: "disabled State",
+        postalCode: "123456",
+        email: "disabled@gmail.com",
+        phone: "12345678910",
         status: "disabled"
     };
 
     const customer = {
         username: "customer",
         password: "$2b$10$Ue/NxrUKcDjx7VYz38RKSuIweaemYH8g52qops.iJfyaGrDh7LAv.",
+        fName: "firstName customer",
+        lName: "lastName customer",
+        address: "123 Customer Ave",
+        city: "Customer City",
+        state: "Customer State",
+        postalCode: "123456",
+        email: "customer@gmail.com",
+        phone: "12345678910",
         status: "customer"
     }
 
