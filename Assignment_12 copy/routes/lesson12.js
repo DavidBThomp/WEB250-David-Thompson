@@ -26,7 +26,7 @@
 
 
 // TO - DO
-// Redirect Users to their pages and lock out users if access is denied
+// Allow full control of side via Manager page (Update accounts, Delete Accounts, Get accounts) - Right now they can create privlidged accounts
 
 const express = require("express");
 const fs = require("fs");
@@ -81,6 +81,7 @@ router.post("/", async (request, response) => {
     let password = request.body.password;
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
+    let deleteLogin = request.body["deleteLogin"];
     let login = request.body["log-in"];
     let logout = request.body["log-out"];
     let forgetme = request.body["forget-me"];
@@ -138,6 +139,13 @@ router.post("/", async (request, response) => {
                 response.send(result)
             }
 
+        } else if (deleteLogin) {
+            if (!await phoneExists(phone)) {
+                let phone = request.body.phone;
+                await deleteUser(phone);
+
+                // Show manager they deleted user
+            }
         } else if (order) {
             let salad = request.body.salad;
             let wings = request.body.wings;
@@ -279,9 +287,6 @@ router.post("/", async (request, response) => {
                         result = build_formEmployee(username, userid, inputConfirmed);
                     } else if (status === "manager") {
                         result = build_formManager(username, userid, inputConfirmed);
-                    } else if (status === 'disable') {
-                        inputConfirmed = "This account has been disabled."
-                        result = build_formCustomer(username, userid, inputConfirmed);
                     } else if (status === "customer") {
                         result = build_formCustomer(username, userid, inputConfirmed);
                     }
@@ -621,20 +626,6 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
         status: "manager"
     };
 
-    const disabledUser = {
-        username: "disabled user",
-        password: "$2b$10$.IagCDjlAqKJgwmrn.N2a.PUx.Fw41i0i3zK00N.OKuqf0JkvCgzG",
-        fName: "firstName disabled",
-        lName: "lastName disabled",
-        address: "123 disabled Ave",
-        city: "disabled City",
-        state: "disabled State",
-        postalCode: "123456",
-        email: "disabled@gmail.com",
-        phone: "12345678910",
-        status: "disabled"
-    };
-
     const customer = {
         username: "customer",
         password: "$2b$10$Ue/NxrUKcDjx7VYz38RKSuIweaemYH8g52qops.iJfyaGrDh7LAv.",
@@ -653,8 +644,6 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
     await collection.insertOne(employee);
 
     await collection.insertOne(manager);
-
-    await collection.insertOne(disabledUser);
 
     await collection.insertOne(customer);
 
@@ -713,6 +702,14 @@ async function findBaseUser(username) {
     return user;
 }
 
+
+async function deleteUser(phone) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+}
 
 // Use this function to generate hashed passwords to save in 
 // the users list or a database.
