@@ -88,6 +88,7 @@ router.post("/", async (request, response) => {
     let reload = request.body["reload"];
     let order = request.body["order"];
 
+
     let inputConfirmed = "";
 
 
@@ -140,11 +141,14 @@ router.post("/", async (request, response) => {
             }
 
         } else if (deleteLogin) {
-            if (!await phoneExists(phone)) {
-                let phone = request.body.phone;
+            let phone = request.body.phone;
+            if (await phoneExists(phone)) {
+                console.log('phoneexists works')
                 await deleteUser(phone);
 
                 // Show manager they deleted user
+            } else {
+                console.log("Phone Number doesn't exist")
             }
         } else if (order) {
             let salad = request.body.salad;
@@ -709,6 +713,12 @@ async function deleteUser(phone) {
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
 
+    const filter = {
+        phone: phone
+    };
+
+    await collection.deleteOne(filter);
+    await client.close();
 }
 
 // Use this function to generate hashed passwords to save in 
