@@ -143,10 +143,13 @@ router.post("/", async (request, response) => {
         } else if (deleteLogin) {
             let phone = request.body.phone;
             if (await phoneExists(phone)) {
-                console.log('phoneexists works')
                 await deleteUser(phone);
+                inputConfirmed = `Account assocaited with phone number: "${phone}" deleted.`;
 
-                // Show manager they deleted user
+                result = build_formManager(username, userid, inputConfirmed);
+                response.send(result)
+
+                // Keep manager logged in
             } else {
                 console.log("Phone Number doesn't exist")
             }
