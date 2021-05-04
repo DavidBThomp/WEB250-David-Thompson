@@ -126,7 +126,19 @@ router.post("/", async (request, response) => {
             let wings = request.body.wings;
             let fries = request.body.fries;
 
+            
             let size = request.body.size;
+
+            var price = 0;
+            if (size === "Small") {
+                price += +5.99
+            } else if (size === "Medium") {
+                price += +7.99
+            } else if (size === "Large") {
+                price += +9.99
+            } else if (size === "X-Large") {
+                price += +12.99
+            }
 
             let pepperoni = request.body.pepperoni;
             let bacon = request.body.bacon;
@@ -138,17 +150,22 @@ router.post("/", async (request, response) => {
             let mushrooms = request.body.mushrooms;
 
             let notes = request.body.notes;
+            notes = notes.trim();
             
             let sides = "";
 
+
             if (salad) {
                 sides += "Salad ";
+                price += 5.99;
             }
             if (wings) {
                 sides += "Wings ";
+                price += 3.99;
             }
             if (fries) {
                 sides += "Fries ";
+                price += 4.99;
             }
             if (sides === "") {
                 sides += "None";
@@ -160,27 +177,35 @@ router.post("/", async (request, response) => {
 
             if (pepperoni) {
                 toppings += "Pepperoni ";
+                price += 0.99;
             }
             if (bacon) {
                 toppings += "Bacon ";
+                price += 0.99;
             }
             if (sausage) {
                 toppings += "Sausage ";
+                price += 0.99;
             }
             if (pineapple) {
                 toppings += "Pineapple ";
+                price += 0.99;
             }
             if (onions) {
                 toppings += "Onions ";
+                price += 0.99;
             }
             if (olives) {
                 toppings += "Olives ";
+                price += 0.99;
             }
             if (bellpepper) {
                 toppings += "Bellpepper ";
+                price += 0.99;
             }
             if (mushrooms) {
                 toppings += "Mushrooms ";
+                price += 0.99;
             }
     
             if (toppings === "") {
@@ -191,9 +216,9 @@ router.post("/", async (request, response) => {
 
             let user = request.session.userid;
 
+            await insertNewOrder(user, toppings, size, sides, price, notes);
 
-
-            await insertNewOrder(user, toppings, size, sides, notes);
+            // response.send();
 
 
             
@@ -459,7 +484,7 @@ async function usernameExists(username) {
     return !!(count);
 }
 
-async function insertNewOrder(user, toppings, size, sides, notes) {
+async function insertNewOrder(user, toppings, size, sides, price, notes) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -469,7 +494,7 @@ async function insertNewOrder(user, toppings, size, sides, notes) {
         topping: toppings,
         size: size,
         side: sides,
-        price: "5.99",
+        price: price.toFixed(2),
         notes: notes
     };
     await collection.insertOne(document);
