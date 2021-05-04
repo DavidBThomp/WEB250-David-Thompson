@@ -79,7 +79,6 @@ router.post("/", async (request, response) => {
     let userid = "";
     let username = request.body.username;
     let password = request.body.password;
-    let status = request.body.status;
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
     let login = request.body["log-in"];
@@ -107,7 +106,18 @@ router.post("/", async (request, response) => {
         if (createLogin) {
             if (!await usernameExists(username)) {
                 let generatedHashedPassword = generateHashedPassword(password);
-                await insertNewUser(username, generatedHashedPassword, status);
+                let status = request.body.status;
+                let fName = request.body.fName;
+                let lName = request.body.lName;
+                let address = request.body.address;
+                let city = request.body.city;
+                let state = request.body.state;
+                let postCode = request.body.postCode;
+                let email = request.body.email;
+                let phone = request.body.phone;
+
+                let defaultstatus = "customer";
+                await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
                 username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
                 result = build_form(username, userid, inputConfirmed);
@@ -515,15 +525,23 @@ async function insertNewOrder(user, toppings, size, sides, price, notes) {
 }
 
 
-async function insertNewUser(username, password, status) {
+async function insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
     const document = {
         username: username,
-        password: password,
-        status: status
+        password: generatedHashedPassword,
+        fName: fName,
+        lName: lName,
+        address: address,
+        city: city,
+        state: state,
+        postalCode: postCode,
+        email: email,
+        phone: phone,
+        status: defaultstatus
     };
     await collection.insertOne(document);
     await client.close();
