@@ -118,6 +118,11 @@ router.post("/", async (request, response) => {
 
 
                 let defaultstatus = "customer";
+
+                if (status != null) {
+                    defaultstatus = status;
+                }
+
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
                 username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
