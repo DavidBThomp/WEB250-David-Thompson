@@ -124,6 +124,7 @@ router.post("/", async (request, response) => {
                 }
 
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
+
                 username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
                 result = build_form(username, userid, inputConfirmed);
@@ -471,20 +472,6 @@ async function getOrders(collectionOrder) {
                 resolve(documents);
         });
     });
-}
-
-async function userExists(username, password) {
-    const client = mongodb.MongoClient(HOST);
-    await client.connect();
-    const database = client.db(DATABASE);
-    const collection = database.collection(COLLECTION);
-    const filter = {
-        username: username,
-        password: password
-    };
-    const count = await collection.countDocuments(filter);
-    await client.close();
-    return !!(count);
 }
 
 async function usernameExists(username) {
