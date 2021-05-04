@@ -104,7 +104,8 @@ router.post("/", async (request, response) => {
         }
 
         if (createLogin) {
-            if (!await usernameExists(username)) {
+            let phone = request.body.phone;
+            if (!await phoneExists(phone)) {
                 let generatedHashedPassword = generateHashedPassword(password);
                 let status = request.body.status;
                 let fName = request.body.fName;
@@ -114,7 +115,7 @@ router.post("/", async (request, response) => {
                 let state = request.body.state;
                 let postCode = request.body.postCode;
                 let email = request.body.email;
-                let phone = request.body.phone;
+
 
                 let defaultstatus = "customer";
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
@@ -124,7 +125,7 @@ router.post("/", async (request, response) => {
                 response.cookie("username", username);
                 response.send(result);
             } else {
-                inputConfirmed = "Username already exists or is taken, please create unique username and password.";
+                inputConfirmed = "Phone Number already linked to existing account, please contact admin for help.";
                 username = null;
                 result = build_form(username, userid, inputConfirmed);
                 response.cookie("username", username);
