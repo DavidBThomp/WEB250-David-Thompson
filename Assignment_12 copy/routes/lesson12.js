@@ -126,7 +126,7 @@ router.post("/", async (request, response) => {
             let wings = request.body.wings;
             let fries = request.body.fries;
 
-            
+
             let size = request.body.size;
 
             var price = 0;
@@ -151,7 +151,7 @@ router.post("/", async (request, response) => {
 
             let notes = request.body.notes;
             notes = notes.trim();
-            
+
             let sides = "";
 
 
@@ -170,7 +170,7 @@ router.post("/", async (request, response) => {
             if (sides === "") {
                 sides += "None";
             }
-    
+
             sides = sides.trim();
 
             let toppings = "";
@@ -207,11 +207,11 @@ router.post("/", async (request, response) => {
                 toppings += "Mushrooms ";
                 price += 0.99;
             }
-    
+
             if (toppings === "") {
                 toppings += "None";
             }
-    
+
             toppings = toppings.trim();
 
             let user = request.session.userid;
@@ -221,7 +221,7 @@ router.post("/", async (request, response) => {
             // response.send();
 
 
-            
+
         } else if (updateLogin) {
 
             if (await usernameExists(username)) {
@@ -657,7 +657,7 @@ async function findBaseUser(username) {
     return user;
 }
 
- 
+
 // Use this function to generate hashed passwords to save in 
 // the users list or a database.
 // Does this have to be async or will run instantly due to hoisting?       -----------------------------------------------------------------

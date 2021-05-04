@@ -18,15 +18,52 @@
             </p>
             <p><label for="password">Password:</label>
                 <input type="text" id="password" name="password" value="">
-                <p>
-                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;
-                    <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
-                    <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
-                    <input type="submit" id="reload" name="reload" value="Reload">
-                </p>
+            </p>
+            <p>
+                <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;
+                <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
+                <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
+                <input type="submit" id="reload" name="reload" value="Reload">
+            </p>
         </form>
         <hr>
         {{{table}}}
+
+        <h1>Create Account</h1>
+        <form method="POST">
+            <p><label for="userName">Username:</label>
+                <input type="text" id="username" name="username" value="{{username}}">
+            </p>
+            <p><label for="password">Password:</label>
+                <input type="text" id="password" name="password" value="">
+            </p>
+            <p><label for="firstName">First Name:</label><br>
+                <input type="text" id="firstName" name="firstName">
+            </p>
+            <p><label for="lastName">Last Name:</label><br>
+                <input type="text" id="lastName" name="lastName">
+            </p>
+            <p><label for="address">Address:</label><br>
+                <input type="text" id="address" name="address">
+            </p>
+            <p><label for="city">City:</label><br>
+                <input type="text" id="city" name="city">
+            </p>
+            <p><label for="state">State:</label><br>
+                <input type="text" id="state" name="state">
+            </p>
+            <p><label for="postCode">Postal Code:</label><br>
+                <input type="number" id="postCode" name="postCode">
+            </p>
+            <p><label for="email">Email:</label><br>
+                <input type="email" id="email" name="email">
+            </p>
+            <p><label for="phone">Phone:</label><br>
+                <input type="text" id="phone" name="phone">
+            </p>
+            <input type="submit" id="createLogin" name="createLogin" value="Create Account">
+
+        </form>
     </div>
 
 
