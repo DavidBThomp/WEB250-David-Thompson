@@ -170,10 +170,16 @@ router.post("/", async (request, response) => {
             if (await phoneExists(phone)) {
                 let user = await findSingleUserPhone(phone);
                 let orders = await getUserOrders(user._id);
-                console.log(orders);
 
 
-                inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
+                inputConfirmed = `<p>FirstName: ${user.fName}<br>Last Name:${user.lName}<br>Address: ${user.address}<br>City: ${user.city}<br>State: ${user.state}<br>Postal Code: ${user.postalCode}<br>Email: ${user.email}<br>Phone: ${user.phone}<br>Status: ${user.status}</p><br><br>`;
+                inputConfirmed += `<h2>Orders</h2>`
+
+                var i;
+                for (i = 0; i < orders.length; i++) {
+                    inputConfirmed+=`<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><<br>`
+                }
+
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
@@ -234,9 +240,9 @@ router.post("/", async (request, response) => {
                 } else if (status === "customer") {
                     result = build_formCustomer(username, userid, inputConfirmed);
                 }
-                
-                
-                
+
+
+
                 response.cookie("username", username);
                 response.send(result);
             } else {
@@ -876,7 +882,7 @@ async function getUserOrders(userid) {
         users_id: `${userid}`
     };
 
-    let orders = await collection.find(filter).toArray(function(err, result) {
+    let orders = await collection.find(filter).toArray(function (err, result) {
         if (err) throw err;
         orders = result;
     });
