@@ -78,6 +78,7 @@ router.get("/", async (request, response) => {
 router.post("/", async (request, response) => {
     let result = "";
     let userid = "";
+    let getResults = "";
     let username = request.body.username;
     let password = request.body.password;
 
@@ -92,6 +93,7 @@ router.post("/", async (request, response) => {
     let reload = request.body["reload"];
     let order = request.body["order"];
     let getAccount = request.body["getAccount"];
+    let getAccountCust = request.body["getAccountCust"];
     let getAllAccounts = request.body["getAllAccounts"];
     let updateAccount = request.body["updateLogin"];
 
@@ -148,6 +150,32 @@ router.post("/", async (request, response) => {
                 result = build_formManager(username, userid, inputConfirmed);
                 response.send(result)
             }
+
+        } else if (getAccountCust) {
+            let sessionUserID = request.session.userid;
+            let sessionUser = await findSingleUserID(sessionUserID);
+            let phone = sessionUser.phone;
+            let user = await findSingleUserPhone(phone);
+            let orders = await getUserOrders(user._id);
+
+
+            inputConfirmed = `<p>FirstName: ${user.fName}<br>Last Name:${user.lName}<br>Address: ${user.address}<br>City: ${user.city}<br>State: ${user.state}<br>Postal Code: ${user.postalCode}<br>Email: ${user.email}<br>Phone: ${user.phone}<br>Status: ${user.status}</p><br><br>`;
+            inputConfirmed += `<h2>Orders</h2>`;
+
+            var i;
+            let fullPrice = 0;
+            for (i = 0; i < orders.length; i++) {
+                inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
+                fullPrice += +orders[i].price
+                console.log(fullPrice);
+            }
+            inputConfirmed += `Total: ${fullPrice}<br>Total + Tax: ${fullPrice}<hr>`
+
+            let sessionID = request.session.userid;
+            username = request.cookies.username;
+            userid = sessionID;
+            result = build_formCustomer(username, userid, inputConfirmed, getResults);
+            response.send(result);
 
         } else if (getAllAccounts) {
 
@@ -237,7 +265,7 @@ router.post("/", async (request, response) => {
                 } else if (status === "manager") {
                     result = build_formManager(username, userid, inputConfirmed);
                 } else if (status === "customer") {
-                    result = build_formCustomer(username, userid, inputConfirmed);
+                    result = build_formCustomer(username, userid, inputConfirmed, getResults);
                 }
 
 
@@ -484,8 +512,6 @@ router.post("/", async (request, response) => {
 
             response.redirect(request.originalUrl);
 
-        } else if (order) {
-
         }
 
     } catch (error) {
@@ -535,7 +561,7 @@ function build_formEmployee(username, userid, inputConfirmed) {
         session: session,
         welcome: welcome,
         username: username,
-        table: inputConfirmed
+        table: inputConfirmed,
     }
     result = template(data);
     return result;
