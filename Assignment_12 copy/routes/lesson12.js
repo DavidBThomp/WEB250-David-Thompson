@@ -304,7 +304,7 @@ router.post("/", async (request, response) => {
                 let postCode = request.body.postCode;
                 let email = request.body.email;
 
-                
+
                 let defaultstatus = "customer";
 
                 if (status != null) {
