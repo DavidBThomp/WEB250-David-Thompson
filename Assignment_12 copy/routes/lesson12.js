@@ -168,7 +168,6 @@ router.post("/", async (request, response) => {
             for (i = 0; i < orders.length; i++) {
                 inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
-                console.log(fullPrice);
             }
             inputConfirmed += `Total: ${fullPrice}<br>Total + Tax: ${fullPrice}<hr>`
 
