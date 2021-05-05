@@ -80,6 +80,8 @@ router.post("/", async (request, response) => {
     let username = request.body.username;
     let password = request.body.password;
 
+    // let userid = request.session.userid;
+
     // Buttons
     let createLogin = request.body["createLogin"];
     let updateLogin = request.body["updateLogin"];
@@ -121,7 +123,6 @@ router.post("/", async (request, response) => {
                 let postCode = request.body.postCode;
                 let email = request.body.email;
 
-
                 let defaultstatus = "customer";
 
                 if (status != null) {
@@ -130,21 +131,24 @@ router.post("/", async (request, response) => {
 
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
 
-                username = null;
                 inputConfirmed = "Login and Password info recorded, please login again.";
-                result = build_form(username, userid, inputConfirmed);
-                response.cookie("username", username);
+                result = build_formManager(username, userid, inputConfirmed);
                 response.send(result);
+
             } else {
                 inputConfirmed = "Phone Number already linked to existing account, please contact admin for help.";
                 username = null;
-                result = build_form(username, userid, inputConfirmed);
-                response.cookie("username", username);
+                result = build_formManager(username, userid, inputConfirmed);
                 response.send(result)
             }
 
         } else if (getLogin) {
-
+            phone = request.body.phoneGet;
+            if (await phoneExists(phone)) {
+            console.log("Phone Exists")
+            let user = await findSingleUserPhone(phone);
+            console.log(user.phone, user.status);
+            }
         } else if (deleteLogin) {
             let phone = request.body.phone;
             if (await phoneExists(phone)) {
@@ -156,7 +160,9 @@ router.post("/", async (request, response) => {
 
                 // Keep manager logged in
             } else {
-                console.log("Phone Number doesn't exist")
+                inputConfirmed = `Account assocaited with phone number: "${phone}" doesn't exist.`;
+                result = build_formManager(username, userid, inputConfirmed);
+                response.send(result)
             }
         } else if (order) {
             let salad = request.body.salad;
@@ -259,7 +265,7 @@ router.post("/", async (request, response) => {
 
 
 
-        } else if (updateLogin) {
+        } else if (updateLogin) { // Need to pin to create account
 
             if (await usernameExists(username)) {
                 await updateUser(username, generatedHashedPassword, status);
@@ -692,6 +698,21 @@ async function findSingleUser(username) {
 
     const filter = {
         username: username
+    };
+
+    let user = await collection.findOne(filter);
+    await client.close();
+    return user;
+}
+
+async function findSingleUserPhone(phone) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {
+        phone: phone
     };
 
     let user = await collection.findOne(filter);
