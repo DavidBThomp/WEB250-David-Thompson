@@ -91,7 +91,7 @@ router.post("/", async (request, response) => {
     let forgetme = request.body["forget-me"];
     let reload = request.body["reload"];
     let order = request.body["order"];
-    let getLogin = request.body["getLogin"];
+    let getAccount = request.body["getAccount"];
     let getAllLogin = request.body["getAllLogin"];
 
     let inputConfirmed = "";
@@ -148,12 +148,16 @@ router.post("/", async (request, response) => {
                 response.send(result)
             }
 
-        } else if (getLogin) {
+        } else if (getAccount) {
             phone = request.body.phoneGet;
             if (await phoneExists(phone)) {
-            console.log("Phone Exists")
             let user = await findSingleUserPhone(phone);
-            console.log(user.phone, user.status);
+            inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
+            let sessionID = request.session.userid;
+            username = request.cookies.username;
+            userid = sessionID;
+            result = build_formManager(username, userid, inputConfirmed);
+            response.send(result);
             }
         } else if (deleteLogin) {
             let phone = request.body.phone;
