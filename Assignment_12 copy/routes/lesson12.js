@@ -26,7 +26,7 @@
 
 
 // TO - DO
-// Verify Manager has full control over all forms
+// Verify Manager has full control over all forms - Retrieve order information with getAccount Info - This will also be used for users as well
 // Make sure all pages direct users to correct follow up page
 // Add correct information to follow up page
 
@@ -169,7 +169,17 @@ router.post("/", async (request, response) => {
             phone = request.body.phoneGet;
             if (await phoneExists(phone)) {
                 let user = await findSingleUserPhone(phone);
+                let orders = await getUserOrders(user._id);
+
+
                 inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                result = build_formManager(username, userid, inputConfirmed);
+                response.send(result);
+            } else {
+                inputConfirmed = `This phone number has no account associated with it.`
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
@@ -193,15 +203,21 @@ router.post("/", async (request, response) => {
             }
         } else if (order) {
 
+            // Gets user account based on if logged in, or if phone value has input (Manager and employee pages)
             username = request.cookies.username;
             let user = await findSingleUser(username);
 
             phone = request.body.phoneOrder;
 
-
             if ( (phone === "") || (phone === null) || (phone === undefined) ) {
                 phone = user.phone;
             }
+
+            user = await findSingleUserPhone(phone)
+            console.log(user._id);
+            let userid = user._id;
+
+
 
             let salad = request.body.salad;
             let wings = request.body.wings;
@@ -294,11 +310,6 @@ router.post("/", async (request, response) => {
             }
 
             toppings = toppings.trim();
-
-            let userid = request.session.userid;
-
-
-
 
             await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
 
@@ -691,7 +702,7 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
         state: "Employee State",
         postalCode: "123456",
         email: "employee@gmail.com",
-        phone: "12345678910",
+        phone: "12345678911",
         status: "employee"
     };
 
@@ -705,7 +716,7 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
         state: "Manager State",
         postalCode: "123456",
         email: "Manager@gmail.com",
-        phone: "12345678910",
+        phone: "12345678912",
         status: "manager"
     };
 
@@ -719,7 +730,7 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
         state: "Customer State",
         postalCode: "123456",
         email: "customer@gmail.com",
-        phone: "12345678910",
+        phone: "12345678913",
         status: "customer"
     }
 
@@ -791,6 +802,22 @@ async function findSingleUserPhone(phone) {
     let user = await collection.findOne(filter);
     await client.close();
     return user;
+}
+
+async function getUserOrders(userid) {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        users_id: userid
+    };
+
+    let orders = await collection.find(filter);
+    await client.close();
+    console.log(order);
+    return orders;
 }
 
 async function findBaseUser(username) {
