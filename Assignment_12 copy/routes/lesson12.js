@@ -26,7 +26,6 @@
 
 
 // TO - DO
-// Verify Manager has full control over all forms - Retrieve order information with getAccount Info - This will also be used for users as well
 // Make sure all pages direct users to correct follow up page
 // Add correct information to follow up page
 
