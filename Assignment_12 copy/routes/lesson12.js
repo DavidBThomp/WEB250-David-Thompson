@@ -84,7 +84,6 @@ router.post("/", async (request, response) => {
 
     // Buttons
     let createLogin = request.body["createLogin"];
-    let updateLogin = request.body["updateLogin"];
     let deleteLogin = request.body["deleteLogin"];
     let login = request.body["log-in"];
     let logout = request.body["log-out"];
@@ -93,6 +92,7 @@ router.post("/", async (request, response) => {
     let order = request.body["order"];
     let getAccount = request.body["getAccount"];
     let getAllAccounts = request.body["getAllAccounts"];
+    let updateAccount = request.body["updateLogin"];
 
     let inputConfirmed = "";
 
@@ -166,13 +166,13 @@ router.post("/", async (request, response) => {
         } else if (getAccount) {
             phone = request.body.phoneGet;
             if (await phoneExists(phone)) {
-            let user = await findSingleUserPhone(phone);
-            inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
-            let sessionID = request.session.userid;
-            username = request.cookies.username;
-            userid = sessionID;
-            result = build_formManager(username, userid, inputConfirmed);
-            response.send(result);
+                let user = await findSingleUserPhone(phone);
+                inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                result = build_formManager(username, userid, inputConfirmed);
+                response.send(result);
             }
         } else if (deleteLogin) {
             let phone = request.body.phone;
@@ -290,19 +290,41 @@ router.post("/", async (request, response) => {
 
 
 
-        } else if (updateLogin) { // Need to pin to create account
+        } else if (updateAccount) {
 
-            if (await usernameExists(username)) {
-                await updateUser(username, generatedHashedPassword, status);
-                let userid = await updateUser(username, generatedHashedPassword, status);
-                username = null;
-                inputConfirmed = "User login has been updated, please login again."
+            if (await phoneExists(phone)) {
+
+                let generatedHashedPassword = generateHashedPassword(password);
+                let status = request.body.status;
+                let fName = request.body.fName;
+                let lName = request.body.lName;
+                let address = request.body.address;
+                let city = request.body.city;
+                let state = request.body.state;
+                let postCode = request.body.postCode;
+                let email = request.body.email;
+
+                
+                let defaultstatus = "customer";
+
+                if (status != null) {
+                    defaultstatus = status;
+                }
+
+                await updateUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
+
+                inputConfirmed = `User login for phone number ${phone} has been updated.`;
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
                 result = build_form(username, userid, inputConfirmed);
                 response.cookie("username", username);
                 response.send(result);
             } else {
-                username = null;
-                inputConfirmed = "User doesn't exist, please submit valid username."
+                inputConfirmed = "Phone number doesn't exits."
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
                 result = build_form(username, userid, inputConfirmed);
                 response.cookie("username", username);
                 response.send(result);
@@ -693,21 +715,29 @@ async function insertBaseUsers() { // Clean up and make insert multiple users
     await client.close();
 }
 
-async function updateUser(username, password, status) {
+async function updateUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTION);
 
     const filter = {
-        username: username
+        phone: phone
     };
 
     const update = {
         "$set": {
             "username": username,
-            "password": password,
-            "status": status
+            "password": generatedHashedPassword,
+            "fName": fName,
+            "lName": lName,
+            "address": address,
+            "city": city,
+            "state": state,
+            "postalCode": postCode,
+            "email": email,
+            "phone": phone,
+            "status": defaultstatus
         }
     };
 
