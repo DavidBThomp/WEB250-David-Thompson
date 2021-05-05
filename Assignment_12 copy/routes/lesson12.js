@@ -156,7 +156,7 @@ router.post("/", async (request, response) => {
 
             var i;
             for (i = 0; i < allUsers.length; i++) {
-                inputConfirmed += (`${allUsers[i].phone},`);
+                inputConfirmed += (`${allUsers[i].phone}<br>`);
             }
 
             username = request.cookies.username;
