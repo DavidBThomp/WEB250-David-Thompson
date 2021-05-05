@@ -216,7 +216,6 @@ router.post("/", async (request, response) => {
             // User ID from the phone number
             user = await findSingleUserPhone(phone)
 
-            console.log(user);
             if (user === null) {
                 inputConfirmed = "Phone number doesn't exist, using your account phone number (Manager/Employee)."
                 let sessionID = request.session.userid;
