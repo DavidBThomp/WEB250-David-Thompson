@@ -209,132 +209,158 @@ router.post("/", async (request, response) => {
 
             phone = request.body.phoneOrder;
 
-            if ( (phone === "") || (phone === null) || (phone === undefined) ) {
+            if ((phone === "") || (phone === null) || (phone === undefined)) {
                 phone = user.phone;
             }
 
             // User ID from the phone number
             user = await findSingleUserPhone(phone)
-            let userid = user._id;
+
+            console.log(user);
+            if (user === null) {
+                inputConfirmed = "Phone number doesn't exist, using your account phone number (Manager/Employee)."
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+
+
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                let status = sessionUser.status;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+                
+                
+                
+                response.cookie("username", username);
+                response.send(result);
+            } else {
+                let userid = user._id;
 
 
 
-            let salad = request.body.salad;
-            let wings = request.body.wings;
-            let fries = request.body.fries;
+                let salad = request.body.salad;
+                let wings = request.body.wings;
+                let fries = request.body.fries;
 
 
-            let size = request.body.size;
+                let size = request.body.size;
 
-            var price = 0;
-            if (size === "Small") {
-                price += +5.99
-            } else if (size === "Medium") {
-                price += +7.99
-            } else if (size === "Large") {
-                price += +9.99
-            } else if (size === "X-Large") {
-                price += +12.99
+                var price = 0;
+                if (size === "Small") {
+                    price += +5.99
+                } else if (size === "Medium") {
+                    price += +7.99
+                } else if (size === "Large") {
+                    price += +9.99
+                } else if (size === "X-Large") {
+                    price += +12.99
+                }
+
+                let pepperoni = request.body.pepperoni;
+                let bacon = request.body.bacon;
+                let sausage = request.body.sausage;
+                let pineapple = request.body.pineapple;
+                let onions = request.body.onions;
+                let olives = request.body.olives;
+                let bellpepper = request.body.bellpepper;
+                let mushrooms = request.body.mushrooms;
+
+                let notes = request.body.notes;
+                notes = notes.trim();
+
+                let sides = "";
+
+
+                if (salad) {
+                    sides += "Salad ";
+                    price += 5.99;
+                }
+                if (wings) {
+                    sides += "Wings ";
+                    price += 3.99;
+                }
+                if (fries) {
+                    sides += "Fries ";
+                    price += 4.99;
+                }
+                if (sides === "") {
+                    sides += "None";
+                }
+
+                sides = sides.trim();
+
+                let toppings = "";
+
+                if (pepperoni) {
+                    toppings += "Pepperoni ";
+                    price += 0.99;
+                }
+                if (bacon) {
+                    toppings += "Bacon ";
+                    price += 0.99;
+                }
+                if (sausage) {
+                    toppings += "Sausage ";
+                    price += 0.99;
+                }
+                if (pineapple) {
+                    toppings += "Pineapple ";
+                    price += 0.99;
+                }
+                if (onions) {
+                    toppings += "Onions ";
+                    price += 0.99;
+                }
+                if (olives) {
+                    toppings += "Olives ";
+                    price += 0.99;
+                }
+                if (bellpepper) {
+                    toppings += "Bellpepper ";
+                    price += 0.99;
+                }
+                if (mushrooms) {
+                    toppings += "Mushrooms ";
+                    price += 0.99;
+                }
+
+                if (toppings === "") {
+                    toppings += "None";
+                }
+
+                toppings = toppings.trim();
+
+                await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
+
+                // Get user status and update page based on status
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                let status = sessionUser.status;
+                inputConfirmed = `Order for phone number: "${phone}" has been input.`
+
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+
+                response.cookie("username", username);
+                response.send(result);
             }
-
-            let pepperoni = request.body.pepperoni;
-            let bacon = request.body.bacon;
-            let sausage = request.body.sausage;
-            let pineapple = request.body.pineapple;
-            let onions = request.body.onions;
-            let olives = request.body.olives;
-            let bellpepper = request.body.bellpepper;
-            let mushrooms = request.body.mushrooms;
-
-            let notes = request.body.notes;
-            notes = notes.trim();
-
-            let sides = "";
-
-
-            if (salad) {
-                sides += "Salad ";
-                price += 5.99;
-            }
-            if (wings) {
-                sides += "Wings ";
-                price += 3.99;
-            }
-            if (fries) {
-                sides += "Fries ";
-                price += 4.99;
-            }
-            if (sides === "") {
-                sides += "None";
-            }
-
-            sides = sides.trim();
-
-            let toppings = "";
-
-            if (pepperoni) {
-                toppings += "Pepperoni ";
-                price += 0.99;
-            }
-            if (bacon) {
-                toppings += "Bacon ";
-                price += 0.99;
-            }
-            if (sausage) {
-                toppings += "Sausage ";
-                price += 0.99;
-            }
-            if (pineapple) {
-                toppings += "Pineapple ";
-                price += 0.99;
-            }
-            if (onions) {
-                toppings += "Onions ";
-                price += 0.99;
-            }
-            if (olives) {
-                toppings += "Olives ";
-                price += 0.99;
-            }
-            if (bellpepper) {
-                toppings += "Bellpepper ";
-                price += 0.99;
-            }
-            if (mushrooms) {
-                toppings += "Mushrooms ";
-                price += 0.99;
-            }
-
-            if (toppings === "") {
-                toppings += "None";
-            }
-
-            toppings = toppings.trim();
-
-            await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
-
-            // Get user status and update page based on status
-            let sessionUserID = request.session.userid;
-            let sessionUser = await findSingleUserID(sessionUserID);
-            let status = sessionUser.status;
-            inputConfirmed = `Order for phone number: "${phone}" has been input.`
-
-
-            // Response
-            let sessionID = request.session.userid;
-            username = request.cookies.username;
-            userid = sessionID;
-
-            if (status === "employee") {
-                result = build_formEmployee(username, userid, inputConfirmed);
-            } else if (status === "manager") {
-                result = build_formManager(username, userid, inputConfirmed);
-            } else if (status === "customer") {
-                result = build_formCustomer(username, userid, inputConfirmed);
-            }
-            
-            response.cookie("username", username);
-            response.send(result);
 
 
         } else if (updateAccount) {
