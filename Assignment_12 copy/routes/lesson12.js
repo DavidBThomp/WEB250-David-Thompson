@@ -92,7 +92,7 @@ router.post("/", async (request, response) => {
     let reload = request.body["reload"];
     let order = request.body["order"];
     let getAccount = request.body["getAccount"];
-    let getAllLogin = request.body["getAllLogin"];
+    let getAllAccounts = request.body["getAllAccounts"];
 
     let inputConfirmed = "";
 
@@ -148,7 +148,16 @@ router.post("/", async (request, response) => {
                 response.send(result)
             }
 
-        } else if (getAccount) {
+        } else if (getAllAccounts) {
+
+            let allUsers = await getAllAccountsInfo();
+
+            username = request.cookies.username;
+            userid = sessionID;
+            result = build_formManager(username, userid, inputConfirmed);
+            response.send(result);
+        } 
+        else if (getAccount) {
             phone = request.body.phoneGet;
             if (await phoneExists(phone)) {
             let user = await findSingleUserPhone(phone);
@@ -758,6 +767,19 @@ async function deleteUser(phone) {
 
     await collection.deleteOne(filter);
     await client.close();
+}
+
+async function getAllAccountsInfo() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {};
+
+    let allUsers = await collection.find(filter).toArray();
+    await client.close();
+    return allUsers;
 }
 
 // Use this function to generate hashed passwords to save in 
