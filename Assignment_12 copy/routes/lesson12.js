@@ -177,7 +177,7 @@ router.post("/", async (request, response) => {
 
                 var i;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed+=`<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><<br>`
+                    inputConfirmed+=`<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
                 }
 
                 let sessionID = request.session.userid;
@@ -277,7 +277,12 @@ router.post("/", async (request, response) => {
                 let bellpepper = request.body.bellpepper;
                 let mushrooms = request.body.mushrooms;
 
-                let notes = request.body.notes;
+                let notesRequest = request.body.notes;
+                if ( notesRequest === "" || notesRequest === null || notesRequest === undefined) {
+                    notes = "No Notes";
+                } else {
+                    notes = notesRequest;
+                }
                 notes = notes.trim();
 
                 let sides = "";
