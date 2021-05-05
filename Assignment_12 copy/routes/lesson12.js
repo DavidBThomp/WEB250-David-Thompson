@@ -213,8 +213,8 @@ router.post("/", async (request, response) => {
                 phone = user.phone;
             }
 
+            // User ID from the phone number
             user = await findSingleUserPhone(phone)
-            console.log(user._id);
             let userid = user._id;
 
 
@@ -313,8 +313,28 @@ router.post("/", async (request, response) => {
 
             await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
 
-            // response.send();
+            // Get user status and update page based on status
+            let sessionUserID = request.session.userid;
+            let sessionUser = await findSingleUserID(sessionUserID);
+            let status = sessionUser.status;
+            inputConfirmed = `Order for phone number: "${phone}" has been input.`
 
+
+            // Response
+            let sessionID = request.session.userid;
+            username = request.cookies.username;
+            userid = sessionID;
+
+            if (status === "employee") {
+                result = build_formEmployee(username, userid, inputConfirmed);
+            } else if (status === "manager") {
+                result = build_formManager(username, userid, inputConfirmed);
+            } else if (status === "customer") {
+                result = build_formCustomer(username, userid, inputConfirmed);
+            }
+            
+            response.cookie("username", username);
+            response.send(result);
 
 
         } else if (updateAccount) {
@@ -789,6 +809,22 @@ async function findSingleUser(username) {
     return user;
 }
 
+async function findSingleUserID(sessionUserID) {
+    var sessionUserIDTest = new mongodb.ObjectID(sessionUserID);
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTION);
+
+    const filter = {
+        _id: sessionUserIDTest
+    };
+
+    sessionUser = await collection.findOne(filter);
+    await client.close();
+    return sessionUser;
+}
+
 async function findSingleUserPhone(phone) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
@@ -816,7 +852,6 @@ async function getUserOrders(userid) {
 
     let orders = await collection.find(filter);
     await client.close();
-    console.log(order);
     return orders;
 }
 
