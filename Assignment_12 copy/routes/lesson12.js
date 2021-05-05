@@ -26,7 +26,9 @@
 
 
 // TO - DO
-// Allow full control of side via Manager page (Update accounts)
+// Verify Manager has full control over all forms
+// Make sure all pages direct users to correct follow up page
+// Add correct information to follow up page
 
 const express = require("express");
 const fs = require("fs");
