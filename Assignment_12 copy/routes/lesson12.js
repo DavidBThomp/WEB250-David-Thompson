@@ -298,7 +298,7 @@ router.post("/", async (request, response) => {
 
 
 
-            await insertNewOrder(userid, toppings, size, sides, price, notes);
+            await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
 
             // response.send();
 
@@ -584,7 +584,7 @@ async function phoneExists(phone) {
     return !!(count);
 }
 
-async function insertNewOrder(userid, toppings, size, sides, price, notes) {
+async function insertNewOrder(userid, toppings, size, sides, price, notes, phone) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
@@ -596,6 +596,7 @@ async function insertNewOrder(userid, toppings, size, sides, price, notes) {
         side: sides,
         price: price.toFixed(2),
         notes: notes,
+        phone: phone
     };
     await collection.insertOne(document);
     await client.close();
@@ -650,7 +651,8 @@ async function insertBaseOrders(user) { // Clean up and make insert multiple ord
         size: "small",
         side: "fries",
         price: "5.99",
-        notes: "basenotes"
+        notes: "base notes",
+        phone: "base phone"
     };
 
     await collection.insertOne(order);
