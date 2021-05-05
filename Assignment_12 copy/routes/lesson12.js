@@ -152,12 +152,19 @@ router.post("/", async (request, response) => {
 
             let allUsers = await getAllAccountsInfo();
 
+            var i;
+            for (i = 0; i < allUsers.length; i++) {
+                inputConfirmed += (`${allUsers[i].phone},`);
+            }
+
             username = request.cookies.username;
+            let sessionID = request.session.userid;
             userid = sessionID;
+            console.log(userid);
             result = build_formManager(username, userid, inputConfirmed);
             response.send(result);
-        } 
-        else if (getAccount) {
+
+        } else if (getAccount) {
             phone = request.body.phoneGet;
             if (await phoneExists(phone)) {
             let user = await findSingleUserPhone(phone);
