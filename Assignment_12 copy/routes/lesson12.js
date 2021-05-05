@@ -170,6 +170,7 @@ router.post("/", async (request, response) => {
             if (await phoneExists(phone)) {
                 let user = await findSingleUserPhone(phone);
                 let orders = await getUserOrders(user._id);
+                console.log(orders);
 
 
                 inputConfirmed = `<p> ${user.fName}, ${user.lName}</p>`
@@ -872,10 +873,14 @@ async function getUserOrders(userid) {
     const collection = database.collection(COLLECTIONORDER);
 
     const filter = {
-        users_id: userid
+        users_id: `${userid}`
     };
 
-    let orders = await collection.find(filter);
+    let orders = await collection.find(filter).toArray(function(err, result) {
+        if (err) throw err;
+        orders = result;
+    });
+
     await client.close();
     return orders;
 }
