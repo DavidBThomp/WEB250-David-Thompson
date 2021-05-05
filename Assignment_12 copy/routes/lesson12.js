@@ -132,12 +132,18 @@ router.post("/", async (request, response) => {
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
 
                 inputConfirmed = "Login and Password info recorded, please login again.";
+
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
                 result = build_formManager(username, userid, inputConfirmed);
                 response.send(result);
 
             } else {
                 inputConfirmed = "Phone Number already linked to existing account, please contact admin for help.";
-                username = null;
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
                 result = build_formManager(username, userid, inputConfirmed);
                 response.send(result)
             }
