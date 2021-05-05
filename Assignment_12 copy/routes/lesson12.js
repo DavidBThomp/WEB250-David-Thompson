@@ -26,7 +26,7 @@
 
 
 // TO - DO
-// Allow full control of side via Manager page (Update accounts, Delete Accounts, Get accounts) - Right now they can create privlidged accounts
+// Allow full control of side via Manager page (Update accounts)
 
 const express = require("express");
 const fs = require("fs");
@@ -160,7 +160,6 @@ router.post("/", async (request, response) => {
             username = request.cookies.username;
             let sessionID = request.session.userid;
             userid = sessionID;
-            console.log(userid);
             result = build_formManager(username, userid, inputConfirmed);
             response.send(result);
 
