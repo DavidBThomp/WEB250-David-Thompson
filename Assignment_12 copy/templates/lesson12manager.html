@@ -70,26 +70,77 @@
             </select><br><br>
             <input type="submit" id="createLogin" name="createLogin" value="Create Account">
             <input type="submit" id="updateLogin" name="updateLogin" value="Update Account">
-            </form>
+        </form>
+        <br>
+        <hr>
+        <h1>Delete Account</h1>
+        <form method="POST">
+            <p><label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone">
+            </p>
+            <input type="submit" id="deleteLogin" name="deleteLogin" value="Delete Account">
+        </form>
+        <br>
+        <hr>
+        <h1>Get Account(s)</h1>
+        <form method="POST">
+            <p><label for="phoneGet">Phone:</label>
+                <input type="text" id="phoneGet" name="phoneGet">
+            </p>
+            <input type="submit" id="getAccount" name="getAccount" value="Get Account">
+            <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Accounts">
+        </form>
+        <br>
+        <hr>
+        <br>
+
+        <h1>Order Pizza(s) for Customer</h1>
+        <form method="POST" id="orderForm">
+            <p><label for="phoneOrder">Phone:</label>
+                <input type="text" id="phoneOrder" name="phoneOrder">
+            </p>
+
+            <h3>Sides:</h3>
+            <input type="checkbox" id="salad" name="salad" value="True">
+            <label for="salad">Salad ($5.99)</label><br>
+            <input type="checkbox" id="wings" name="wings" value="True">
+            <label for="wings">Wings ($3.99)</label><br>
+            <input type="checkbox" id="fries" name="fries" value="True">
+            <label for="fries">Fries ($4.99)</label><br>
             <br>
-            <hr>
-            <h1>Delete Account</h1>
-            <form method="POST">
-                <p><label for="phone">Phone:</label>
-                    <input type="text" id="phone" name="phone">
-                </p>
-                <input type="submit" id="deleteLogin" name="deleteLogin" value="Delete Account">
-            </form>
-            <br>
-            <hr>
-            <h1>Get Account(s)</h1>
-            <form method="POST">
-                <p><label for="phoneGet">Phone:</label>
-                    <input type="text" id="phoneGet" name="phoneGet">
-                </p>
-                <input type="submit" id="getAccount" name="getAccount" value="Get Account">
-                <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Accounts">
-            </form>
+
+            <label for="sides">
+                <h3>Pizza Size:</h3>
+            </label>
+            <select id="size" name="size">
+                <option value="Small">Small ($5.99)</option>
+                <option value="Medium">Medium ($7.99)</option>
+                <option value="Large">Large ($9.99)</option>
+                <option value="X-Large">X-Large ($12.99)</option>
+            </select>
+
+            <h3>Pizza Toppings (+$0.99 per topping):</h3>
+            <input type="checkbox" id="pepperoni" name="pepperoni" value="True">
+            <label for="pepperoni">Pepperoni</label><br>
+            <input type="checkbox" id="bacon" name="bacon" value="True">
+            <label for="bacon">Bacon</label><br>
+            <input type="checkbox" id="sausage" name="sausage" value="True">
+            <label for="sausage">Sausage</label><br>
+            <input type="checkbox" id="pineapple" name="pineapple" value="True">
+            <label for="pineapple">Pineapple</label><br>
+            <input type="checkbox" id="onions" name="onions" value="True">
+            <label for="onions">Onions</label><br>
+            <input type="checkbox" id="olives" name="olives" value="True">
+            <label for="olives">Olives</label><br>
+            <input type="checkbox" id="bellpepper" name="bellpepper" value="True">
+            <label for="bellpepper">Bell pepper</label><br>
+            <input type="checkbox" id="mushrooms" name="mushrooms" value="True">
+            <label for="mushrooms">Mushrooms</label><br>
+
+            <h3>Extra Notes:</h3>
+            <textarea id="notes" name="notes"></textarea><br>
+            <input type="submit" id="order" name="order" value="Order">
+        </form>
     </div>
 
 

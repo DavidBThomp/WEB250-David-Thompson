@@ -190,6 +190,17 @@ router.post("/", async (request, response) => {
                 response.send(result)
             }
         } else if (order) {
+
+            username = request.cookies.username;
+            let user = await findSingleUser(username);
+
+            phone = request.body.phoneOrder;
+
+
+            if ( (phone === "") || (phone === null) || (phone === undefined) ) {
+                phone = user.phone;
+            }
+
             let salad = request.body.salad;
             let wings = request.body.wings;
             let fries = request.body.fries;
@@ -282,9 +293,12 @@ router.post("/", async (request, response) => {
 
             toppings = toppings.trim();
 
-            let user = request.session.userid;
+            let userid = request.session.userid;
 
-            await insertNewOrder(user, toppings, size, sides, price, notes);
+
+
+
+            await insertNewOrder(userid, toppings, size, sides, price, notes);
 
             // response.send();
 
@@ -570,18 +584,18 @@ async function phoneExists(phone) {
     return !!(count);
 }
 
-async function insertNewOrder(user, toppings, size, sides, price, notes) {
+async function insertNewOrder(userid, toppings, size, sides, price, notes) {
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
     const collection = database.collection(COLLECTIONORDER);
     const document = {
-        users_id: `${user}`,
+        users_id: `${userid}`,
         topping: toppings,
         size: size,
         side: sides,
         price: price.toFixed(2),
-        notes: notes
+        notes: notes,
     };
     await collection.insertOne(document);
     await client.close();
