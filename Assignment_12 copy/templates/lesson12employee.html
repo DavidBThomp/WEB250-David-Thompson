@@ -20,11 +20,9 @@
             <p><label for="password">Password:</label>
                 <input type="text" id="password" name="password" value="">
                 <p>
-                    <input type="submit" id="updateLogin" name="updateLogin" value="Update Login">&nbsp;
-                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;<br>
+                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;
                     <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
                     <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
-                    <input type="submit" id="reload" name="reload" value="Reload">
                 </p>
         </form>
         <hr>
@@ -33,60 +31,65 @@
         <h1>Manage Accounts</h1>
         <form method="POST">
             <p><label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone">
+                <input type="text" id="phone" name="phone" required>
             </p>
             <p>
                 <input type="submit" id="deleteLogin" name="deleteLogin" value="Delete Account">
                 <input type="submit" id="getAccount" name="getAccount" value="Get Account">
-                <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Account Phone Numbers">
             </p>
+        </form>
+        <form method="POST">
+            <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Account Phone Numbers">
         </form>
         <hr>
         <br>
         <h1>Manage Orders</h1>
         <form method="POST">
             <p><label for="orderID">OrderID:</label>
-                <input type="text" id="orderID" name="orderID">
+                <input type="text" id="orderID" name="orderID" required>
             </p>
             <p>
                 <input type="submit" id="orderDelete" name="orderDelete" value="OrderDelete">
                 <input type="submit" id="orderComplete" name="orderComplete" value="OrderComplete">
-                <input type="submit" id="ordersActive" name="ordersActive" value="OrdersActive">
             </p>
+        </form>
+        <form method="POST">
+            <input type="submit" id="ordersActive" name="ordersActive" value="OrdersActive">
         </form>
         <hr>
 
         <h1>Create/Update Account</h1>
         <form method="POST">
             <p><label for="userName">Username:</label>
-                <input type="text" id="username" name="username" value="">
+                <input type="text" id="username" name="username" value="{{username}}" required>
             </p>
             <p><label for="password">Password:</label>
-                <input type="text" id="password" name="password" value="">
+                <input type="text" id="password" name="password" value="" required>
             </p>
-            <p><label for="fName">First Name:</label>
-                <input type="text" id="fName" name="fName">
+            <p><label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
             </p>
-            <p><label for="lName">Last Name:</label>
-                <input type="text" id="lName" name="lName">
+            <p><label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
             </p>
             <p><label for="address">Address:</label>
-                <input type="text" id="address" name="address">
+                <input type="text" id="address" name="address" required>
             </p>
             <p><label for="city">City:</label>
-                <input type="text" id="city" name="city">
+                <input type="text" id="city" name="city" required>
             </p>
             <p><label for="state">State:</label>
-                <input type="text" id="state" name="state">
+                <input type="text" id="state" name="state" maxlength="2" pattern="[A-Za-z]{2}" title="2 letter state"
+                    required>
             </p>
             <p><label for="postCode">Postal Code:</label>
-                <input type="number" id="postCode" name="postCode">
+                <input type="number" id="postCode" name="postCode" pattern="[0-9]{5}" required>
             </p>
             <p><label for="email">Email:</label>
-                <input type="email" id="email" name="email">
+                <input type="email" id="email" name="email" maxlength="40" required>
             </p>
             <p><label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone">
+                <input type="text" id="phone" name="phone" max="14" min="10" required>
             </p>
             <label for="status">Status:</label>
             <select id="status" name="status">
@@ -103,7 +106,7 @@
         <h1>Order Pizza(s) for Customer</h1>
         <form method="POST" id="orderForm">
             <p><label for="phoneOrder">Phone:</label>
-                <input type="text" id="phoneOrder" name="phoneOrder">
+                <input type="text" id="phoneOrder" name="phoneOrder" required>
             </p>
 
             <h3>Sides:</h3>
@@ -148,7 +151,6 @@
             <input type="submit" id="order" name="order" value="Order">
         </form>
     </div>
-
 
 </body>
 
