@@ -99,6 +99,7 @@ router.post("/", async (request, response) => {
     let getAccountCust = request.body["getAccountCust"];
     let getAllAccounts = request.body["getAllAccounts"];
     let updateAccount = request.body["updateLogin"];
+    let orderDelete = request.body["orderDelete"];
 
     let inputConfirmed = "";
 
@@ -196,6 +197,59 @@ router.post("/", async (request, response) => {
                 response.send(result);
 
             }
+
+        } else if (orderDelete) {
+
+            let orderID = request.body.orderID;
+            if (orderID.length <= 12 || orderID.length >= 24) { // This is an approximation because anything above between 20-24 wont process.
+                orderID = "123123123123"
+            }
+
+            let orderValid = await checkOrder(orderID);
+
+            if (orderValid) {
+                await deleteOrder(orderID);
+
+                inputConfirmed = `OrderID ${orderID} has been deleted.`
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+                response.send(result);
+            } else {
+                inputConfirmed = `OrderID doesn't exist.`
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+                response.send(result);
+            }
+
+
 
         } else if (getAccountCust) {
             let sessionUserID = request.session.userid;
@@ -521,7 +575,7 @@ router.post("/", async (request, response) => {
                         request.session.page_views++;
                         inputConfirmed = ("You successfully logged in " + request.session.page_views + " times");
                     } else if (request.session.page_views = 1) {
-                        inputConfirmed = ("Incorrect login for the first time!");
+                        inputConfirmed = ("Logged for the first time!");
                     }
 
                     let userid = user._id;
@@ -743,6 +797,23 @@ async function phoneExists(phone) {
     const filter = {
         phone: phone
     };
+    const count = await collection.countDocuments(filter);
+    await client.close();
+    return !!(count);
+}
+
+async function checkOrder(orderID) {
+    orderIDTest = new mongodb.ObjectID(orderID)
+    console.log(orderIDTest);
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        _id: orderIDTest
+    };
+
     const count = await collection.countDocuments(filter);
     await client.close();
     return !!(count);
@@ -1014,6 +1085,21 @@ async function deleteUser(phone) {
 
     const filter = {
         phone: phone
+    };
+
+    await collection.deleteOne(filter);
+    await client.close();
+}
+
+async function deleteOrder(orderID) {
+    orderIDTest = new mongodb.ObjectID(orderID)
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        _id: orderIDTest
     };
 
     await collection.deleteOne(filter);
