@@ -607,19 +607,19 @@ router.post("/", async (request, response) => {
                 toppings = toppings.trim();
 
                 await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
-
-                // Get user status and update page based on status
-                let sessionUserID = request.session.userid;
-                let sessionUser = await findSingleUserID(sessionUserID);
-                let status = sessionUser.status;
+                
                 inputConfirmed = `Order for phone number: "${phone}" has been input.`
 
+
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
 
                 // Response
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
-
                 if (status === "employee") {
                     result = build_formEmployee(username, userid, inputConfirmed);
                 } else if (status === "manager") {
@@ -627,8 +627,6 @@ router.post("/", async (request, response) => {
                 } else if (status === "customer") {
                     result = build_formCustomer(username, userid, inputConfirmed);
                 }
-
-                response.cookie("username", username);
                 response.send(result);
             }
 
