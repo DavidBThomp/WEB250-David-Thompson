@@ -657,19 +657,37 @@ router.post("/", async (request, response) => {
                 await updateUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
 
                 inputConfirmed = `User login for phone number ${phone} has been updated.`;
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
-                result = build_form(username, userid, inputConfirmed);
-                response.cookie("username", username);
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
                 response.send(result);
             } else {
                 inputConfirmed = "Phone number doesn't exits."
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
-                result = build_form(username, userid, inputConfirmed);
-                response.cookie("username", username);
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
                 response.send(result);
             }
 
