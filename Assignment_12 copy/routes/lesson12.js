@@ -201,7 +201,7 @@ router.post("/", async (request, response) => {
         } else if (orderDelete) {
 
             let orderID = request.body.orderID;
-            if (orderID.length <= 12 || orderID.length >= 24) { // This is an approximation because anything above between 20-24 wont process.
+            if (orderID.length < 12 || orderID.length > 24) { // This is an approximation because anything above between 20-24 wont process.
                 orderID = "123123123123"
             }
 
