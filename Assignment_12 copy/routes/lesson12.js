@@ -26,10 +26,9 @@
 
 
 // TO - DO
-// Staff can complete/cancel orders - Order Status?!
-// Taxes API
 // Make sure all pages direct users to correct follow up page
 // Add correct information to follow up page
+// Taxes API (Be willing to compromise)
 
 const express = require("express");
 const fs = require("fs");
@@ -345,7 +344,7 @@ router.post("/", async (request, response) => {
                 inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
             }
-            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2)}<hr>`
+            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2) * 1.1}<hr>`
 
             let sessionID = request.session.userid;
             username = request.cookies.username;
@@ -379,9 +378,12 @@ router.post("/", async (request, response) => {
                 inputConfirmed += `<h2>Orders</h2>`
 
                 var i;
+                let fullPrice = 0;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${orders[i].status}</p><br>`
+                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${orders[i].status}</p><br>`;
+                    fullPrice += +orders[i].price;
                 }
+                inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2) * 1.1}<hr>`
 
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
