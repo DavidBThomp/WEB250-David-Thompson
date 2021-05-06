@@ -211,7 +211,7 @@ router.post("/", async (request, response) => {
             var i;
             let fullPrice = 0;
             for (i = 0; i < orders.length; i++) {
-                inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
+                inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
             }
             inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2)}<hr>`
@@ -249,7 +249,7 @@ router.post("/", async (request, response) => {
 
                 var i;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
+                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
                 }
 
                 let sessionID = request.session.userid;
