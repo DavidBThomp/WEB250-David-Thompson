@@ -1,14 +1,9 @@
 // FINAL PROJECT
 
-// Update the website routing structure to include the pizza order application.
-// Update the pizza order application as needed based on your current understanding of server-side scripting and web development best practices.
-// Create a database to record pizza order information. Your design should follow best practices for your selected database platform (relational SQL database, document database, or key-value database).
+
 // Provide a way for customers to log in to the pizza order application to display and reorder their previous orders.
 // Use a REST API to retrieve sales tax information based on the customer's zip code. Update order information based on the retrieved sales tax.
 // Provide a way for staff to log in to the pizza order application and display current orders.
-// Provide a way for staff to place, complete, and cancel orders.
-// Provide a way for managers to display order and tax summary information.
-// Validate all user input using server-side scripts.
 // Validate all generated HTML and CSS.
 // Record Selenium IDE tests to demonstrate functionality for each page of your website. Include a separate test for each page.
 // Create a zip file of your entire website and Dockerfile and update your AWS Elastic Beanstalk web server application and verify that it works correctly.
