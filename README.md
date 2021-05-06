@@ -58,3 +58,6 @@ In this session, we learned about REST APIs and their function. I learned that m
 
 In this session, we learned about testing software for our websites. More specifically, I learned about web testing, which is used to test different parts of websites. This is typically done in prototyping and allows for mistakes to be found, as well as things that might not be considered such as security and load-bearing. I also learned about how some testing software creates virtual users to check performance metrics. This will be useful in the future because websites that aren't able to perform speedily, typically lose a lot of the viewers. This also can expose possible security issues that wouldn't be found until the site is live, and those issues are already exploited. 
 
+## Final Project
+
+For the final project, I had to learn a lot about how to make the backend of the website do CRUD operations and manage the website. I learned so much about the various technologies being used to create and manage websites. Some research has pointed me towards the MEAN stack (MongoDB, ExpressJS, Angular, and NodeJS). All of these being new things that I learned about this semester. Overall, nearly everything done this semester was a learning experience and will be valuable to reference as I continue to learn and become a full-stack developer.
