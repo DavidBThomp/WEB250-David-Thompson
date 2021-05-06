@@ -137,7 +137,7 @@ router.post("/", async (request, response) => {
 
                 await insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus);
 
-                inputConfirmed = "Login and Password info recorded, please login again.";
+                inputConfirmed = "Login and Password info recorded, please login.";
 
 
                 // Assist with response
@@ -269,16 +269,17 @@ router.post("/", async (request, response) => {
             let phone = request.body.phone;
             if (await phoneExists(phone)) {
                 await deleteUser(phone);
-                inputConfirmed = `Account assocaited with phone number: "${phone}" deleted.`;
+                inputConfirmed = `Account associated with phone number: "${phone}" deleted.`;
 
                 result = build_formManager(username, userid, inputConfirmed);
                 response.send(result)
 
-                // Keep manager logged in
+                // Keep Manager/Employee Logged in
             } else {
-                inputConfirmed = `Account assocaited with phone number: "${phone}" doesn't exist.`;
+                inputConfirmed = `Account associated with phone number: "${phone}" doesn't exist.`;
                 result = build_formManager(username, userid, inputConfirmed);
                 response.send(result)
+                // Keep Manager/Employee Logged in
             }
         } else if (order) {
 
