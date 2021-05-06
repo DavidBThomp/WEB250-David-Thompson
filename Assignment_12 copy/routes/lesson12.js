@@ -271,15 +271,38 @@ router.post("/", async (request, response) => {
                 await deleteUser(phone);
                 inputConfirmed = `Account associated with phone number: "${phone}" deleted.`;
 
-                result = build_formManager(username, userid, inputConfirmed);
-                response.send(result)
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
 
-                // Keep Manager/Employee Logged in
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
+                response.send(result);
             } else {
                 inputConfirmed = `Account associated with phone number: "${phone}" doesn't exist.`;
-                result = build_formManager(username, userid, inputConfirmed);
-                response.send(result)
-                // Keep Manager/Employee Logged in
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
+                response.send(result);
             }
         } else if (order) {
 
