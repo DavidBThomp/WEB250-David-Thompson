@@ -137,19 +137,62 @@ router.post("/", async (request, response) => {
 
                 inputConfirmed = "Login and Password info recorded, please login again.";
 
-                let sessionID = request.session.userid;
-                username = request.cookies.username;
-                userid = sessionID;
-                result = build_formManager(username, userid, inputConfirmed);
+
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                if (sessionUserID === undefined) {
+                    result = build_form(username, userid, inputConfirmed);
+                } else {
+                    let sessionUser = await findSingleUserID(sessionUserID);
+                    status = sessionUser.status;
+
+                    // Response
+                    let sessionID = request.session.userid;
+                    username = request.cookies.username;
+                    userid = sessionID;
+
+
+                    if (status === "employee") {
+                        result = build_formEmployee(username, userid, inputConfirmed);
+                    } else if (status === "manager") {
+                        result = build_formManager(username, userid, inputConfirmed);
+                    } else if (status === "customer") {
+                        result = build_formCustomer(username, userid, inputConfirmed);
+                    } else {
+                        result = build_form(username, userid, inputConfirmed);
+                    }
+                }
+                response.cookie("username", username);
                 response.send(result);
 
             } else {
                 inputConfirmed = "Phone Number already linked to existing account, please contact admin for help.";
-                let sessionID = request.session.userid;
-                username = request.cookies.username;
-                userid = sessionID;
-                result = build_formManager(username, userid, inputConfirmed);
-                response.send(result)
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                if (sessionUserID === undefined) {
+                    result = build_form(username, userid, inputConfirmed);
+                } else {
+
+                    let sessionUser = await findSingleUserID(sessionUserID);
+                    status = sessionUser.status;
+
+                    // Response
+                    let sessionID = request.session.userid;
+                    username = request.cookies.username;
+                    userid = sessionID;
+
+
+
+                    if (status === "employee") {
+                        result = build_formEmployee(username, userid, inputConfirmed);
+                    } else if (status === "manager") {
+                        result = build_formManager(username, userid, inputConfirmed);
+                    } else if (status === "customer") {
+                        result = build_formCustomer(username, userid, inputConfirmed);
+                    }
+                }
+                response.send(result);
+
             }
 
         } else if (getAccountCust) {
@@ -204,7 +247,7 @@ router.post("/", async (request, response) => {
 
                 var i;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed+=`<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
+                    inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
                 }
 
                 let sessionID = request.session.userid;
@@ -305,7 +348,7 @@ router.post("/", async (request, response) => {
                 let mushrooms = request.body.mushrooms;
 
                 let notesRequest = request.body.notes;
-                if ( notesRequest === "" || notesRequest === null || notesRequest === undefined) {
+                if (notesRequest === "" || notesRequest === null || notesRequest === undefined) {
                     notes = "No Notes";
                 } else {
                     notes = notesRequest;
