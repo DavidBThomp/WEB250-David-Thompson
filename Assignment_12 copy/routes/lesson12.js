@@ -361,10 +361,20 @@ router.post("/", async (request, response) => {
                 inputConfirmed += (`${allUsers[i].phone}<br>`);
             }
 
-            username = request.cookies.username;
+            // Assist with response
+            let sessionUserID = request.session.userid;
+            let sessionUser = await findSingleUserID(sessionUserID);
+            status = sessionUser.status;
+
+            // Response
             let sessionID = request.session.userid;
+            username = request.cookies.username;
             userid = sessionID;
-            result = build_formManager(username, userid, inputConfirmed);
+            if (status === "employee") {
+                result = build_formEmployee(username, userid, inputConfirmed);
+            } else if (status === "manager") {
+                result = build_formManager(username, userid, inputConfirmed);
+            }
             response.send(result);
 
         } else if (getAccount) {
@@ -385,17 +395,37 @@ router.post("/", async (request, response) => {
                 }
                 inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${(fullPrice * 1.1).toFixed(2)}<hr>`
 
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
-                result = build_formManager(username, userid, inputConfirmed);
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
                 response.send(result);
             } else {
                 inputConfirmed = `This phone number has no account associated with it.`
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
                 userid = sessionID;
-                result = build_formManager(username, userid, inputConfirmed);
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                }
                 response.send(result);
             }
         } else if (deleteLogin) {
