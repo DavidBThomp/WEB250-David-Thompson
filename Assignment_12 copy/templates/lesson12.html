@@ -14,7 +14,7 @@
         <p>{{welcome}}</p>
         <form method="POST">
             <p><label for="userName">Username:</label>
-                <input type="text" id="username" name="username" value="{{username}}">
+                <input type="text" id="username" name="username" value="{{username}}" required>
             </p>
             <p><label for="password">Password:</label>
                 <input type="text" id="password" name="password" value="">
@@ -23,7 +23,6 @@
                 <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;
                 <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
                 <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
-                <input type="submit" id="reload" name="reload" value="Reload">
             </p>
         </form>
         <hr>

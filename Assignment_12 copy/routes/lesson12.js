@@ -786,7 +786,7 @@ async function insertBaseOrders(user) { // Clean up and make insert multiple ord
     const order = {
         users_id: `${user._id}`,
         topping: "pepperoni",
-        size: "small",
+        size: "Small",
         side: "fries",
         price: "5.99",
         notes: "base notes",
