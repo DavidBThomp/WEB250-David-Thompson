@@ -344,7 +344,7 @@ router.post("/", async (request, response) => {
                 inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
             }
-            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2) * 1.1}<hr>`
+            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${(fullPrice * 1.1).toFixed(2)}<hr>`
 
             let sessionID = request.session.userid;
             username = request.cookies.username;
@@ -383,7 +383,7 @@ router.post("/", async (request, response) => {
                     inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${orders[i].status}</p><br>`;
                     fullPrice += +orders[i].price;
                 }
-                inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2) * 1.1}<hr>`
+                inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${(fullPrice * 1.1).toFixed(2)}<hr>`
 
                 let sessionID = request.session.userid;
                 username = request.cookies.username;
