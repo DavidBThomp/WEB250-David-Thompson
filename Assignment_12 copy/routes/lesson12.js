@@ -344,7 +344,7 @@ router.post("/", async (request, response) => {
                 inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
             }
-            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${(fullPrice * 1.1).toFixed(2)}<hr>`
+            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${(fullPrice * 1.1).toFixed(2)}`
 
             let sessionID = request.session.userid;
             username = request.cookies.username;
@@ -607,7 +607,7 @@ router.post("/", async (request, response) => {
                 toppings = toppings.trim();
 
                 await insertNewOrder(userid, toppings, size, sides, price, notes, phone);
-                
+
                 inputConfirmed = `Order for phone number: "${phone}" has been input.`
 
 
