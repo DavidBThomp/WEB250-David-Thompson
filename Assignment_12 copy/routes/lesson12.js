@@ -3,8 +3,6 @@
 
 // Provide a way for customers to log in to the pizza order application to display and reorder their previous orders.
 // Use a REST API to retrieve sales tax information based on the customer's zip code. Update order information based on the retrieved sales tax.
-// Provide a way for staff to log in to the pizza order application and display current orders.
-// Validate all generated HTML and CSS.
 // Record Selenium IDE tests to demonstrate functionality for each page of your website. Include a separate test for each page.
 // Create a zip file of your entire website and Dockerfile and update your AWS Elastic Beanstalk web server application and verify that it works correctly.
 // Update your git repository by adding a final project folder containing your entire unzipped website content, Dockerfile, and Selenium IDE tests.
@@ -18,12 +16,9 @@
 //  https://zellwk.com/blog/async-await-express/
 //  https://docs.mongodb.com/drivers/node/usage-examples
 
-
-
 // TO - DO
-// Make sure all pages direct users to correct follow up page
-// Add correct information to follow up page
 // Taxes API (Be willing to compromise)
+// Re-Order Customer (Be willing to compromise)
 
 const express = require("express");
 const fs = require("fs");
