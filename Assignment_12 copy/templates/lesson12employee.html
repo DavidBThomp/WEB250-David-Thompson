@@ -14,7 +14,7 @@
         <p>Cookie: {{cookie}}<br>Session: {{session}}</p>
         <p>{{welcome}}</p>
         <form method="POST">
-            <p><label for="userName">Username:</label>
+            <p><label for="username">Username:</label>
                 <input type="text" id="username" name="username" value="{{username}}">
             </p>
             <p><label for="password">Password:</label>
@@ -60,7 +60,7 @@
 
         <h1>Create/Update Account</h1>
         <form method="POST">
-            <p><label for="userName">Username:</label>
+            <p><label for="username">Username:</label>
                 <input type="text" id="username" name="username" value="{{username}}" required>
             </p>
             <p><label for="password">Password:</label>
@@ -83,13 +83,13 @@
                     required>
             </p>
             <p><label for="postCode">Postal Code:</label>
-                <input type="number" id="postCode" name="postCode" pattern="[0-9]{5}" required>
+                <input type="number" id="postCode" name="postCode" required>
             </p>
             <p><label for="email">Email:</label>
                 <input type="email" id="email" name="email" maxlength="40" required>
             </p>
             <p><label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone" max="14" min="10" required>
+                <input type="text" id="phone" name="phone" required>
             </p>
             <label for="status">Status:</label>
             <select id="status" name="status">
@@ -118,9 +118,7 @@
             <label for="fries">Fries ($4.99)</label><br>
             <br>
 
-            <label for="sides">
-                <h3>Pizza Size:</h3>
-            </label>
+            <h3>Pizza Size:</h3>
             <select id="size" name="size">
                 <option value="Small">Small ($5.99)</option>
                 <option value="Medium">Medium ($7.99)</option>
