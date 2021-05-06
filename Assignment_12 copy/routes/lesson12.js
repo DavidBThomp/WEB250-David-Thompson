@@ -200,6 +200,30 @@ router.post("/", async (request, response) => {
 
             }
 
+        } else if (ordersActive) {
+            let allOrders = await getAllOrdersInfo();
+            inputConfirmed = `<h2>Active Orders</h2>`
+            var i;
+            for (i = 0; i < allOrders.length; i++) {
+                inputConfirmed += `<p>OrderID: ${allOrders[i]._id}<br>Size: ${allOrders[i].size}<br>Toppings: ${allOrders[i].topping}<br>Sides: ${allOrders[i].side}<br>Price: ${allOrders[i].price}<br>Notes: ${allOrders[i].notes}<br>Order Status: ${allOrders[i].status}</p><br>`
+            }
+
+            // Assist with response
+            let sessionUserID = request.session.userid;
+            let sessionUser = await findSingleUserID(sessionUserID);
+            status = sessionUser.status;
+
+            // Response
+            let sessionID = request.session.userid;
+            username = request.cookies.username;
+            userid = sessionID;
+            if (status === "employee") {
+                result = build_formEmployee(username, userid, inputConfirmed);
+            } else if (status === "manager") {
+                result = build_formManager(username, userid, inputConfirmed);
+            }
+            response.send(result);
+
         } else if (orderComplete) {
 
             let orderID = request.body.orderID;
@@ -1193,6 +1217,21 @@ async function getAllAccountsInfo() {
     let allUsers = await collection.find(filter).toArray();
     await client.close();
     return allUsers;
+}
+
+async function getAllOrdersInfo() {
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        status: "active"
+    };
+
+    let allOrders = await collection.find(filter).toArray();
+    await client.close();
+    return allOrders;
 }
 
 // Use this function to generate hashed passwords to save in 
