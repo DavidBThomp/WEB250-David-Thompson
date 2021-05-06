@@ -26,7 +26,6 @@
 
 
 // TO - DO
-// Delete Orders
 // Staff can complete/cancel orders - Order Status?!
 // Taxes API
 // Make sure all pages direct users to correct follow up page
@@ -100,6 +99,9 @@ router.post("/", async (request, response) => {
     let getAllAccounts = request.body["getAllAccounts"];
     let updateAccount = request.body["updateLogin"];
     let orderDelete = request.body["orderDelete"];
+    let orderComplete = request.body["orderComplete"];
+    let ordersActive = request.body["ordersActive"];
+
 
     let inputConfirmed = "";
 
@@ -198,6 +200,57 @@ router.post("/", async (request, response) => {
 
             }
 
+        } else if (orderComplete) {
+
+            let orderID = request.body.orderID;
+            if (orderID.length < 12 || orderID.length > 24) { // This is an approximation because anything above between 20-24 wont process.
+                orderID = "123123123123"
+            }
+
+            let orderValid = await checkOrder(orderID);
+
+            if (orderValid) {
+                await completeOrder(orderID);
+
+                inputConfirmed = `OrderID ${orderID} has been completed.`
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+                response.send(result);
+            } else {
+                inputConfirmed = `OrderID doesn't exist.`
+                // Assist with response
+                let sessionUserID = request.session.userid;
+                let sessionUser = await findSingleUserID(sessionUserID);
+                status = sessionUser.status;
+
+                // Response
+                let sessionID = request.session.userid;
+                username = request.cookies.username;
+                userid = sessionID;
+                if (status === "employee") {
+                    result = build_formEmployee(username, userid, inputConfirmed);
+                } else if (status === "manager") {
+                    result = build_formManager(username, userid, inputConfirmed);
+                } else if (status === "customer") {
+                    result = build_formCustomer(username, userid, inputConfirmed);
+                }
+                response.send(result);
+            }
+
         } else if (orderDelete) {
 
             let orderID = request.body.orderID;
@@ -292,7 +345,7 @@ router.post("/", async (request, response) => {
             response.send(result);
 
         } else if (getAccount) {
-            phone = request.body.phoneGet;
+            phone = request.body.phone;
             if (await phoneExists(phone)) {
                 let user = await findSingleUserPhone(phone);
                 let orders = await getUserOrders(user._id);
@@ -303,7 +356,7 @@ router.post("/", async (request, response) => {
 
                 var i;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`
+                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${order[i].status}</p><br>`
                 }
 
                 let sessionID = request.session.userid;
@@ -831,12 +884,12 @@ async function insertNewOrder(userid, toppings, size, sides, price, notes, phone
         side: sides,
         price: price.toFixed(2),
         notes: notes,
-        phone: phone
+        phone: phone,
+        status: "active"
     };
     await collection.insertOne(document);
     await client.close();
 }
-
 
 async function insertNewUser(username, generatedHashedPassword, fName, lName, address, city, state, postCode, email, phone, defaultstatus) {
     const client = mongodb.MongoClient(HOST);
@@ -887,7 +940,8 @@ async function insertBaseOrders(user) { // Clean up and make insert multiple ord
         side: "fries",
         price: "5.99",
         notes: "base notes",
-        phone: "base phone"
+        phone: "base phone",
+        status: "active"
     };
 
     await collection.insertOne(order);
@@ -995,6 +1049,28 @@ async function updateUser(username, generatedHashedPassword, fName, lName, addre
     await collection.updateOne(filter, update);
     await client.close();
 }
+
+async function completeOrder(orderID) {
+    orderIDTest = new mongodb.ObjectID(orderID)
+    const client = mongodb.MongoClient(HOST);
+    await client.connect();
+    const database = client.db(DATABASE);
+    const collection = database.collection(COLLECTIONORDER);
+
+    const filter = {
+        _id: orderIDTest
+    };
+
+    const update = {
+        "$set": {
+            "status": "complete"
+        }
+    };
+
+    await collection.updateOne(filter, update);
+    await client.close();
+}
+
 
 async function findSingleUser(username) {
     const client = mongodb.MongoClient(HOST);
