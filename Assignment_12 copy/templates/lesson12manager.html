@@ -19,7 +19,7 @@
             <p><label for="password">Password:</label>
                 <input type="text" id="password" name="password" value="">
                 <p>
-                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;<br>
+                    <input type="submit" id="log-in" name="log-in" value="Log In">&nbsp;
                     <input type="submit" id="log-out" name="log-out" value="Log Out">&nbsp;
                     <input type="submit" id="forget-me" name="forget-me" value="Forget Me">&nbsp;
                     <input type="submit" id="reload" name="reload" value="Reload">
@@ -33,18 +33,23 @@
             <p><label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone">
             </p>
-            <input type="submit" id="deleteLogin" name="deleteLogin" value="Delete Account">
-            <input type="submit" id="getAccount" name="getAccount" value="Get Account">
-            <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Account Phone Numbers">
+            <p>
+                <input type="submit" id="deleteLogin" name="deleteLogin" value="Delete Account">
+                <input type="submit" id="getAccount" name="getAccount" value="Get Account">
+                <input type="submit" id="getAllAccounts" name="getAllAccounts" value="Get All Account Phone Numbers">
+            </p>
         </form>
-        <br>
         <hr>
         <br>
-        <h1>Delete Orders</h1>
+        <h1>Manage Orders</h1>
         <form method="POST">
             <p><label for="orderID">OrderID:</label>
                 <input type="text" id="orderID" name="orderID">
+            </p>
+            <p>
                 <input type="submit" id="orderDelete" name="orderDelete" value="OrderDelete">
+                <input type="submit" id="orderComplete" name="orderComplete" value="OrderComplete">
+                <input type="submit" id="ordersActive" name="ordersActive" value="OrdersActive">
             </p>
         </form>
         <hr>
@@ -90,7 +95,7 @@
             <input type="submit" id="createLogin" name="createLogin" value="Create Account">
             <input type="submit" id="updateLogin" name="updateLogin" value="Update Account">
         </form>
-        
+
         <br>
         <hr>
         <br>
