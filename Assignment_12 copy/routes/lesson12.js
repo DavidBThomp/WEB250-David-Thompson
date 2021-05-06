@@ -212,7 +212,7 @@ router.post("/", async (request, response) => {
                 inputConfirmed += `<p>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}</p><br>`;
                 fullPrice += +orders[i].price
             }
-            inputConfirmed += `Total: ${fullPrice}<br>Total + Tax: ${fullPrice}<hr>`
+            inputConfirmed += `Total: ${fullPrice.toFixed(2)}<br>Total + Tax: ${fullPrice.toFixed(2)}<hr>`
 
             let sessionID = request.session.userid;
             username = request.cookies.username;
@@ -495,7 +495,7 @@ router.post("/", async (request, response) => {
                         request.session.page_views++;
                         inputConfirmed = ("You successfully logged in " + request.session.page_views + " times");
                     } else if (request.session.page_views = 1) {
-                        inputConfirmed = ("Welcome to this page for the first time!");
+                        inputConfirmed = ("Incorrect login for the first time!");
                     }
 
                     let userid = user._id;
@@ -519,7 +519,7 @@ router.post("/", async (request, response) => {
                         request.session.fail_views++;
                         inputConfirmed = "Invalid password, please try again. There have been " + request.session.fail_views + " failed login attempts."
                     } else if (request.session.fail_views = 1) {
-                        inputConfirmed = ("Welcome to this fail login attempt page for the first time!");
+                        inputConfirmed = ("Incorrect password for the first time!");
                     }
 
                     result = build_form(username, userid, inputConfirmed);
