@@ -14,7 +14,7 @@
         <p>Cookie: {{cookie}}<br>Session: {{session}}</p>
         <p>{{welcome}}</p>
         <form method="POST">
-            <p><label for="userName">Username:</label>
+            <p><label for="username">Username:</label>
                 <input type="text" id="username" name="username" value="{{username}}">
             </p>
             <p><label for="password">Password:</label>
@@ -50,9 +50,11 @@
             <label for="fries">Fries ($4.99)</label><br>
             <br>
 
-            <label for="sides">
-                <h3>Pizza Size:</h3>
-            </label>
+            <h3>
+                <label>
+                    Pizza Size:
+                </label>
+            </h3>
             <select id="size" name="size">
                 <option value="Small">Small ($5.99)</option>
                 <option value="Medium">Medium ($7.99)</option>
