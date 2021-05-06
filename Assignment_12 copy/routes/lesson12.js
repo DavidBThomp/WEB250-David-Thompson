@@ -356,7 +356,7 @@ router.post("/", async (request, response) => {
 
                 var i;
                 for (i = 0; i < orders.length; i++) {
-                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${order[i].status}</p><br>`
+                    inputConfirmed += `<p>OrderID: ${orders[i]._id}<br>Size: ${orders[i].size}<br>Toppings: ${orders[i].topping}<br>Sides: ${orders[i].side}<br>Price: ${orders[i].price}<br>Notes: ${orders[i].notes}<br>Order Status: ${orders[i].status}</p><br>`
                 }
 
                 let sessionID = request.session.userid;
