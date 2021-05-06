@@ -604,7 +604,7 @@ router.post("/", async (request, response) => {
 
 
         } else if (updateAccount) {
-
+            let phone = request.body.phone;
             if (await phoneExists(phone)) {
 
                 let generatedHashedPassword = generateHashedPassword(password);
@@ -883,7 +883,6 @@ async function phoneExists(phone) {
 
 async function checkOrder(orderID) {
     orderIDTest = new mongodb.ObjectID(orderID)
-    console.log(orderIDTest);
     const client = mongodb.MongoClient(HOST);
     await client.connect();
     const database = client.db(DATABASE);
